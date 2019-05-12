@@ -1,7 +1,5 @@
 #include "soundviewer.h"
 #include <math.h>
-//#include <audio_io.h>
-//#include <sound_manager.h>
 #include <privacy_privilege_manager.h>
 
 #include <recorder.h>
@@ -47,20 +45,6 @@ typedef struct appdata {
 
 
 //static recorder_h g_recorder;
-
-/**
- * @brief Called when the state of focus that belongs to the stream_info is changed.
- * @details This function is issued in the internal thread of the sound manager.\n
- * Therefore it is recommended not to call UI update function in this function.
- *
- * @param[in]   stream_info     The handle of stream information
- * @param[in]   focus_mask      The changed focus mask
- * @param[in]   focus_state     The changed focus state
- * @param[in]   reason          The reason for state change of the focus
- * @param[in]   sound_behavior  The requested sound behavior that should be followed, values of #sound_behavior_e combined with bitwise 'or'
- * @param[in]   extra_info      The extra information
- * @param[in]   user_data       The user data passed from the callback registration function
- */
 static void __focus_callback_audioio(sound_stream_info_h stream_info,
                             sound_stream_focus_mask_e focus_mask,
                             sound_stream_focus_state_e focus_state,
@@ -350,17 +334,6 @@ static void _button_click_cb(void *data, Evas_Object *button, void *ev)
 	if(recording) {
 		ecore_thread_run(synchronous_recording, synchronous_recording_ended, NULL, NULL);
 	}
-
-
-
-//	int error_code = recorder_start(g_recorder);
-//
-//    if (RECORDER_ERROR_NONE != error_code)
-//        dlog_print(DLOG_ERROR, LOG_TAG, "recorder_start() failed! Error code = %d", error_code);
-//    else
-//    		dlog_print(DLOG_INFO, LOG_TAG, "recorder_start() ok!");
-
-
 }
 
 
@@ -465,34 +438,6 @@ create_base_gui(appdata_s *ad)
 	dlog_print(DLOG_DEBUG, LOG_TAG, "gui ok");
 }
 
-//static void
-//_state_changed_cb(recorder_state_e previous, recorder_state_e current, bool by_policy, void *user_data)
-//{
-//    dlog_print(DLOG_INFO, LOG_TAG, "_recorder_state_changed_cb (prev: %d, curr: %d)\n", previous, current);
-//}
-//
-//static void
-//_recorder_recording_limit_reached_cb(recorder_recording_limit_type_e type, void *user_data)
-//{
-//    dlog_print(DLOG_DEBUG, LOG_TAG, "Recording limit reached: %d\n", type);
-//}
-//
-//static bool
-//_recorder_supported_audio_encoder_cb(recorder_audio_codec_e codec, void *user_data)
-//{
-//	dlog_print(DLOG_DEBUG, LOG_TAG, "_recorder_supported_audio_encoder_cb: %d\n", codec);
-//
-//	return true;
-//}
-//
-//static bool
-//_recorder_supported_file_format_cb(recorder_file_format_e  format, void *user_data)
-//{
-//	dlog_print(DLOG_DEBUG, LOG_TAG, "recorder_file_format_e : %d\n", format);
-//
-//	return true;
-//}
-
 void
 app_request_response_cb2(ppm_call_cause_e cause, ppm_request_result_e result,
                              const char *privilege, void *user_data)
@@ -519,6 +464,7 @@ app_request_response_cb2(ppm_call_cause_e cause, ppm_request_result_e result,
             break;
     }
 }
+
 void
 app_request_response_cb(ppm_call_cause_e cause, ppm_request_result_e result,
                              const char *privilege, void *user_data)
@@ -592,45 +538,25 @@ app_create(void *data)
 
 	create_base_gui(ad);
 
-//	int ret;
-//	int _ret;
-//	sound_device_mask_e mask = SOUND_DEVICE_IO_DIRECTION_OUT_MASK |
-//	                           SOUND_DEVICE_IO_DIRECTION_BOTH_MASK;
-//
-//
-//	sound_device_list_h list;
-//	sound_device_h device;
-//	sound_device_type_e type;
-//	sound_device_io_direction_e direction;
-//	char* name;
-//	int id;
-//	//bool running;
-//
-//	ret = sound_manager_get_device_list(mask, &list);
-//
-//	while ((_ret = sound_manager_get_next_device(list, &device)) == SOUND_MANAGER_ERROR_NONE) {
-//	    ret = sound_manager_get_device_type(device, &type);
-//	    dlog_print(DLOG_INFO, LOG_TAG, "SOUND_DEVICE TYPE %d", type);
-//
-//	    ret = sound_manager_get_device_io_direction(device, &direction);
-//		dlog_print(DLOG_INFO, LOG_TAG, "SOUND_DEVICE_IO_DIRECTION  %d", direction);
-//
-//		ret = sound_manager_get_device_id(device, &id);
-//	    	dlog_print(DLOG_INFO, LOG_TAG, "SOUND_DEVICE ID %d", id);
-//
-//		ret = sound_manager_get_device_name(device, &name);
-//    		dlog_print(DLOG_INFO, LOG_TAG, "SOUND_DEVICE name %s", name);
-//
-//		//ret = sound_manager_is_device_running(device, &running);
-//		//dlog_print(DLOG_INFO, LOG_TAG, "SOUND_DEVICE running %d", running);
-//	}
-//	if (_ret == SOUND_MANAGER_ERROR_NO_DATA)
-//	    /* End of the available devices */
-//		ret = sound_manager_free_device_list(list);
-//		if (ret != SOUND_MANAGER_ERROR_NONE)
-//			/* Failed to free the device list*/
-//			dlog_print(DLOG_ERROR, LOG_TAG, "sound_manager_free_device_list is failed. err = %d", ret);
+	return true;
+}
 
+static void
+app_control(app_control_h app_control, void *data)
+{
+	/* Handle the launch request. */
+}
+
+static void
+app_pause(void *data)
+{
+	/* Take necessary actions when application becomes invisible. */
+}
+
+static void
+app_resume(void *data)
+{
+	/* Take necessary actions when application becomes visible. */
 	ppm_check_result_e result;
 	const char *privilege = "http://tizen.org/privilege/recorder";
 
@@ -663,25 +589,6 @@ app_create(void *data)
 		 /* Handle errors */
 		 dlog_print(DLOG_ERROR, LOG_TAG, "ppm_check_permission: error code = %d", ret);
 	 }
-	return true;
-}
-
-static void
-app_control(app_control_h app_control, void *data)
-{
-	/* Handle the launch request. */
-}
-
-static void
-app_pause(void *data)
-{
-	/* Take necessary actions when application becomes invisible. */
-}
-
-static void
-app_resume(void *data)
-{
-	/* Take necessary actions when application becomes visible. */
 }
 
 static void
@@ -711,18 +618,6 @@ app_terminate(void *data)
 
 	    /* Free the Sounds directory path. */
 	    free(g_sounds_directory);
-
-	    /* Free the stream information handle which was created at application view creation. */
-//	    error_code = sound_manager_destroy_stream_information(g_stream_info_h);
-//	    if (SOUND_MANAGER_ERROR_NONE != error_code) {
-//	        dlog_print(DLOG_ERROR, LOG_TAG, "sound_manager_destroy_stream_information() failed! Error code = 0x%x", error_code);
-//	    }
-
-//	int error_code = recorder_unprepare(g_recorder);
-//	error_code = recorder_destroy(g_recorder);
-//
-//	if (error_code != RECORDER_ERROR_NONE)
-//	    dlog_print(DLOG_ERROR, LOG_TAG, "fail to destroy recorder: error code = %d", error_code);
 }
 
 static void
