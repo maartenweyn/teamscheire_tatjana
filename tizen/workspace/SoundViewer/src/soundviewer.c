@@ -25,8 +25,8 @@ static audio_out_h output;
 static sound_stream_info_h g_stream_info_h = NULL;
 
 static bool recording = false;
-
 static bool data_initialized = false;
+static bool requesting_permission = false;
 
 static void *g_buffer = NULL;  /* Buffer used for audio recording/playback */
 static int g_buffer_size;  /* Size of the buffer used for audio recording/playback */
@@ -209,7 +209,6 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
     int bytes_read;
     char *buffer_ptr = NULL;
     int error_code = SOUND_MANAGER_ERROR_NONE;
-    int num_of_iterations;
 
     /*
      * Buffer size for 1 sec is equals to  sample rate * num of channel * num of bytes per sample
@@ -439,40 +438,13 @@ create_base_gui(appdata_s *ad)
 }
 
 void
-app_request_response_cb2(ppm_call_cause_e cause, ppm_request_result_e result,
-                             const char *privilege, void *user_data)
-{
-    if (cause == PRIVACY_PRIVILEGE_MANAGER_CALL_CAUSE_ERROR) {
-        /* Log and handle errors */
-	    dlog_print(DLOG_ERROR, LOG_TAG, "app_request_response_cb: %s error code = %d", privilege, result);
-
-        return;
-    }
-
-    switch (result) {
-        case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_ALLOW_FOREVER:
-    		dlog_print(DLOG_INFO, LOG_TAG, "%s PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_ALLOW_FOREVER", privilege);
-            /* Update UI and start accessing protected functionality */
-            break;
-        case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_DENY_FOREVER:
-    		dlog_print(DLOG_INFO, LOG_TAG, "%s PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_DENY_FOREVER", privilege);
-            /* Show a message and terminate the application */
-            break;
-        case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_DENY_ONCE:
-    		dlog_print(DLOG_INFO, LOG_TAG, "%s PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_DENY_ONCE", privilege);
-            /* Show a message with explanation */
-            break;
-    }
-}
-
-void
 app_request_response_cb(ppm_call_cause_e cause, ppm_request_result_e result,
                              const char *privilege, void *user_data)
 {
     if (cause == PRIVACY_PRIVILEGE_MANAGER_CALL_CAUSE_ERROR) {
         /* Log and handle errors */
 	    dlog_print(DLOG_ERROR, LOG_TAG, "app_request_response_cb: %s error code = %d", privilege, result);
-
+	    requesting_permission = false;
         return;
     }
 
@@ -491,41 +463,137 @@ app_request_response_cb(ppm_call_cause_e cause, ppm_request_result_e result,
             break;
     }
 
-    //data_initialize();
-
-    ppm_check_result_e result2;
-    const char *privilege2 = "http://tizen.org/privilege/mediastorage";
-    int ret = ppm_check_permission(privilege2, &result2);
-
-    	 	 if (ret == PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE) {
-    	 		switch (result2) {
-    	 			case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
-    	 				/* Update UI and start accessing protected functionality */
-    	 				dlog_print(DLOG_INFO, LOG_TAG, "mediastorage PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW");
-    	 				data_initialize();
-    	 				break;
-    	 			 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
-    	 				/* Show a message and terminate the application */
-    	 				 dlog_print(DLOG_INFO, LOG_TAG, "mediastorage PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY");
-    	 				break;
-    	 			 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK:
-    	 				 dlog_print(DLOG_INFO, LOG_TAG, "mediastorage PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK");
-    	 				 ret = ppm_request_permission(privilege2, app_request_response_cb2, NULL);
-    	 				 /* Log and handle errors */
-    	 				if (ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE)
-    	 					dlog_print(DLOG_ERROR, LOG_TAG, "mediastorage ppm_request_permission: error code = %d", ret);
-    	 				else
-    	 					dlog_print(DLOG_INFO, LOG_TAG, "mediastorage ppm_request_permission ok");
-    	 				 break;
-    	 		 }
-    	 	 }
-    	 	 else {
-    	 		 /* ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE */
-    	 		 /* Handle errors */
-    	 		 dlog_print(DLOG_ERROR, LOG_TAG, "ppm_check_permission: error code = %d", ret);
-    	 	 }
+    requesting_permission = false;
 }
 
+// only tizen 5.0
+//void
+//app_request_multiple_response_cb(ppm_call_cause_e cause, ppm_request_result_e* results,
+//                                 const char **privileges, size_t privileges_count, void *user_data)
+//{
+//    if (cause == PRIVACY_PRIVILEGE_MANAGER_CALL_CAUSE_ERROR) {
+//        /* Log and handle errors */
+//
+//        return;
+//    }
+//    for (int it = 0; it < privileges_count; ++it) {
+//        switch (results[it]) {
+//            case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_ALLOW_FOREVER:
+//                /* Update UI and start accessing protected functionality */
+//                break;
+//            case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_DENY_FOREVER:
+//                /* Show a message and terminate the application */
+//                break;
+//            case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_DENY_ONCE:
+//                /* Show a message with explanation */
+//                break;
+//        }
+//    }
+//}
+
+void
+app_check_and_request_permissions()
+{
+//works only in tizen 5.0
+//    ppm_check_result_e results[2];
+//    const char* privileges [] = {"http://tizen.org/privilege/recorder",
+//                                 "http://tizen.org/privilege/mediastorage"};
+//    char* askable_privileges[2];
+//    int askable_privileges_count = 0;
+//
+//    int ret = ppm_check_permissions(privileges, sizeof(privileges) / sizeof(privileges[0]), results);
+//
+//    if (ret == PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE) {
+//        for (int it = 0; it < sizeof(privileges) / sizeof(privileges[0]); ++it)
+//        {
+//            switch (results[it]) {
+//            case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
+//                /* Update UI and start accessing protected functionality */
+//                break;
+//            case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
+//			   /* Show a message and terminate the application */
+//			   break;
+//            case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK:
+//				askable_privileges[askable_privileges_count++] = privileges[it];
+//				/* Log and handle errors */
+//				break;
+//			}
+//		}
+//		ret = ppm_request_permissions(askable_privileges, askable_privileges_count,
+//									  app_request_multiple_response_cb, NULL);
+//	} else {
+//		/* ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE */
+//		/* Handle errors */
+//	}
+
+
+	ppm_check_result_e result;
+	const char *privilege = "http://tizen.org/privilege/recorder";
+
+	int ret = ppm_check_permission(privilege, &result);
+
+	if (ret == PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE) {
+		switch (result) {
+		case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
+			/* Update UI and start accessing protected functionality */
+			dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW");
+			data_initialize();
+			break;
+		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
+			/* Show a message and terminate the application */
+			 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY");
+			break;
+		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK:
+			 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK");
+			 requesting_permission = true;
+			 ret = ppm_request_permission(privilege, app_request_response_cb, NULL);
+			 /* Log and handle errors */
+			if (ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE)
+				dlog_print(DLOG_ERROR, LOG_TAG, "recorder ppm_request_permission: error code = %d", ret);
+			else
+				dlog_print(DLOG_INFO, LOG_TAG, "recorder ppm_request_permission ok");
+			 break;
+		}
+	} else {
+	 /* ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE */
+	 /* Handle errors */
+	 dlog_print(DLOG_ERROR, LOG_TAG, "ppm_check_permission: error code = %d", ret);
+	}
+
+	while (requesting_permission) {}
+
+	const char *privilege2 = "http://tizen.org/privilege/mediastorage";
+
+	ret = ppm_check_permission(privilege2, &result);
+
+	if (ret == PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE) {
+		switch (result) {
+		case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
+			/* Update UI and start accessing protected functionality */
+			dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW");
+			data_initialize();
+			break;
+		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
+			/* Show a message and terminate the application */
+			 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY");
+			break;
+		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK:
+			 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK");
+			 ret = ppm_request_permission(privilege, app_request_response_cb, NULL);
+			 /* Log and handle errors */
+			if (ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE)
+				dlog_print(DLOG_ERROR, LOG_TAG, "recorder ppm_request_permission: error code = %d", ret);
+			else
+				dlog_print(DLOG_INFO, LOG_TAG, "recorder ppm_request_permission ok");
+			 break;
+		}
+	} else {
+	 /* ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE */
+	 /* Handle errors */
+	 dlog_print(DLOG_ERROR, LOG_TAG, "ppm_check_permission: error code = %d", ret);
+	}
+
+}
 
 static bool
 app_create(void *data)
