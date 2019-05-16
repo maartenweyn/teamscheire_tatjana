@@ -26,13 +26,13 @@ static sound_stream_info_h g_stream_info_h = NULL;
 
 static bool recording = false;
 static bool data_initialized = false;
-static bool requesting_permission = false;
 
 static void *g_buffer = NULL;  /* Buffer used for audio recording/playback */
 static int g_buffer_size;  /* Size of the buffer used for audio recording/playback */
 
 
 static Evas_Object *button;
+static Evas_Object *buttonPermissions;
 static Evas_Object *volume;
 typedef struct appdata {
 	Evas_Object *win;
@@ -41,6 +41,8 @@ typedef struct appdata {
 	Evas_Object *box;
 	Evas_Object *nf;
 } appdata_s;
+
+static void app_check_and_request_permissions();
 
 
 
@@ -139,15 +141,15 @@ static void __audio_device_init(void)
     CHECK_ERROR_AND_RETURN("audio_in_create", error_code);
 
 //    /* Audio output device initialization. */
-    error_code = audio_out_create_new(SAMPLE_RATE, AUDIO_CHANNEL_MONO,
-            AUDIO_SAMPLE_TYPE_S16_LE, &output);
+    //error_code = audio_out_create_new(SAMPLE_RATE, AUDIO_CHANNEL_MONO,AUDIO_SAMPLE_TYPE_S16_LE, &output);
+    error_code = audio_out_create_new(SAMPLE_RATE, AUDIO_CHANNEL_MONO,AUDIO_SAMPLE_TYPE_U8, &output);
     CHECK_ERROR_AND_RETURN("audio_out_create", error_code);
 
     /*
      * Buffer size for 1 sec is equals to  sample rate * num of channel * num of bytes per sample
      * Buffer size for mentioned RECORDING_SEC
      */
-    g_buffer_size = SAMPLE_RATE * 2 * 2 * RECORDING_SEC;
+    g_buffer_size = SAMPLE_RATE * 1 * 1 * RECORDING_SEC;
 
     /* Allocate the memory for the buffer used for recording/playback. */
     g_buffer = malloc(g_buffer_size);
@@ -214,7 +216,7 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
      * Buffer size for 1 sec is equals to  sample rate * num of channel * num of bytes per sample
      * Buffer size for mentioned RECORDING_SEC
      */
-    g_buffer_size = SAMPLE_RATE * 2 * 2 * RECORDING_SEC;
+    g_buffer_size = SAMPLE_RATE * 1 * 1 * RECORDING_SEC;
     error_code = sound_manager_acquire_focus(g_stream_info_h, SOUND_STREAM_FOCUS_FOR_RECORDING,
                                              SOUND_BEHAVIOR_NONE, NULL);
     if (SOUND_MANAGER_ERROR_NONE != error_code)
@@ -239,7 +241,7 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 
     /* Record in small chunks. */
     //num_of_iterations = RECORDING_SEC / MIN_RECORDING_INTERVAL;
-    read_length = 2 * SAMPLE_RATE * MIN_RECORDING_INTERVAL; //MIN_BUFFER_SIZE;
+    read_length = 1 * SAMPLE_RATE * MIN_RECORDING_INTERVAL; //MIN_BUFFER_SIZE;
     buffer_ptr = (char *)g_buffer;
 
     //dlog_print(DLOG_INFO, LOG_TAG, "num_of_iterations %d", num_of_iterations);
@@ -260,13 +262,12 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 
     		uint8_t *index = (uint8_t*)g_buffer;
 		while (index < (((uint8_t*)g_buffer) + read_length)) {
-			/* Use the int16_t type, because it is 2 bytes long */
-			int32_t value = *(int16_t*)index;
+			uint32_t value = *(uint8_t*)index;
 			value *= value;
-			double fraction = value / (read_length / 2.0 );
+			double fraction = value / (read_length);
 			sum += (uint16_t) fraction;
 
-			dlog_print(DLOG_DEBUG, LOG_TAG, "value %d -> %d",  *(int16_t*)index, (uint8_t) fraction);
+			dlog_print(DLOG_DEBUG, LOG_TAG, "value %d -> %d",  *(uint8_t*)index, (uint8_t) fraction);
 
 			/* Go to the next sample */
 			index += 2;
@@ -277,7 +278,7 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 //		char text[20];
 //		snprintf(text, sizeof(text), "%i", mean);
 //		elm_object_text_set(volume , text);
-		recording = false;
+		//recording = false;
     }
 
     /* Close the file used for recording. */
@@ -317,12 +318,6 @@ static void synchronous_recording_ended(void *data, Ecore_Thread *thread)
 
 static void _button_click_cb(void *data, Evas_Object *button, void *ev)
 {
-	static int counter = 0;
-	counter++;
-
-//    char text[20];
-//    snprintf(text, sizeof(text), "Clicked! %d times", counter);
-//	elm_object_text_set(button, text);
 	dlog_print(DLOG_DEBUG, LOG_TAG, "button clicked");
 
 	if (!data_initialized)
@@ -334,6 +329,14 @@ static void _button_click_cb(void *data, Evas_Object *button, void *ev)
 		ecore_thread_run(synchronous_recording, synchronous_recording_ended, NULL, NULL);
 	}
 }
+
+static void _buttonpermission_click_cb(void *data, Evas_Object *button, void *ev)
+{
+
+	dlog_print(DLOG_DEBUG, LOG_TAG, "button permission clicked");
+	app_check_and_request_permissions();
+}
+
 
 
 static void
@@ -422,9 +425,27 @@ create_base_gui(appdata_s *ad)
 	evas_object_show(volume);
 	elm_box_pack_end(ad->box, volume);
 
+
+	buttonPermissions = elm_button_add(ad->box);
+	evas_object_size_hint_weight_set(buttonPermissions,0.0,1.0);
+	evas_object_size_hint_align_set(buttonPermissions,-1.0,1.0);
+	//elm_object_style_set(buttonPermissions, "circle");
+	elm_object_text_set(buttonPermissions,"Click Me!");
+	evas_object_show(buttonPermissions);
+	//elm_table_pack(box, buttonPermissions, 3, 1, 1, 1);
+	elm_box_pack_end(ad->box, buttonPermissions);
+
+
+	Evas_Object *ic;
+	ic = elm_icon_add(buttonPermissions);
+	elm_icon_standard_set(ic, "Home");
+	elm_object_part_content_set(buttonPermissions,"icon",ic);
+	evas_object_show(ic);
+	evas_object_smart_callback_add(buttonPermissions, "clicked", _buttonpermission_click_cb, NULL);
+
 	button = elm_button_add(ad->box);
 	elm_object_text_set(button, "Click me");
-	//elm_object_style_set(ad->button, "bottom");
+	elm_object_style_set(button, "bottom");
 	evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.5);
 	elm_box_pack_end(ad->box, button);
@@ -444,14 +465,16 @@ app_request_response_cb(ppm_call_cause_e cause, ppm_request_result_e result,
     if (cause == PRIVACY_PRIVILEGE_MANAGER_CALL_CAUSE_ERROR) {
         /* Log and handle errors */
 	    dlog_print(DLOG_ERROR, LOG_TAG, "app_request_response_cb: %s error code = %d", privilege, result);
-	    requesting_permission = false;
-        return;
+	    return;
     }
 
     switch (result) {
         case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_ALLOW_FOREVER:
     		dlog_print(DLOG_INFO, LOG_TAG, "%s PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_ALLOW_FOREVER", privilege);
-            /* Update UI and start accessing protected functionality */
+        if (strcmp(privilege, "http://tizen.org/privilege/mediastorage") == 0) {
+			evas_object_hide(buttonPermissions);
+        }
+    		/* Update UI and start accessing protected functionality */
             break;
         case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_DENY_FOREVER:
     		dlog_print(DLOG_INFO, LOG_TAG, "%s PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_DENY_FOREVER", privilege);
@@ -462,8 +485,6 @@ app_request_response_cb(ppm_call_cause_e cause, ppm_request_result_e result,
             /* Show a message with explanation */
             break;
     }
-
-    requesting_permission = false;
 }
 
 // only tizen 5.0
@@ -490,6 +511,41 @@ app_request_response_cb(ppm_call_cause_e cause, ppm_request_result_e result,
 //        }
 //    }
 //}
+
+void
+app_check_and_request_mediapermissions() {
+	ppm_check_result_e result;
+	const char *privilege = "http://tizen.org/privilege/mediastorage";
+	int ret = ppm_check_permission(privilege, &result);
+
+	if (ret == PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE) {
+		switch (result) {
+		case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
+			/* Update UI and start accessing protected functionality */
+			dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW");
+			evas_object_hide(buttonPermissions);
+
+			break;
+		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
+			/* Show a message and terminate the application */
+			 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY");
+			break;
+		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK:
+			 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK");
+			 ret = ppm_request_permission(privilege, app_request_response_cb, NULL);
+			 /* Log and handle errors */
+			if (ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE)
+				dlog_print(DLOG_ERROR, LOG_TAG, "recorder ppm_request_permission: error code = %d", ret);
+			else
+				dlog_print(DLOG_INFO, LOG_TAG, "recorder ppm_request_permission ok");
+			 break;
+		}
+	} else {
+	 /* ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE */
+	 /* Handle errors */
+	 dlog_print(DLOG_ERROR, LOG_TAG, "ppm_check_permission: error code = %d", ret);
+	}
+}
 
 void
 app_check_and_request_permissions()
@@ -526,7 +582,6 @@ app_check_and_request_permissions()
 //		/* Handle errors */
 //	}
 
-
 	ppm_check_result_e result;
 	const char *privilege = "http://tizen.org/privilege/recorder";
 
@@ -537,41 +592,7 @@ app_check_and_request_permissions()
 		case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
 			/* Update UI and start accessing protected functionality */
 			dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW");
-			data_initialize();
-			break;
-		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
-			/* Show a message and terminate the application */
-			 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY");
-			break;
-		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK:
-			 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK");
-			 requesting_permission = true;
-			 ret = ppm_request_permission(privilege, app_request_response_cb, NULL);
-			 /* Log and handle errors */
-			if (ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE)
-				dlog_print(DLOG_ERROR, LOG_TAG, "recorder ppm_request_permission: error code = %d", ret);
-			else
-				dlog_print(DLOG_INFO, LOG_TAG, "recorder ppm_request_permission ok");
-			 break;
-		}
-	} else {
-	 /* ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE */
-	 /* Handle errors */
-	 dlog_print(DLOG_ERROR, LOG_TAG, "ppm_check_permission: error code = %d", ret);
-	}
-
-	while (requesting_permission) {}
-
-	const char *privilege2 = "http://tizen.org/privilege/mediastorage";
-
-	ret = ppm_check_permission(privilege2, &result);
-
-	if (ret == PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE) {
-		switch (result) {
-		case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
-			/* Update UI and start accessing protected functionality */
-			dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW");
-			data_initialize();
+			app_check_and_request_mediapermissions();
 			break;
 		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
 			/* Show a message and terminate the application */
@@ -585,7 +606,7 @@ app_check_and_request_permissions()
 				dlog_print(DLOG_ERROR, LOG_TAG, "recorder ppm_request_permission: error code = %d", ret);
 			else
 				dlog_print(DLOG_INFO, LOG_TAG, "recorder ppm_request_permission ok");
-			 break;
+			break;
 		}
 	} else {
 	 /* ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE */
@@ -624,39 +645,7 @@ app_pause(void *data)
 static void
 app_resume(void *data)
 {
-	/* Take necessary actions when application becomes visible. */
-	ppm_check_result_e result;
-	const char *privilege = "http://tizen.org/privilege/recorder";
-
-	int ret = ppm_check_permission(privilege, &result);
-
-	 if (ret == PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE) {
-		switch (result) {
-			case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
-				/* Update UI and start accessing protected functionality */
-				dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW");
-				data_initialize();
-				break;
-			 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
-				/* Show a message and terminate the application */
-				 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY");
-				break;
-			 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK:
-				 dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ASK");
-				 ret = ppm_request_permission(privilege, app_request_response_cb, NULL);
-				 /* Log and handle errors */
-				if (ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE)
-					dlog_print(DLOG_ERROR, LOG_TAG, "recorder ppm_request_permission: error code = %d", ret);
-				else
-					dlog_print(DLOG_INFO, LOG_TAG, "recorder ppm_request_permission ok");
-				 break;
-		 }
-	 }
-	 else {
-		 /* ret != PRIVACY_PRIVILEGE_MANAGER_ERROR_NONE */
-		 /* Handle errors */
-		 dlog_print(DLOG_ERROR, LOG_TAG, "ppm_check_permission: error code = %d", ret);
-	 }
+	app_check_and_request_permissions();
 }
 
 static void
