@@ -7,9 +7,10 @@
 
 // Define the sample rate for recording audio
 #define SAMPLE_RATE 44100
-#define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_U8
+//#define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_U8
+#define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_S16_LE
 #define RECORDING_SEC 10
-#define MIN_RECORDING_INTERVAL  0.1
+#define MIN_RECORDING_INTERVAL  1
 #define MIN_BUFFER_SIZE 19200
 #define BUFLEN 512
 #define MAX_2BYTES_SIGNED 32767
@@ -26,13 +27,24 @@ static sound_stream_info_h g_stream_info_h = NULL;
 
 static bool recording = false;
 static bool data_initialized = false;
+static bool permissions_initialized = false;
+static int currentLeq = 0;
 
 static void *g_buffer = NULL;  /* Buffer used for audio recording/playback */
 static int g_buffer_size;  /* Size of the buffer used for audio recording/playback */
 
+static const double AFILTER_Acoef[] = {1.0, -4.0195761811158315, 6.1894064429206921, -4.4531989035441155,
+                    1.4208429496218764, -0.14182547383030436,
+                    0.0043511772334950787};
+static const double AFILTER_Bcoef[] = {0.2557411252042574, -0.51148225040851436,
+                    -0.25574112520425807, 1.0229645008170318,
+                    -0.25574112520425918, -0.51148225040851414,
+                    0.25574112520425729};
+
+static double AFILTER_conditions[] = {0, 0, 0, 0, 0, 0};
+
 
 static Evas_Object *button;
-static Evas_Object *buttonPermissions;
 static Evas_Object *volume;
 typedef struct appdata {
 	Evas_Object *win;
@@ -44,7 +56,15 @@ typedef struct appdata {
 
 static void app_check_and_request_permissions();
 
+static double a_filter(double input) {
+	double output = input * AFILTER_Bcoef[0] + AFILTER_conditions[0];
+	for (int j = 0; j < 5; j++) {
+		AFILTER_conditions[j] = input * AFILTER_Bcoef[j + 1] - output * AFILTER_Acoef[j + 1] + AFILTER_conditions[j + 1];
+	}
+	AFILTER_conditions[5] = input * AFILTER_Bcoef[6] - output * AFILTER_Acoef[6];
 
+	return output;
+}
 
 //static recorder_h g_recorder;
 static void __focus_callback_audioio(sound_stream_info_h stream_info,
@@ -142,14 +162,18 @@ static void __audio_device_init(void)
 
 //    /* Audio output device initialization. */
     //error_code = audio_out_create_new(SAMPLE_RATE, AUDIO_CHANNEL_MONO,AUDIO_SAMPLE_TYPE_S16_LE, &output);
-    error_code = audio_out_create_new(SAMPLE_RATE, AUDIO_CHANNEL_MONO,AUDIO_SAMPLE_TYPE_U8, &output);
-    CHECK_ERROR_AND_RETURN("audio_out_create", error_code);
+    //error_code = audio_out_create_new(SAMPLE_RATE, AUDIO_CHANNEL_MONO, SAMPLE_RATE, &output);
+    //CHECK_ERROR_AND_RETURN("audio_out_create", error_code);
 
     /*
      * Buffer size for 1 sec is equals to  sample rate * num of channel * num of bytes per sample
      * Buffer size for mentioned RECORDING_SEC
      */
-    g_buffer_size = SAMPLE_RATE * 1 * 1 * RECORDING_SEC;
+#if	SAMPLE_TYPE == AUDIO_SAMPLE_TYPE_S16_LE
+    		g_buffer_size = SAMPLE_RATE * 2 * 1 * RECORDING_SEC;
+#else
+    		g_buffer_size = SAMPLE_RATE * 1 * 1 * RECORDING_SEC;
+#endif
 
     /* Allocate the memory for the buffer used for recording/playback. */
     g_buffer = malloc(g_buffer_size);
@@ -187,6 +211,17 @@ void data_initialize(void)
     data_initialized = true;
 }
 
+static void* setvolume_async(void *data)
+{
+	int16_t* leq = data;
+	char text[20];
+	snprintf(text, sizeof(text), " Volume: %d dB", *leq);
+	dlog_print(DLOG_DEBUG, LOG_TAG, "setvolume_async() %d", *leq);
+	elm_object_text_set(volume , text);
+
+	return NULL;
+}
+
 /**
  * @brief Records the audio synchronously.
  * @details Executes in a different thread, because it launches synchronous
@@ -216,7 +251,12 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
      * Buffer size for 1 sec is equals to  sample rate * num of channel * num of bytes per sample
      * Buffer size for mentioned RECORDING_SEC
      */
-    g_buffer_size = SAMPLE_RATE * 1 * 1 * RECORDING_SEC;
+#if	SAMPLE_TYPE == AUDIO_SAMPLE_TYPE_S16_LE
+    		g_buffer_size = SAMPLE_RATE * 2 * 1 * RECORDING_SEC;
+#else
+    		g_buffer_size = SAMPLE_RATE * 1 * 1 * RECORDING_SEC;
+#endif
+
     error_code = sound_manager_acquire_focus(g_stream_info_h, SOUND_STREAM_FOCUS_FOR_RECORDING,
                                              SOUND_BEHAVIOR_NONE, NULL);
     if (SOUND_MANAGER_ERROR_NONE != error_code)
@@ -241,7 +281,13 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 
     /* Record in small chunks. */
     //num_of_iterations = RECORDING_SEC / MIN_RECORDING_INTERVAL;
-    read_length = 1 * SAMPLE_RATE * MIN_RECORDING_INTERVAL; //MIN_BUFFER_SIZE;
+     //MIN_BUFFER_SIZE;
+#if	SAMPLE_TYPE == AUDIO_SAMPLE_TYPE_S16_LE
+    		read_length = 2 * SAMPLE_RATE * MIN_RECORDING_INTERVAL;
+#else
+    		read_length = 1 * SAMPLE_RATE * MIN_RECORDING_INTERVAL;
+#endif
+
     buffer_ptr = (char *)g_buffer;
 
     //dlog_print(DLOG_INFO, LOG_TAG, "num_of_iterations %d", num_of_iterations);
@@ -258,27 +304,43 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 			 fwrite(g_buffer, sizeof(char), read_length, g_fp_w);
 		}
 
-    		uint64_t sum = 0;
+    		double sumsquare = 0;
 
     		uint8_t *index = (uint8_t*)g_buffer;
 		while (index < (((uint8_t*)g_buffer) + read_length)) {
-			uint32_t value = *(uint8_t*)index;
-			value *= value;
-			double fraction = value / (read_length);
-			sum += (uint16_t) fraction;
+#if	SAMPLE_TYPE == AUDIO_SAMPLE_TYPE_S16_LE
+			int16_t ivalue = *(int16_t*)index;
+			double fraction = 0.0;
+			if (ivalue < 0)
+				fraction = ivalue / 32768;
+			else
+				fraction = ivalue / 32767;
 
-			dlog_print(DLOG_DEBUG, LOG_TAG, "value %d -> %d",  *(uint8_t*)index, (uint8_t) fraction);
+#else
+			uint8_t value = *(uint8_t*)index;
+			int16_t ivalue = value - 128;
+			double fraction = 0.0;
+			if (ivalue < 0)
+				fraction = ivalue / 128.0;
+			else
+				fraction = ivalue / 127.0;
+
+			dlog_print(DLOG_DEBUG, LOG_TAG, "value %d -> %d",  value,  ivalue;
+#endif
+			double filtered = a_filter(fraction);
+			sumsquare += filtered * filtered;
+
+
+			dlog_print(DLOG_DEBUG, LOG_TAG, "%d -> %.4f -> %.4f",  ivalue, fraction, filtered);
 
 			/* Go to the next sample */
-			index += 2;
+			index += 1;
 		}
 
-		uint32_t mean = 20 * log(sqrt(sum));
-		dlog_print(DLOG_INFO, LOG_TAG, "sum %d mean %i",sum,  mean);
-//		char text[20];
-//		snprintf(text, sizeof(text), "%i", mean);
-//		elm_object_text_set(volume , text);
-		//recording = false;
+		currentLeq = (int16_t) ((10.0 * log10(sumsquare / read_length)) + 93.97940008672037609572522210551);
+		dlog_print(DLOG_INFO, LOG_TAG, "Leq %d", currentLeq);
+		ecore_main_loop_thread_safe_call_sync(setvolume_async, &currentLeq);
+
     }
 
     /* Close the file used for recording. */
@@ -288,6 +350,10 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
     /* Stop the hardware recording process. */
     error_code = audio_in_unprepare(input);
     CHECK_ERROR("audio_in_unprepare", error_code);
+
+    error_code = sound_manager_release_focus(g_stream_info_h, SOUND_STREAM_FOCUS_FOR_RECORDING, SOUND_BEHAVIOR_NONE, "record(Release)");
+	if (SOUND_MANAGER_ERROR_NONE != error_code)
+		dlog_print(DLOG_ERROR, LOG_TAG, "sound_manager_release_focus() failed! Error code = 0x%x", error_code);
 
 }
 
@@ -320,24 +386,26 @@ static void _button_click_cb(void *data, Evas_Object *button, void *ev)
 {
 	dlog_print(DLOG_DEBUG, LOG_TAG, "button clicked");
 
+	if (!permissions_initialized) {
+		app_check_and_request_permissions();
+		return;
+	}
+
 	if (!data_initialized)
 		data_initialize();
 
 	recording = !recording;
 
 	if(recording) {
+		elm_object_text_set(button, "Recording");
 		ecore_thread_run(synchronous_recording, synchronous_recording_ended, NULL, NULL);
+	} else {
+		elm_object_text_set(button, "Record");
+		char text[20];
+		snprintf(text, sizeof(text), " Volume: %d dB", currentLeq);
+		elm_object_text_set(volume , text);
 	}
 }
-
-static void _buttonpermission_click_cb(void *data, Evas_Object *button, void *ev)
-{
-
-	dlog_print(DLOG_DEBUG, LOG_TAG, "button permission clicked");
-	app_check_and_request_permissions();
-}
-
-
 
 static void
 win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
@@ -425,26 +493,8 @@ create_base_gui(appdata_s *ad)
 	evas_object_show(volume);
 	elm_box_pack_end(ad->box, volume);
 
-
-	buttonPermissions = elm_button_add(ad->box);
-	evas_object_size_hint_weight_set(buttonPermissions,0.0,1.0);
-	evas_object_size_hint_align_set(buttonPermissions,-1.0,1.0);
-	//elm_object_style_set(buttonPermissions, "circle");
-	elm_object_text_set(buttonPermissions,"Click Me!");
-	evas_object_show(buttonPermissions);
-	//elm_table_pack(box, buttonPermissions, 3, 1, 1, 1);
-	elm_box_pack_end(ad->box, buttonPermissions);
-
-
-	Evas_Object *ic;
-	ic = elm_icon_add(buttonPermissions);
-	elm_icon_standard_set(ic, "Home");
-	elm_object_part_content_set(buttonPermissions,"icon",ic);
-	evas_object_show(ic);
-	evas_object_smart_callback_add(buttonPermissions, "clicked", _buttonpermission_click_cb, NULL);
-
 	button = elm_button_add(ad->box);
-	elm_object_text_set(button, "Click me");
+	elm_object_text_set(button, "Record");
 	elm_object_style_set(button, "bottom");
 	evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(button, EVAS_HINT_FILL, 0.5);
@@ -472,7 +522,7 @@ app_request_response_cb(ppm_call_cause_e cause, ppm_request_result_e result,
         case PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_ALLOW_FOREVER:
     		dlog_print(DLOG_INFO, LOG_TAG, "%s PRIVACY_PRIVILEGE_MANAGER_REQUEST_RESULT_ALLOW_FOREVER", privilege);
         if (strcmp(privilege, "http://tizen.org/privilege/mediastorage") == 0) {
-			evas_object_hide(buttonPermissions);
+			permissions_initialized = true;
         }
     		/* Update UI and start accessing protected functionality */
             break;
@@ -523,8 +573,7 @@ app_check_and_request_mediapermissions() {
 		case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW:
 			/* Update UI and start accessing protected functionality */
 			dlog_print(DLOG_INFO, LOG_TAG, "recorder PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_ALLOW");
-			evas_object_hide(buttonPermissions);
-
+			permissions_initialized = true;
 			break;
 		 case PRIVACY_PRIVILEGE_MANAGER_CHECK_RESULT_DENY:
 			/* Show a message and terminate the application */

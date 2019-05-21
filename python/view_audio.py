@@ -50,10 +50,15 @@ def AFilter(input):
 STEPS = int(44100 / 1)
 print ("STEPS:", STEPS)
 
-signal = np.memmap("audio/pcm_w.raw", dtype='u1', mode='r') #u8
-signal = signal.astype('f')-128
-signal[signal < 0] /= 128.0
-signal[signal >= 0] /= 127.0
+#signal = np.memmap("audio/pcm_w.raw", dtype='u1', mode='r') #u8
+#signal = signal.astype('f')-128
+#signal[signal < 0] /= 128.0
+#signal[signal >= 0] /= 127.0
+
+signal = np.memmap("audio/pcm_w.raw", dtype='i2', mode='r') #u8
+signal = signal.astype('f')
+signal[signal < 0] /= 32768.0
+signal[signal >= 0] /= 32767.0
 print ("VALUES:",signal)
 print ("lenght:", len(signal))
 
