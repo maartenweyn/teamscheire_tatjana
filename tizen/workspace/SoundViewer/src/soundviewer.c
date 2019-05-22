@@ -4,6 +4,7 @@
 
 #include <recorder.h>
 #include <storage.h>
+#include <http.h>
 
 // Define the sample rate for recording audio
 #define SAMPLE_RATE 44100
@@ -29,6 +30,7 @@ static bool recording = false;
 static bool data_initialized = false;
 static bool permissions_initialized = false;
 static int currentLeq = 0;
+static int correctedLeq = 0;
 
 static void *g_buffer = NULL;  /* Buffer used for audio recording/playback */
 static int g_buffer_size;  /* Size of the buffer used for audio recording/playback */
@@ -43,6 +45,11 @@ static const double AFILTER_Bcoef[] = {0.2557411252042574, -0.51148225040851436,
 
 static double AFILTER_conditions[] = {0, 0, 0, 0, 0, 0};
 
+static const double x0 = 65.0; // watch
+static const double x1 = 82.0; // watch
+static const double ref0 = 21.0; //ref
+static const double ref1 = 76.0; //ref
+
 
 static Evas_Object *button;
 static Evas_Object *volume;
@@ -54,7 +61,79 @@ typedef struct appdata {
 	Evas_Object *nf;
 } appdata_s;
 
+
+static http_session_h session = NULL;
+
 static void app_check_and_request_permissions();
+
+
+/// HTTP
+
+static void init_http() {
+	int ret = HTTP_ERROR_NONE;
+
+	ret = http_init();
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_init failed: %d", ret);
+
+	ret = http_session_create(HTTP_SESSION_MODE_NORMAL, &session);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_create failed: %d", ret);
+}
+
+static void deinit_http() {
+	int ret = HTTP_ERROR_NONE;
+
+	ret = http_deinit();
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_deinit failed: %d", ret);
+
+	ret = http_session_destroy_all_transactions(session);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_destroy_all_transactions failed: %d", ret);
+
+	ret = http_session_destroy(session);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_destroy failed: %d", ret);
+}
+
+static void get_http() {
+	int ret = HTTP_ERROR_NONE;
+
+	http_transaction_h transaction = NULL;
+	ret = http_session_open_transaction(session, HTTP_METHOD_GET, &transaction);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_open_transaction failed: %d", ret);
+
+	char uri[1024] = "www.google.be";
+
+	ret = http_transaction_request_set_uri(transaction, uri);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_request_set_uri failed: %d", ret);
+
+	http_method_e method = HTTP_METHOD_GET;
+
+	ret = http_transaction_request_set_method(transaction, method);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_request_set_method failed: %d", ret);
+
+	ret = http_transaction_submit(transaction);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_submit failed: %d", ret);
+
+	http_status_code_e status_code = -1;
+
+	ret = http_transaction_response_get_status_code(transaction, &status_code);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_response_get_status_code failed: %d", ret);
+
+	ret = http_transaction_destroy(transaction);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_destroy failed: %d", ret);
+}
+
+
+// DB filter
 
 static double a_filter(double input) {
 	double output = input * AFILTER_Bcoef[0] + AFILTER_conditions[0];
@@ -64,6 +143,11 @@ static double a_filter(double input) {
 	AFILTER_conditions[5] = input * AFILTER_Bcoef[6] - output * AFILTER_Acoef[6];
 
 	return output;
+}
+
+static int correctdB(double input) {
+	double corrected = ((input - x0) * ((ref1 - ref0) / (x1 - x0))) + ref0;
+	return (int) corrected;
 }
 
 //static recorder_h g_recorder;
@@ -215,7 +299,7 @@ static void* setvolume_async(void *data)
 {
 	int16_t* leq = data;
 	char text[20];
-	snprintf(text, sizeof(text), " Volume: %d dB", *leq);
+	snprintf(text, sizeof(text), " Volume: %d (%d) dB", *leq, correctedLeq);
 	dlog_print(DLOG_DEBUG, LOG_TAG, "setvolume_async() %d", *leq);
 	elm_object_text_set(volume , text);
 
@@ -312,9 +396,9 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 			int16_t ivalue = *(int16_t*)index;
 			double fraction = 0.0;
 			if (ivalue < 0)
-				fraction = ivalue / 32768;
+				fraction = ivalue / 32768.0;
 			else
-				fraction = ivalue / 32767;
+				fraction = ivalue / 32767.0;
 
 #else
 			uint8_t value = *(uint8_t*)index;
@@ -338,7 +422,8 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 		}
 
 		currentLeq = (int16_t) ((10.0 * log10(sumsquare / read_length)) + 93.97940008672037609572522210551);
-		dlog_print(DLOG_INFO, LOG_TAG, "Leq %d", currentLeq);
+		correctedLeq = correctdB(currentLeq);
+		dlog_print(DLOG_INFO, LOG_TAG, "Leq %d / %d", currentLeq, correctedLeq);
 		ecore_main_loop_thread_safe_call_sync(setvolume_async, &currentLeq);
 
     }
