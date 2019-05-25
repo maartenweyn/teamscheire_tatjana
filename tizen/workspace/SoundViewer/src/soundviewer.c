@@ -6,6 +6,9 @@
 #include <storage.h>
 #include <http.h>
 
+#include <curl/curl.h>
+#include <net_connection.h>
+
 // Define the sample rate for recording audio
 #define SAMPLE_RATE 44100
 //#define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_U8
@@ -31,6 +34,8 @@ static bool data_initialized = false;
 static bool permissions_initialized = false;
 static int currentLeq = 0;
 static int correctedLeq = 0;
+static int corr_avg_leq = 0;
+static int avg_leq = 0;
 
 static void *g_buffer = NULL;  /* Buffer used for audio recording/playback */
 static int g_buffer_size;  /* Size of the buffer used for audio recording/playback */
@@ -45,9 +50,9 @@ static const double AFILTER_Bcoef[] = {0.2557411252042574, -0.51148225040851436,
 
 static double AFILTER_conditions[] = {0, 0, 0, 0, 0, 0};
 
-static const double x0 = 65.0; // watch
+static const double x0 = 55.0; // watch
 static const double x1 = 82.0; // watch
-static const double ref0 = 21.0; //ref
+static const double ref0 = 20.0; //ref
 static const double ref1 = 76.0; //ref
 
 
@@ -60,6 +65,14 @@ typedef struct appdata {
 	Evas_Object *box;
 	Evas_Object *nf;
 } appdata_s;
+
+struct MemoryStruct {
+	char *memory;
+	size_t size;
+};
+
+
+struct MemoryStruct chunk;
 
 
 static http_session_h session = NULL;
@@ -84,17 +97,18 @@ static void init_http() {
 static void deinit_http() {
 	int ret = HTTP_ERROR_NONE;
 
-	ret = http_deinit();
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_deinit failed: %d", ret);
-
-	ret = http_session_destroy_all_transactions(session);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_destroy_all_transactions failed: %d", ret);
-
 	ret = http_session_destroy(session);
 	if (ret != HTTP_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_destroy failed: %d", ret);
+
+	ret = http_deinit();
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_deinit failed: %d", ret);
+}
+
+/* Callback for receiving the response header */
+void header_cb(http_transaction_h transaction, char* header, size_t header_len, void* user_data) {
+	dlog_print(DLOG_INFO, LOG_TAG, "header_cb : %s (%d)", header, header_len);
 }
 
 static void get_http() {
@@ -104,6 +118,10 @@ static void get_http() {
 	ret = http_session_open_transaction(session, HTTP_METHOD_GET, &transaction);
 	if (ret != HTTP_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_open_transaction failed: %d", ret);
+
+	ret = http_transaction_set_received_header_cb(transaction, header_cb, NULL);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_set_received_header_cb failed: %d", ret);
 
 	char uri[1024] = "www.google.be";
 
@@ -121,15 +139,103 @@ static void get_http() {
 	if (ret != HTTP_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_submit failed: %d", ret);
 
-	http_status_code_e status_code = -1;
+	http_status_code_e status_code =  0;
+
+	dlog_print(DLOG_INFO, LOG_TAG, "status_code : %i", status_code);
 
 	ret = http_transaction_response_get_status_code(transaction, &status_code);
 	if (ret != HTTP_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_response_get_status_code failed: %d", ret);
+	else
+		dlog_print(DLOG_INFO, LOG_TAG, "http_transaction_response_get_status_code : %i", status_code);
+
+	char* status_text;
+
+	ret = http_transaction_response_get_status_text(transaction, &status_text);
+	if (ret != HTTP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_response_get_status_text failed: %d", ret);
+	else
+		dlog_print(DLOG_INFO, LOG_TAG, "http_transaction_response_get_status_text : %s", status_text);
+
 
 	ret = http_transaction_destroy(transaction);
 	if (ret != HTTP_ERROR_NONE)
 		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_destroy failed: %d", ret);
+}
+
+static size_t
+read_callback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+	size_t realsize = size * nmemb;
+
+	dlog_print(DLOG_INFO, LOG_TAG, "read_callback size: %d", realsize);
+	dlog_print(DLOG_INFO, LOG_TAG, "read_callback %s", (char*) contents);
+
+	return realsize;
+}
+
+
+static bool post_to_thingsboard() {
+	/* Initialize CURL */
+	    CURL *curlHandler = curl_easy_init();
+
+	    connection_h connection;
+
+	    int conn_err;
+	    conn_err = connection_create(&connection);
+	    if (conn_err != CONNECTION_ERROR_NONE) {
+	        /* Error handling */
+	        return false;
+	    }
+
+	    char *proxy_address;
+	    conn_err = connection_get_proxy(connection, CONNECTION_ADDRESS_FAMILY_IPV4, &proxy_address);
+
+	    if(curlHandler) {
+	    		if (conn_err == CONNECTION_ERROR_NONE && proxy_address)
+				curl_easy_setopt(curlHandler, CURLOPT_PROXY, proxy_address);
+
+	      /* Set CURL parameters */
+	      //curl_easy_setopt(curlHandler, CURLOPT_URL, "http://apidev.accuweather.com/currentconditions/v1/28143.json?language=en&apikey=hoArfRosT1215");
+	      curl_easy_setopt(curlHandler, CURLOPT_URL, "http://demo.thingsboard.io/api/v1/ObCtJ5ttQ8U9tToxcQvD/telemetry");
+
+	      struct curl_slist *list = NULL;
+	      list = curl_slist_append(list, "Content-Type: application/json");
+	      curl_easy_setopt(curlHandler, CURLOPT_HTTPHEADER, list);
+	      /* Now specify the POST data */
+	      char json[100];
+	      double ts = ecore_time_unix_get();
+	      dlog_print(DLOG_INFO, LOG_TAG, "ts %f  %.0f", ts, ts * 1000);
+	      snprintf(json, sizeof(json), "{\"ts\":%.0f, \"values\":{\"leq\":%d, \"cleq\":%d}}", ts * 1000, avg_leq, corr_avg_leq);
+	      dlog_print(DLOG_INFO, LOG_TAG, "json %s", json);
+	      curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS, json);
+	      curl_easy_setopt(curlHandler, CURLOPT_READFUNCTION, read_callback);
+	      curl_easy_setopt(curlHandler, CURLOPT_READDATA, (void *)&chunk);
+	      curl_easy_setopt(curlHandler, CURLOPT_VERBOSE, 1L);
+	      //curl_easy_setopt(curl, CURLOPT_POST, 1L);
+	      //curl_easy_setopt(curlHandler, CURLOPT_CUSTOMREQUEST, "GET");
+	      //curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS,  jObj);
+	      /* send all data to this function  */
+	      //curl_easy_setopt(curlHandler, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+	      /* we pass the 'chunk' struct to the callback function */
+	      //curl_easy_setopt(curlHandler, CURLOPT_WRITEDATA, (void *)&chunk);
+
+	      /* Perform the request */
+	      CURLcode res = curl_easy_perform(curlHandler);
+
+	      /* Check for errors */
+	      if(res != CURLE_OK)
+	        fprintf(stderr, "CURL failed: %s\n",
+	                curl_easy_strerror(res));
+
+	      /* Clean up */
+	      curl_easy_cleanup(curlHandler);
+	      free(chunk.memory);
+	      connection_destroy(connection);
+	      //free(jObj);
+	  }
+
+	    return true;
 }
 
 
@@ -299,7 +405,7 @@ static void* setvolume_async(void *data)
 {
 	int16_t* leq = data;
 	char text[20];
-	snprintf(text, sizeof(text), " Volume: %d (%d) dB", *leq, correctedLeq);
+	snprintf(text, sizeof(text), "%d (%d) dB - %d dB", *leq, correctedLeq, corr_avg_leq);
 	dlog_print(DLOG_DEBUG, LOG_TAG, "setvolume_async() %d", *leq);
 	elm_object_text_set(volume , text);
 
@@ -322,6 +428,9 @@ static void* setvolume_async(void *data)
  */
 static void synchronous_recording(void *data, Ecore_Thread *thread)
 {
+	static double cumulativeSoundLevel = 0.0;
+	static int cumulativeSoundCounter = 0;
+	static double start_ts = 0.0;
 
 	//return;
 	//elm_object_text_set(button, "recording");
@@ -378,6 +487,7 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
     dlog_print(DLOG_INFO, LOG_TAG, "read_length %d", read_length);
 
     //recording = false;
+    start_ts = ecore_time_unix_get();
     while (recording) {
     		bytes_read = audio_in_read(input, buffer_ptr, read_length);
     		if (bytes_read < 0) {
@@ -409,22 +519,36 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 			else
 				fraction = ivalue / 127.0;
 
-			dlog_print(DLOG_DEBUG, LOG_TAG, "value %d -> %d",  value,  ivalue;
+			//dlog_print(DLOG_DEBUG, LOG_TAG, "value %d -> %d",  value,  ivalue;
 #endif
 			double filtered = a_filter(fraction);
 			sumsquare += filtered * filtered;
 
 
-			dlog_print(DLOG_DEBUG, LOG_TAG, "%d -> %.4f -> %.4f",  ivalue, fraction, filtered);
+			//dlog_print(DLOG_DEBUG, LOG_TAG, "%d -> %.4f -> %.4f",  ivalue, fraction, filtered);
 
 			/* Go to the next sample */
 			index += 1;
 		}
 
-		currentLeq = (int16_t) ((10.0 * log10(sumsquare / read_length)) + 93.97940008672037609572522210551);
+		double soundLevel = sumsquare / read_length;
+		cumulativeSoundLevel += soundLevel;
+		cumulativeSoundCounter++;
+
+		currentLeq = (int16_t) ((10.0 * log10(soundLevel)) + 93.97940008672037609572522210551);
 		correctedLeq = correctdB(currentLeq);
 		dlog_print(DLOG_INFO, LOG_TAG, "Leq %d / %d", currentLeq, correctedLeq);
+
 		ecore_main_loop_thread_safe_call_sync(setvolume_async, &currentLeq);
+
+		if (ecore_time_unix_get() - start_ts >= 60.0) {
+			avg_leq = (int16_t) ((10.0 * log10(cumulativeSoundLevel / cumulativeSoundCounter)) + 93.97940008672037609572522210551);
+			corr_avg_leq = correctdB(avg_leq);
+			post_to_thingsboard();
+			cumulativeSoundLevel = 0;
+			cumulativeSoundCounter = 0;
+			start_ts = ecore_time_unix_get();
+		}
 
     }
 
@@ -470,6 +594,14 @@ static void synchronous_recording_ended(void *data, Ecore_Thread *thread)
 static void _button_click_cb(void *data, Evas_Object *button, void *ev)
 {
 	dlog_print(DLOG_DEBUG, LOG_TAG, "button clicked");
+
+
+	//init_http();
+	//get_http();
+	//deinit_http();
+	//test_curl();
+
+	//return;
 
 	if (!permissions_initialized) {
 		app_check_and_request_permissions();
