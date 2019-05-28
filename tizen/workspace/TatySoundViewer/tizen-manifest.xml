@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest xmlns="http://tizen.org/ns/packages" api-version="4.0" package="be.wesdec.tatysoundviewer" version="1.0.0">
+    <profile name="wearable"/>
+    <ui-application appid="be.wesdec.tatysoundviewer" exec="tatysoundviewer" multiple="false" nodisplay="false" taskmanage="true" type="capp">
+        <label>tatysoundviewer</label>
+        <icon>tatysoundviewer.png</icon>
+    </ui-application>
+    <privileges>
+        <privilege>http://tizen.org/privilege/appmanager.launch</privilege>
+        <privilege>http://tizen.org/privilege/display</privilege>
+    </privileges>
+</manifest>
