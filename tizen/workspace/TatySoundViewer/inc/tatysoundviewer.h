@@ -7,6 +7,8 @@
 #include <efl_extension.h>
 #include <dlog.h>
 
+#define UPDATE_INTERVAL	10
+
 #ifdef  LOG_TAG
 #undef  LOG_TAG
 #endif

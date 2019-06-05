@@ -20,6 +20,10 @@ typedef struct
 	int avg_corrected_leq;
 } leq_data_s;
 
+
+
+static post_data_s postdata[POSTDATA_BUFFER_SIZE];
+static int post_data_length	= 0;
 static bool permissions_initialized = false;
 static bool audio_initialized = false;
 static leq_data_s leq_data;
@@ -127,8 +131,18 @@ void push_current_values(double ts, int leq, int corrected) {
 }
 
 void push_average_values(double ts, int avg, int corrected) {
-	dlog_print(DLOG_INFO, LOG_TAG, "Avg %d / %d  (%0.3f)", avg, corrected, ts);
-	post_to_thingsboard(ts, avg, corrected);
+	dlog_print(DLOG_INFO, LOG_TAG, "%d Avg %d / %d  (%0.3f)", avg, corrected, ts);
+	postdata[post_data_length].ts = ts;
+	postdata[post_data_length].avg_leq = avg;
+	postdata[post_data_length].corr_avg_leq = corrected;
+	postdata[post_data_length].response = 0;
+	uint8_t response = post_to_thingsboard(postdata, post_data_length+1);
+	if (response == 0) {
+			post_data_length = 0;
+	} else {
+		postdata[post_data_length].response = response;
+		post_data_length++;
+	}
 	leq_data.avg_leq = avg;
 	leq_data.avg_corrected_leq = corrected;
 }
@@ -199,10 +213,12 @@ void service_app_control(app_control_h app_control, void *data)
 
 				app_control_h reply;
 				app_control_create(&reply);
+				//app_control_add_extra_data(reply, "leq", "0,0,0,0");
 
 				char leq[40];
 			    snprintf(leq, sizeof(leq), "%d,%d,%d,%d", leq_data.current_leq, leq_data.current_corrected_leq, leq_data.avg_leq, leq_data.avg_corrected_leq);
 				app_control_add_extra_data(reply, "leq", leq);
+
 				if (app_control_reply_to_launch_request(reply, app_control, APP_CONTROL_RESULT_SUCCEEDED) == APP_CONTROL_ERROR_NONE)
 				{
 					dlog_print(DLOG_INFO, LOG_TAG, "Update reply send");

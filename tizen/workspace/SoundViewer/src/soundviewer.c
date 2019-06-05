@@ -55,6 +55,8 @@ static const double x1 = 82.0; // watch
 static const double ref0 = 20.0; //ref
 static const double ref1 = 76.0; //ref
 
+static int tb_response = 0;
+
 
 static Evas_Object *button;
 static Evas_Object *volume;
@@ -175,7 +177,7 @@ read_callback(void *contents, size_t size, size_t nmemb, void *userp)
 }
 
 
-static bool post_to_thingsboard() {
+static int post_to_thingsboard() {
 	/* Initialize CURL */
 	    CURL *curlHandler = curl_easy_init();
 
@@ -185,7 +187,7 @@ static bool post_to_thingsboard() {
 	    conn_err = connection_create(&connection);
 	    if (conn_err != CONNECTION_ERROR_NONE) {
 	        /* Error handling */
-	        return false;
+	        return 1;
 	    }
 
 	    char *proxy_address;
@@ -233,9 +235,15 @@ static bool post_to_thingsboard() {
 	      free(chunk.memory);
 	      connection_destroy(connection);
 	      //free(jObj);
+
+	      if(res == CURLE_OK)
+	    	  	  return 0;
+	      else {
+	    	  	  return 3;
+		}
 	  }
 
-	    return true;
+	    return 2;
 }
 
 
@@ -405,7 +413,7 @@ static void* setvolume_async(void *data)
 {
 	int16_t* leq = data;
 	char text[20];
-	snprintf(text, sizeof(text), "%d (%d) dB - %d dB", *leq, correctedLeq, corr_avg_leq);
+	snprintf(text, sizeof(text), "%d dB - %d dB %d",correctedLeq, corr_avg_leq, tb_response);
 	dlog_print(DLOG_DEBUG, LOG_TAG, "setvolume_async() %d", *leq);
 	elm_object_text_set(volume , text);
 
@@ -539,16 +547,18 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 		correctedLeq = correctdB(currentLeq);
 		dlog_print(DLOG_INFO, LOG_TAG, "Leq %d / %d", currentLeq, correctedLeq);
 
-		ecore_main_loop_thread_safe_call_sync(setvolume_async, &currentLeq);
 
-		if (ecore_time_unix_get() - start_ts >= 60.0) {
+
+		if (ecore_time_unix_get() - start_ts >= 10.0) {
 			avg_leq = (int16_t) ((10.0 * log10(cumulativeSoundLevel / cumulativeSoundCounter)) + 93.97940008672037609572522210551);
 			corr_avg_leq = correctdB(avg_leq);
-			post_to_thingsboard();
+			tb_response =  post_to_thingsboard();
 			cumulativeSoundLevel = 0;
 			cumulativeSoundCounter = 0;
 			start_ts = ecore_time_unix_get();
 		}
+
+		ecore_main_loop_thread_safe_call_sync(setvolume_async, &currentLeq);
 
     }
 

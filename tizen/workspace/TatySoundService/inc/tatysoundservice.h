@@ -7,10 +7,20 @@
 #define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_S16_LE
 #define RECORDING_SEC 1
 #define RECORDING_INTERVAL 10
-#define AVG_RECORDING_INTERVAL 60
+#define AVG_RECORDING_INTERVAL 5 //60
+
+#define POSTDATA_BUFFER_SIZE	60 * 24
 
 #define MYSERVICELAUNCHER_APP_ID "be.wesdec.tatysoundviewer" // an ID of the UI application of our package
 #define STRNCMP_LIMIT 256 // the limit of characters to be compared using strncmp function
+
+typedef struct
+{
+	double ts;
+	int avg_leq;
+	int corr_avg_leq;
+	int response;
+} post_data_s;
 
 #ifdef  LOG_TAG
 #undef  LOG_TAG

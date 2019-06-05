@@ -9,9 +9,9 @@
 #define COMMUNICATION_H_
 
 #include <stdbool.h>
+#include "tatysoundservice.h"
 
 
-bool post_to_thingsboard(double ts, int avg_leq, int corr_avg_leq);
-
+int post_to_thingsboard(post_data_s data[], int lenght);
 
 #endif /* COMMUNICATION_H_ */
