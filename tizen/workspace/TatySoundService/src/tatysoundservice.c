@@ -2,6 +2,7 @@
 #include <service_app.h>
 #include <privacy_privilege_manager.h>
 #include <Ecore.h>
+#include <system_info.h>
 
 #include "tatysoundservice.h"
 #include "sound.h"
@@ -29,6 +30,23 @@ static bool audio_initialized = false;
 static leq_data_s leq_data;
 
 static void app_check_and_request_permissions();
+
+void get_device_id(void)
+{
+    char *value;
+    int ret;
+
+    ret = system_info_get_platform_string("http://tizen.org/system/tizenid", &value);
+    if (ret != SYSTEM_INFO_ERROR_NONE) {
+        /* Error handling */
+
+        return;
+    }
+
+    dlog_print(DLOG_INFO, LOG_TAG, "Tizen ID: %s", value);
+
+    free(value); /* Release after use */
+}
 
 void app_request_response_cb(ppm_call_cause_e cause, ppm_request_result_e result, const char *privilege, void *user_data)
 {
@@ -180,6 +198,8 @@ bool service_app_create(void *data)
 	dlog_print(DLOG_DEBUG, LOG_TAG, "%s", __func__);
 
 	ad->timer1 = ecore_timer_add(1, init_recording, ad);
+
+	get_device_id();
     return true;
 }
 

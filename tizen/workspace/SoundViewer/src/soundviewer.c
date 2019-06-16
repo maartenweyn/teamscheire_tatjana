@@ -56,6 +56,8 @@ static const double ref0 = 20.0; //ref
 static const double ref1 = 76.0; //ref
 
 static int tb_response = 0;
+static int min = 200;
+static int max = 0;
 
 
 static Evas_Object *button;
@@ -76,94 +78,9 @@ struct MemoryStruct {
 
 struct MemoryStruct chunk;
 
-
-static http_session_h session = NULL;
-
 static void app_check_and_request_permissions();
 
 
-/// HTTP
-
-static void init_http() {
-	int ret = HTTP_ERROR_NONE;
-
-	ret = http_init();
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_init failed: %d", ret);
-
-	ret = http_session_create(HTTP_SESSION_MODE_NORMAL, &session);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_create failed: %d", ret);
-}
-
-static void deinit_http() {
-	int ret = HTTP_ERROR_NONE;
-
-	ret = http_session_destroy(session);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_destroy failed: %d", ret);
-
-	ret = http_deinit();
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_deinit failed: %d", ret);
-}
-
-/* Callback for receiving the response header */
-void header_cb(http_transaction_h transaction, char* header, size_t header_len, void* user_data) {
-	dlog_print(DLOG_INFO, LOG_TAG, "header_cb : %s (%d)", header, header_len);
-}
-
-static void get_http() {
-	int ret = HTTP_ERROR_NONE;
-
-	http_transaction_h transaction = NULL;
-	ret = http_session_open_transaction(session, HTTP_METHOD_GET, &transaction);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_session_open_transaction failed: %d", ret);
-
-	ret = http_transaction_set_received_header_cb(transaction, header_cb, NULL);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_set_received_header_cb failed: %d", ret);
-
-	char uri[1024] = "www.google.be";
-
-	ret = http_transaction_request_set_uri(transaction, uri);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_request_set_uri failed: %d", ret);
-
-	http_method_e method = HTTP_METHOD_GET;
-
-	ret = http_transaction_request_set_method(transaction, method);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_request_set_method failed: %d", ret);
-
-	ret = http_transaction_submit(transaction);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_submit failed: %d", ret);
-
-	http_status_code_e status_code =  0;
-
-	dlog_print(DLOG_INFO, LOG_TAG, "status_code : %i", status_code);
-
-	ret = http_transaction_response_get_status_code(transaction, &status_code);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_response_get_status_code failed: %d", ret);
-	else
-		dlog_print(DLOG_INFO, LOG_TAG, "http_transaction_response_get_status_code : %i", status_code);
-
-	char* status_text;
-
-	ret = http_transaction_response_get_status_text(transaction, &status_text);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_response_get_status_text failed: %d", ret);
-	else
-		dlog_print(DLOG_INFO, LOG_TAG, "http_transaction_response_get_status_text : %s", status_text);
-
-
-	ret = http_transaction_destroy(transaction);
-	if (ret != HTTP_ERROR_NONE)
-		dlog_print(DLOG_ERROR, LOG_TAG, "http_transaction_destroy failed: %d", ret);
-}
 
 static size_t
 read_callback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -413,7 +330,7 @@ static void* setvolume_async(void *data)
 {
 	int16_t* leq = data;
 	char text[20];
-	snprintf(text, sizeof(text), "%d dB - %d dB %d",correctedLeq, corr_avg_leq, tb_response);
+	snprintf(text, sizeof(text), "%d-%d-%d: %d dB - %d dB %d",min, *leq, max, correctedLeq, corr_avg_leq, tb_response);
 	dlog_print(DLOG_DEBUG, LOG_TAG, "setvolume_async() %d", *leq);
 	elm_object_text_set(volume , text);
 
@@ -547,7 +464,8 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 		correctedLeq = correctdB(currentLeq);
 		dlog_print(DLOG_INFO, LOG_TAG, "Leq %d / %d", currentLeq, correctedLeq);
 
-
+		if (currentLeq < min) min = currentLeq;
+		if (currentLeq > max) max = currentLeq;
 
 		if (ecore_time_unix_get() - start_ts >= 10.0) {
 			avg_leq = (int16_t) ((10.0 * log10(cumulativeSoundLevel / cumulativeSoundCounter)) + 93.97940008672037609572522210551);

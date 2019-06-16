@@ -3,6 +3,8 @@
 
 #include <dlog.h>
 
+#include "settings.h"
+
 #define SAMPLE_RATE 44100
 #define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_S16_LE
 #define RECORDING_SEC 1
@@ -13,6 +15,7 @@
 
 #define MYSERVICELAUNCHER_APP_ID "be.wesdec.tatysoundviewer" // an ID of the UI application of our package
 #define STRNCMP_LIMIT 256 // the limit of characters to be compared using strncmp function
+
 
 typedef struct
 {

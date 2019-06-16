@@ -49,9 +49,10 @@ int post_to_thingsboard(post_data_s data[], int lenght) {
 			curl_easy_setopt(curlHandler, CURLOPT_PROXY, proxy_address);
 
 		/* Set CURL parameters */
-		//curl_easy_setopt(curlHandler, CURLOPT_URL, "http://apidev.accuweather.com/currentconditions/v1/28143.json?language=en&apikey=hoArfRosT1215");
-		curl_easy_setopt(curlHandler, CURLOPT_URL, "http://demo.thingsboard.io/api/v1/ObCtJ5ttQ8U9tToxcQvD/telemetry");
-
+		//curl_easy_setopt(curlHandler, CURLOPT_URL, "http://demo.thingsboard.io/api/v1/ObCtJ5ttQ8U9tToxcQvD/telemetry");
+		curl_easy_setopt(curlHandler, CURLOPT_URL, "https://demo.thingsboard.io/api/v1/w4ntKFw4M1eK0MEmMHvt/telemetry");
+		//curl_easy_setopt(curlHandler, CURLOPT_URL, FIREBASE_HOST);
+		//json [{"ts":1560594942583, "values":{"leq":79, "cleq":71, "resp":0}}]
 		struct curl_slist *list = NULL;
 		list = curl_slist_append(list, "Content-Type: application/json");
 		curl_easy_setopt(curlHandler, CURLOPT_HTTPHEADER, list);
@@ -65,6 +66,7 @@ int post_to_thingsboard(post_data_s data[], int lenght) {
 			char temp[100];
 			dlog_print(DLOG_INFO, LOG_TAG, "ts %f  %.0f", data[i].ts, data[i].ts * 1000);
 			int temp_length = snprintf(temp, sizeof(temp), "{\"ts\":%.0f, \"values\":{\"leq\":%d, \"cleq\":%d, \"resp\":%d}}", data[i].ts * 1000, data[i].avg_leq, data[i].corr_avg_leq, data[i].response);
+			//int temp_length = snprintf(temp, sizeof(temp), "{\"ts\":%.0f, \"leq\":%d, \"cleq\":%d, \"resp\":%d}", data[i].ts * 1000, data[i].avg_leq, data[i].corr_avg_leq, data[i].response);
 			memcpy(&json[current_length], temp, temp_length);
 			current_length += temp_length;
 			if (i + 1 < lenght) {
