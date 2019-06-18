@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <recorder.h>
 #include <Ecore.h>
+#include <app_event.h>
 
 static audio_in_h input;
 static sound_stream_info_h g_stream_info_h = NULL;
@@ -122,6 +123,12 @@ void measure_sound() {
 	ecore_thread_run(synchronous_recording, synchronous_recording_ended, NULL, NULL);
 }
 
+static void user_event_cb(const char *event_name, bundle *event_data, void *user_data)
+{
+    dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: %s \n", event_name);
+    return;
+}
+
 /**
  * @brief Records the audio synchronously.
  * @details Executes in a different thread, because it launches synchronous
@@ -227,6 +234,28 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 	int currentLeq = (int16_t)Leq;
 	int correctedLeq = correctdB(Leq);
 	push_current_values(ts, currentLeq, correctedLeq);
+
+	bundle *event_data = NULL;
+	event_handler_h event_handler;
+	event_data = bundle_create();
+	int ret = EVENT_ERROR_NONE;
+
+	//ret = event_add_event_handler("event.arq901aCcl.tatysoundservice.new_data_event", user_event_cb, "new_data_event", &event_handler);
+
+//	if (ret != EVENT_ERROR_NONE)
+//	    dlog_print(DLOG_ERROR, LOG_TAG, "event_add_event_handler err: [%d]", ret);
+
+	char leqString[10];
+	snprintf(leqString, sizeof(leqString), "%d", correctedLeq);
+	ret = bundle_add_str(event_data, "leq", leqString);
+
+	dlog_print(DLOG_INFO, LOG_TAG, "event_publish_app_event");
+
+	ret = event_publish_app_event("event.arq901aCcl.tatysoundservice.new_data_event", event_data);
+	if (ret != EVENT_ERROR_NONE)
+	    dlog_print(DLOG_ERROR, LOG_TAG, "event_publish_app_event err: [%d]", ret);
+
+	ret = bundle_free(event_data);
 
 	//dlog_print(DLOG_ERROR, LOG_TAG, "timing %0.3f - %0.3f = %0.3f >= %0.3f?", ts, start_ts, ts - start_ts, AVG_RECORDING_INTERVAL);
 

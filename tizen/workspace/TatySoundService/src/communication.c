@@ -50,7 +50,8 @@ int post_to_thingsboard(post_data_s data[], int lenght) {
 
 		/* Set CURL parameters */
 		//curl_easy_setopt(curlHandler, CURLOPT_URL, "http://demo.thingsboard.io/api/v1/ObCtJ5ttQ8U9tToxcQvD/telemetry");
-		curl_easy_setopt(curlHandler, CURLOPT_URL, "https://demo.thingsboard.io/api/v1/w4ntKFw4M1eK0MEmMHvt/telemetry");
+		//curl_easy_setopt(curlHandler, CURLOPT_URL, "https://demo.thingsboard.io/api/v1/w4ntKFw4M1eK0MEmMHvt/telemetry");
+		curl_easy_setopt(curlHandler, CURLOPT_URL, thingsboard_url);
 		//curl_easy_setopt(curlHandler, CURLOPT_URL, FIREBASE_HOST);
 		//json [{"ts":1560594942583, "values":{"leq":79, "cleq":71, "resp":0}}]
 		struct curl_slist *list = NULL;

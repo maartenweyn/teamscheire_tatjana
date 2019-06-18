@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="4.0" package="be.wesdec.tatysoundservice" version="1.0.0">
+<manifest xmlns="http://tizen.org/ns/packages" api-version="4.0" package="arq901aCcl.tatysoundservice" version="1.0.0">
     <profile name="wearable" />
-    <service-application appid="be.wesdec.tatysoundservice" exec="tatysoundservice" type="capp" multiple="false" taskmanage="false" nodisplay="true">
+    <service-application appid="arq901aCcl.tatysoundservice" exec="tatysoundservice" type="capp" multiple="false" taskmanage="false" nodisplay="true">
         <icon>tatysoundservice.png</icon>
         <label>tatysoundservice</label>
 	</service-application>

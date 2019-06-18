@@ -3,6 +3,7 @@
 #include <privacy_privilege_manager.h>
 #include <Ecore.h>
 #include <system_info.h>
+#include <app_event.h>
 
 #include "tatysoundservice.h"
 #include "sound.h"
@@ -35,6 +36,7 @@ void get_device_id(void)
 {
     char *value;
     int ret;
+    char token[20];
 
     ret = system_info_get_platform_string("http://tizen.org/system/tizenid", &value);
     if (ret != SYSTEM_INFO_ERROR_NONE) {
@@ -43,8 +45,16 @@ void get_device_id(void)
         return;
     }
 
-    dlog_print(DLOG_INFO, LOG_TAG, "Tizen ID: %s", value);
+    memcpy(token, value, 20);
 
+    dlog_print(DLOG_INFO, LOG_TAG, "Tizen ID: %s", value);
+    dlog_print(DLOG_INFO, LOG_TAG, "token: %s", token);
+
+	snprintf(thingsboard_url, sizeof(thingsboard_url), "https://demo.thingsboard.io/api/v1/%s/telemetry", token);
+
+    dlog_print(DLOG_INFO, LOG_TAG, "thingsboard_url: %s", thingsboard_url);
+
+    //free(token); /* Release after use */
     free(value); /* Release after use */
 }
 
@@ -192,6 +202,34 @@ static Eina_Bool init_recording(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
+void
+ sample_cb(const char *key, const int type, const bundle_keyval_t *kv, void *user_data)
+ {
+     void *basic_val = NULL;
+     size_t basic_size = 0;
+     void **array_val = NULL;
+     int array_len = 0;
+     size_t *array_elem_size = NULL;
+
+     dlog_print(DLOG_INFO, LOG_TAG, "Key:%s, Type:%d\n", key, type);
+     if (bundle_keyval_type_is_array(kv)) {
+         bundle_keyval_get_array_val(kv, &array_val, &array_len, &array_elem_size);
+         // Do something
+     }
+     else {
+         bundle_keyval_get_basic_val(kv, &basic_val, &basic_size);
+         dlog_print(DLOG_INFO, LOG_TAG, "Value:%s\n", basic_val);
+     }
+ }
+
+
+static void user_event_cb(const char *event_name, bundle *event_data, void *user_data)
+{
+    dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: %s: %d\n", event_name, bundle_get_count(event_data));
+    bundle_foreach(event_data, sample_cb, NULL);
+    return;
+}
+
 bool service_app_create(void *data)
 {
 	appdata_s* ad = (appdata_s*)data;
@@ -200,6 +238,15 @@ bool service_app_create(void *data)
 	ad->timer1 = ecore_timer_add(1, init_recording, ad);
 
 	get_device_id();
+
+//	event_handler_h event_handler;
+//	int ret = EVENT_ERROR_NONE;
+//
+//	ret = event_add_event_handler("event.arq901aCcl.tatysoundservice.new_data_event", user_event_cb, "new_data_event", &event_handler);
+//
+//	if (ret != EVENT_ERROR_NONE)
+//	    dlog_print(DLOG_ERROR, LOG_TAG, "event_add_event_handler err: [%d]", ret);
+
     return true;
 }
 
