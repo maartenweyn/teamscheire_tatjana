@@ -236,26 +236,17 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 	push_current_values(ts, currentLeq, correctedLeq);
 
 	bundle *event_data = NULL;
-	event_handler_h event_handler;
 	event_data = bundle_create();
 	int ret = EVENT_ERROR_NONE;
 
-	//ret = event_add_event_handler("event.arq901aCcl.tatysoundservice.new_data_event", user_event_cb, "new_data_event", &event_handler);
+	char currentleqString[10], correctedleqString[10];
+	snprintf(correctedleqString, sizeof(correctedleqString), "%d", correctedLeq);
+	snprintf(currentleqString, sizeof(currentleqString), "%d", currentLeq);
+	ret = bundle_add_str(event_data, "cleq", correctedleqString);
+	ret = bundle_add_str(event_data, "leq", currentleqString);
 
-//	if (ret != EVENT_ERROR_NONE)
-//	    dlog_print(DLOG_ERROR, LOG_TAG, "event_add_event_handler err: [%d]", ret);
 
-	char leqString[10];
-	snprintf(leqString, sizeof(leqString), "%d", correctedLeq);
-	ret = bundle_add_str(event_data, "leq", leqString);
 
-	dlog_print(DLOG_INFO, LOG_TAG, "event_publish_app_event");
-
-	ret = event_publish_app_event("event.arq901aCcl.tatysoundservice.new_data_event", event_data);
-	if (ret != EVENT_ERROR_NONE)
-	    dlog_print(DLOG_ERROR, LOG_TAG, "event_publish_app_event err: [%d]", ret);
-
-	ret = bundle_free(event_data);
 
 	//dlog_print(DLOG_ERROR, LOG_TAG, "timing %0.3f - %0.3f = %0.3f >= %0.3f?", ts, start_ts, ts - start_ts, AVG_RECORDING_INTERVAL);
 
@@ -267,7 +258,21 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 		cumulativeSoundLevel = 0;
 		cumulativeSoundCounter = 0;
 		start_ts = ecore_time_unix_get();
+
+		char avgleqString[10], avgcorrectedleqString[10];
+		snprintf(avgcorrectedleqString, sizeof(avgcorrectedleqString), "%d", corr_avg_leq);
+		snprintf(avgleqString, sizeof(avgleqString), "%d", avg_leg);
+		ret = bundle_add_str(event_data, "avgleq", avgleqString);
+		ret = bundle_add_str(event_data, "avgcleq", avgcorrectedleqString);
 	}
+
+	dlog_print(DLOG_INFO, LOG_TAG, "event_publish_app_event");
+
+	ret = event_publish_app_event("event.be.wesdec.tatysoundservice.new_data_event", event_data);
+	if (ret != EVENT_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "event_publish_app_event err: [%d]", ret);
+
+	ret = bundle_free(event_data);
 
     /* Stop the hardware recording process. */
     error_code = audio_in_unprepare(input);

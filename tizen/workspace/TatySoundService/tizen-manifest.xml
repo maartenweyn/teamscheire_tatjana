@@ -1,19 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="4.0" package="arq901aCcl.tatysoundservice" version="1.0.0">
-    <profile name="wearable" />
-    <service-application appid="arq901aCcl.tatysoundservice" exec="tatysoundservice" type="capp" multiple="false" taskmanage="false" nodisplay="true">
-        <icon>tatysoundservice.png</icon>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3.2" package="be.wesdec.tatysoundservice" version="1.0.0">
+    <author email="maarten@wesdec.be">Maarten Weyn</author>
+    <profile name="wearable"/>
+    <service-application appid="be.wesdec.tatysoundservice" exec="tatysoundservice" multiple="false" nodisplay="true" taskmanage="false" type="capp">
         <label>tatysoundservice</label>
-	</service-application>
+        <icon>logo.png</icon>
+    </service-application>
     <privileges>
         <privilege>http://tizen.org/privilege/mediastorage</privilege>
         <privilege>http://tizen.org/privilege/network.get</privilege>
+        <privilege>http://tizen.org/privilege/appmanager.launch</privilege>
         <privilege>http://tizen.org/privilege/network.set</privilege>
         <privilege>http://tizen.org/privilege/internet</privilege>
+        <privilege>http://tizen.org/privilege/display</privilege>
         <privilege>http://tizen.org/privilege/recorder</privilege>
         <privilege>http://tizen.org/privilege/network.profile</privilege>
-        <privilege>http://tizen.org/privilege/appmanager.launch</privilege>
-        <privilege>http://tizen.org/privilege/display</privilege>
     </privileges>
     <feature name="http://tizen.org/feature/network.internet">true</feature>
 </manifest>

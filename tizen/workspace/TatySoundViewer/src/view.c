@@ -8,17 +8,38 @@
 #include "view.h"
 #include "tatysoundviewer.h"
 
+#include "view_defines.h"
+
+#define MAIN_EDJ "/edje/main.edj"
+
+
+struct sound_val_s {
+	int raw;
+	int leq;
+	int avg_min;
+	int avg_hour;
+	int avg_8hour;
+	int avg_day;
+};
+
+typedef struct sound_val_s sound_val_t;
+
 static struct view_info {
 	Evas_Object *win;
 	Evas_Object *layout_setup;
 	Evas_Object *layout_run;
-	int current_leq;
+	sound_val_t sound_values;
 } s_info = {
 	.win = NULL,
 	.layout_setup = NULL,
 	.layout_run = NULL,
-	.current_leq = 0,
+	.sound_values = {0,}
 };
+
+static const char *_create_resource_path(const char *file_name);
+static void _set_selected_part_displayed_value(Evas_Object *current_layout, char *part, unsigned value);
+static void _set_displayed_sound_value(Evas_Object *layout);
+
 
 /**
  * @brief Create Essential Object window and layout
@@ -32,16 +53,10 @@ Eina_Bool view_create(void)
 		return EINA_FALSE;
 	}
 
-	//s_info.layout_setup = view_create_layout_for_win(s_info.win, _create_resource_path(TIMER_SETUP_EDJ), "grp");
-	//elm_layout_signal_callback_add(s_info.layout_setup, SIGNAL_PART_SELECTED, PART_HOUR, _selected_time_display_part_cb, NULL);
-	//elm_layout_signal_callback_add(s_info.layout_setup, SIGNAL_PART_SELECTED, PART_MINUTE, _selected_time_display_part_cb, NULL);
-	//elm_layout_signal_callback_add(s_info.layout_setup, SIGNAL_PART_SELECTED, PART_SECOND, _selected_time_display_part_cb, NULL);
-	//elm_layout_signal_callback_add(s_info.layout_setup, SIGNAL_RESET_TIMER, "", _reset_timer_cb, NULL);
+	s_info.layout_setup = view_create_layout_for_win(s_info.win, _create_resource_path(MAIN_EDJ), GRP_SETUP);
+	elm_layout_signal_callback_add(s_info.layout_setup, START_CLICKED, "", launch_service, NULL);
 
-	//s_info.layout_run = view_create_layout_for_win(s_info.win, _create_resource_path(TIMER_RUN_EDJ), GRP_RUN);
-	//elm_layout_signal_callback_add(s_info.layout_run, SIGNAL_SET_TIMER, "", _set_time_cb, NULL);
 
-	//_init_rotary();
 
 	evas_object_show(s_info.layout_setup);
 
@@ -49,6 +64,55 @@ Eina_Bool view_create(void)
 	evas_object_show(s_info.win);
 
 	return EINA_TRUE;
+}
+
+void updates_values(int raw, int leq, int avg_min, int avg_hour, int avg_8hour, int avg_day) {
+	s_info.sound_values.raw = raw;
+	s_info.sound_values.leq = leq;
+	s_info.sound_values.avg_min = avg_min;
+	s_info.sound_values.avg_hour = avg_hour;
+	s_info.sound_values.avg_8hour = avg_8hour;
+	s_info.sound_values.avg_day = avg_day;
+
+	_set_displayed_sound_value(s_info.layout_setup);
+}
+
+void set_running_status(int running) {
+	int msg_id = MSG_ID_SET_RUNNING_STATUS;
+	Edje_Message_Int_Set *msg = NULL;
+
+	if (!s_info.layout_setup) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "[%s:%d] s_info.layout == NULL", __FILE__, __LINE__);
+		return;
+	}
+
+	if (running == 0)
+		msg_id = MSG_ID_SET_NOT_RUNNING_STATUS;
+
+	edje_object_message_send(elm_layout_edje_get(s_info.layout_setup), EDJE_MESSAGE_INT_SET, msg_id, NULL);
+	free(msg);
+}
+
+/**
+ * @brief Creates path to the given resource file by concatenation of the basic resource path and the given file_name.
+ * @param[in] file_name File name or path relative to the resource directory.
+ * @return The absolute path to the resource with given file_name is returned.
+ */
+static const char *_create_resource_path(const char *file_name)
+{
+	static char res_path_buff[PATH_MAX] = {0,};
+	char *res_path = NULL;
+
+	res_path = app_get_resource_path();
+	if (res_path == NULL) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "[%s:%d] failed to get resource path.", __FILE__, __LINE__);
+		return NULL;
+	}
+
+	snprintf(res_path_buff, PATH_MAX, "%s%s", res_path, file_name);
+	free(res_path);
+
+	return &res_path_buff[0];
 }
 
 /**
@@ -108,5 +172,54 @@ Evas_Object *view_create_layout_for_win(Evas_Object *win, const char *file_path,
 	//eext_object_event_callback_add(layout, EEXT_CALLBACK_BACK, _layout_back_cb, NULL);
 
 	return layout;
+}
+
+static void _set_selected_part_displayed_value(Evas_Object *current_layout, char *part, unsigned value)
+{
+	Eina_Stringshare *txt = NULL;
+
+	if (!s_info.layout_setup) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "[%s:%d] s_info.layout == NULL", __FILE__, __LINE__);
+		return;
+	}
+
+	txt = eina_stringshare_printf("%.2d", value);
+	elm_layout_text_set(current_layout, part, txt);
+	eina_stringshare_del(txt);
+}
+
+static void _set_displayed_sound_value(Evas_Object *layout)
+{
+	_set_selected_part_displayed_value(layout, PART_RAW, s_info.sound_values.raw);
+	_set_selected_part_displayed_value(layout, PART_LEQ, s_info.sound_values.leq);
+	_set_selected_part_displayed_value(layout, PART_LEQ_MIN, s_info.sound_values.avg_min);
+	_set_selected_part_displayed_value(layout, PART_LEQ_HOUR, s_info.sound_values.avg_hour);
+	_set_selected_part_displayed_value(layout, PART_LEQ_8HOUR, s_info.sound_values.avg_8hour);
+	_set_selected_part_displayed_value(layout, PART_LEQ_DAY, s_info.sound_values.avg_day);
+
+	int msg_id = MSG_ID_SET_VALUES;
+	Edje_Message_Int_Set *msg = NULL;
+
+	if (!s_info.layout_setup) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "[%s:%d] s_info.layout == NULL", __FILE__, __LINE__);
+		return;
+	}
+
+	msg = calloc(1, sizeof(Edje_Message_Int_Set) + (sizeof(int) * 5));
+	if (!msg) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "[%s:%d] msg == NULL", __FILE__, __LINE__);
+		return;
+	}
+
+	msg->count = 6;
+	msg->val[0] = s_info.sound_values.raw;
+	msg->val[1] = s_info.sound_values.leq;
+	msg->val[2] = s_info.sound_values.avg_min;
+	msg->val[3] = s_info.sound_values.avg_hour;
+	msg->val[4] = s_info.sound_values.avg_8hour;
+	msg->val[5] = s_info.sound_values.avg_day;
+
+	edje_object_message_send(elm_layout_edje_get(s_info.layout_setup), EDJE_MESSAGE_INT_SET, msg_id, msg);
+	free(msg);
 }
 

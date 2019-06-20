@@ -1,0 +1,171 @@
+#include "../../inc/view_defines.h"
+#include "edc_defines.h"
+
+images {
+   image: IMAGE_FPATH_BOARD_BG COMP;
+   image: IMAGE_FPATH_BUTTON_START COMP;
+   image: IMAGE_FPATH_BUTTON_START_PRESSED COMP;
+   image: IMAGE_FPATH_BUTTON_STOP COMP;
+   image: IMAGE_FPATH_BUTTON_STOP_PRESSED COMP;
+   image: IMAGE_FPATH_INDICATOR COMP;
+   image: IMAGE_FPATH_INDICATOR1 COMP;
+   image: IMAGE_FPATH_INDICATOR8 COMP;
+   image: IMAGE_FPATH_INDICATORD COMP;
+}
+
+collections {
+   group {
+      name: GRP_SETUP;
+      parts {
+         part {
+            name: PART_MAIN_BG;
+            type: RECT;
+            mouse_events: 0;
+            description {
+               state: STATE_DEFAULT 0.0;
+               rel1 {
+                  relative: 0.0 0.0;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+               }
+            }
+         }
+
+         part {
+            name: PART_BG;
+            type: IMAGE;
+            mouse_events: 0;
+            repeat_events: 0;
+            description {
+               state: STATE_DEFAULT 0.0;
+               rel1 {
+                  relative: 0.0 0.0;
+               }
+               rel2 {
+                  relative: 1.0 1.0;
+               }
+               image {
+                  normal: IMAGE_FPATH_BOARD_BG;
+               }
+               map {
+                  on: 1;
+                  smooth: 1;
+                  perspective_on: 1;
+                  rotation {
+                     center: PART_MAIN_BG;
+                     z: 0.0;
+                  }
+               }
+            }
+         }
+
+
+         part {
+            name: PART_START_BUTTON;
+            type: IMAGE;
+            description {
+               state: STATE_DEFAULT 0.0;
+               rel1 {
+                  relative: 0.2139 0.7833;
+               }
+               rel2 {
+                  relative: (0.2139 + 0.5722) (0.7833 + 0.2167);
+               }
+               image {
+                  normal: IMAGE_FPATH_BUTTON_START;
+               }
+            }
+
+            description {
+               state: STATE_BTN_PRESSED 0.0;
+               inherit: STATE_DEFAULT 0.0;
+               image {
+                  normal: IMAGE_FPATH_BUTTON_START_PRESSED;
+               }
+            }
+            
+            description {
+               state: STATE_RUNNING 0.0;
+               inherit: STATE_DEFAULT 0.0;
+               image {
+                  normal: IMAGE_FPATH_BUTTON_STOP;
+               }
+            }
+            
+            description {
+               state: STATE_STOP_PRESSED 0.0;
+               inherit: STATE_DEFAULT 0.0;
+               image {
+                  normal: IMAGE_FPATH_BUTTON_STOP_PRESSED;
+               }
+            }
+         }
+         
+         SOUND_PART(PART_RAW,   "00", 0.40, 0.1944, 0.6, 0.2167, FONT_SIZE_SMALL, FONT_STYLE_SMALL, 179, 179, 179)
+         SOUND_PART(PART_LEQ,   "00", 0.25, 0.1944, 0.2, 0.2167, FONT_SIZE_SMALL, FONT_STYLE_SMALL, 179, 179, 179)
+         SOUND_PART(PART_LEQ_MIN,   "00", 0.4, 0.1944, 0.2, 0.2167, FONT_SIZE_SMALL, FONT_STYLE_SMALL, 179, 179, 179)
+         
+         PART_INDICATOR(PART_INDICATOR_LEQ, 179, 179, 179, 5, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ_MIN, 179, 179, 179, 23, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ_HOUR, 179, 179, 179, 23, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ_8HOUR, 179, 179, 179, 23, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ_DAY, 179, 179, 179, 23, 27)
+      }
+
+      script {
+      
+      		public _indicator_set_position(indicator_part, Float:value) {
+				new Float:final_rot = (360 * (value - 70) / 110);
+
+				custom_state(indicator_part, STATE_DEFAULT, 0.0);
+				set_state_val(indicator_part, STATE_MAP_ROT_Z, final_rot);
+				set_state(indicator_part, "custom", 0.0);
+			}
+        
+         public message(Msg_Type:type, id, ...) {
+				if (type == MSG_INT_SET) {
+					if (id == MSG_ID_SET_RUNNING_STATUS) {
+						set_state_val(PART:PART_START_BUTTON, STATE_IMAGE, IMAGE:IMAGE_FPATH_BUTTON_STOP);
+					} else if (id == MSG_ID_SET_NOT_RUNNING_STATUS) {
+						set_state_val(PART:PART_START_BUTTON, STATE_IMAGE, IMAGE:IMAGE_FPATH_BUTTON_START);
+					} else if (id == MSG_ID_SET_VALUES) {
+						//new Float:raw = getarg(2);
+						new Float:leq = getarg(3);
+						new Float:leq_min = getarg(4);
+						new Float:leq_hour = getarg(5);
+						new Float:leq_8hour = getarg(6);
+						new Float:leq_day = getarg(7);
+						_indicator_set_position(PART:PART_INDICATOR_LEQ, leq);
+						_indicator_set_position(PART:PART_INDICATOR_LEQ_MIN, leq_min);
+						_indicator_set_position(PART:PART_INDICATOR_LEQ_HOUR, leq_hour);
+						_indicator_set_position(PART:PART_INDICATOR_LEQ_8HOUR, leq_8hour);
+						_indicator_set_position(PART:PART_INDICATOR_LEQ_DAY, leq_day);
+						
+					} 
+				}
+			}
+
+      }
+
+      programs {
+         program {
+            signal: "mouse,down,1";
+            source: PART_START_BUTTON;
+            action: STATE_SET STATE_BTN_PRESSED 0.0;
+            target: PART_START_BUTTON;
+         }
+         program {
+            signal: "mouse,up,1";
+            source: PART_START_BUTTON;
+            action: STATE_SET STATE_DEFAULT 0.0;
+            target: PART_START_BUTTON;
+         }
+         program {
+            signal: "mouse,clicked,1";
+            source: PART_START_BUTTON;
+            action: SIGNAL_EMIT START_CLICKED "";
+         }
+      }
+   }
+}

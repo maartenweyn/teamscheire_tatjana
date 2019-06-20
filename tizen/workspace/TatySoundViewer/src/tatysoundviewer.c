@@ -4,6 +4,10 @@
 #include <app_control.h>
 #include <device/power.h>
 
+
+#include <bundle.h>
+#include <app_event.h>
+
 typedef struct appdata {
 	Evas_Object *win;
 	Evas_Object *conform;
@@ -24,7 +28,40 @@ static bool serviceLaunced = false;
 
 static app_control_h app_update_control = NULL;
 
-static void launch_service()
+static void new_data_event_cb(const char *event_name, bundle *event_data, void *user_data)
+{
+    dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: %s: %d\n", event_name, bundle_get_count(event_data));
+    char *value;
+    int raw = 10;
+    int leq = 10;
+    int avg_min = 10;
+
+    if (bundle_get_str(event_data, "leq", &value) == BUNDLE_ERROR_NONE) {
+    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq: %s\n", value);
+    		raw = atoi(value);
+    }
+
+    if (bundle_get_str(event_data, "cleq", &value) == BUNDLE_ERROR_NONE) {
+    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: corrected leq: %s\n", value);
+    		leq = atoi(value);
+    }
+
+    if (bundle_get_str(event_data, "avgleq", &value) == BUNDLE_ERROR_NONE) {
+    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: avg leq: %s\n", value);
+    }
+
+    if (bundle_get_str(event_data, "avgcleq", &value) == BUNDLE_ERROR_NONE) {
+    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: avg corr leq: %s\n", value);
+    		avg_min = atoi(value);
+    }
+
+    updates_values(raw, leq, avg_min, 10, 10, 10);
+
+    return;
+}
+
+
+void launch_service()
 {
 	static app_control_h app_control = NULL;
 	int response = app_control_create(&app_control);
@@ -61,7 +98,8 @@ static void launch_service()
 
     if (response == APP_CONTROL_ERROR_NONE) {
     		serviceLaunced = true;
-    		elm_object_text_set(startStopButton, "Stop Service");
+    		//elm_object_text_set(startStopButton, "Stop Service");
+    		//set_running_status(1);
     }
 }
 
@@ -292,10 +330,18 @@ app_create(void *data)
 		Initialize UI resources and application's data
 		If this function returns true, the main loop of application starts
 		If this function returns false, the application is terminated */
-	appdata_s *ad = data;
-	create_base_gui(ad);
+	//appdata_s *ad = data;
+	//create_base_gui(ad);
 
-	//view_create();
+	view_create();
+
+	event_handler_h event_handler;
+	int ret = EVENT_ERROR_NONE;
+
+	ret = event_add_event_handler("event.be.wesdec.tatysoundservice.new_data_event", new_data_event_cb, "new_data_event", &event_handler);
+
+	if (ret != EVENT_ERROR_NONE)
+	    dlog_print(DLOG_ERROR, LOG_TAG, "event_add_event_handler err: [%d]", ret);
 
 	return true;
 }

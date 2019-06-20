@@ -18,4 +18,6 @@
 #define PACKAGE "be.wesdec.tatysoundviewer"
 #endif
 
+void launch_service();
+
 #endif /* __tatysoundviewer_H__ */
