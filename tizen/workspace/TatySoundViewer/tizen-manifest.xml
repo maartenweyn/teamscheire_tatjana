@@ -3,7 +3,7 @@
     <profile name="wearable"/>
     <ui-application appid="be.wesdec.tatysoundviewer" exec="tatysoundviewer" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>tatysoundviewer</label>
-        <icon>tatysoundviewer.png</icon>
+        <icon>logo.png</icon>
     </ui-application>
     <privileges>
         <privilege>http://tizen.org/privilege/appmanager.launch</privilege>

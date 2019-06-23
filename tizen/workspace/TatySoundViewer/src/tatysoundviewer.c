@@ -43,31 +43,50 @@ void control_service()
 static void new_data_event_cb(const char *event_name, bundle *event_data, void *user_data)
 {
     dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: %s: %d\n", event_name, bundle_get_count(event_data));
-    char *value;
-    int raw = 10;
-    int leq = 10;
-    int avg_min = 10;
+    char *raw = NULL;
+    char *leq = NULL;
 
-    if (bundle_get_str(event_data, "leq", &value) == BUNDLE_ERROR_NONE) {
-    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq: %s\n", value);
-    		raw = atoi(value);
+    if (bundle_get_str(event_data, "raw", &raw) == BUNDLE_ERROR_NONE) {
+    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: raw: %s\n", raw);
+    		//raw = atoi(value);
     }
 
-    if (bundle_get_str(event_data, "cleq", &value) == BUNDLE_ERROR_NONE) {
-    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: corrected leq: %s\n", value);
-    		leq = atoi(value);
+    if (bundle_get_str(event_data, "leq", &leq) == BUNDLE_ERROR_NONE) {
+    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: corrected leq: %s\n", leq);
+    		//leq = atoi(value);
     }
 
-    if (bundle_get_str(event_data, "avgleq", &value) == BUNDLE_ERROR_NONE) {
-    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: avg leq: %s\n", value);
+    if (bundle_get_count(event_data) > 2) {
+    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: MORE DATA");
+        char *leq_min = NULL;
+        	char *leq_hour = NULL;
+        	char *leq_8hours = NULL;
+        char *leq_day = NULL;
+        char *network_string = NULL;
+        int network_status = 0;
+
+		if (bundle_get_str(event_data, "leg_min", &leq_min) == BUNDLE_ERROR_NONE) {
+				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leg_min: %s\n", leq_min);
+		}
+
+		if (bundle_get_str(event_data, "leq_hour", &leq_hour) == BUNDLE_ERROR_NONE) {
+				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_hour: %s\n", leq_hour);
+		}
+//		if (bundle_get_str(event_data, "leq_8hours", &leq_8hours) == BUNDLE_ERROR_NONE) {
+//				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_8hours: %s\n", leq_8hours);
+//		}
+//		if (bundle_get_str(event_data, "leq_day", &leq_day) == BUNDLE_ERROR_NONE) {
+//				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_day: %s\n", leq_day);
+//		}
+		if (bundle_get_str(event_data, "network", &network_string) == BUNDLE_ERROR_NONE) {
+				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_day: %s\n", network_string);
+				network_status = atoi(network_string);
+		}
+		//updates_values(leq_min, leq_hour, leq_8hours, leq_day, network_status);
+		updates_values(leq_min, leq_hour, "30.0", "30.0", network_status);
     }
 
-    if (bundle_get_str(event_data, "avgcleq", &value) == BUNDLE_ERROR_NONE) {
-    		dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: avg corr leq: %s\n", value);
-    		avg_min = atoi(value);
-    }
-
-    updates_values(raw, leq, avg_min, 10, 10, 10);
+    updates_current_values(raw, leq);
 
     return;
 }

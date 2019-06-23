@@ -14,12 +14,12 @@
 
 
 struct sound_val_s {
-	int raw;
-	int leq;
-	int avg_min;
-	int avg_hour;
-	int avg_8hour;
-	int avg_day;
+	char raw[5];
+	char leq[5];
+	char leq_min[5];
+	char leq_hour[5];
+	char leq_8hours[5];
+	char leq_day[5];
 };
 
 typedef struct sound_val_s sound_val_t;
@@ -29,15 +29,17 @@ static struct view_info {
 	Evas_Object *layout_setup;
 	Evas_Object *layout_run;
 	sound_val_t sound_values;
+	int network_status;
 } s_info = {
 	.win = NULL,
 	.layout_setup = NULL,
 	.layout_run = NULL,
-	.sound_values = {0,}
+	.sound_values = {"25.0", "25.0","25.0","25.0","25.0","25.0"},
+	.network_status = 0
 };
 
 static const char *_create_resource_path(const char *file_name);
-static void _set_selected_part_displayed_value(Evas_Object *current_layout, char *part, unsigned value);
+static void _set_selected_part_displayed_value(Evas_Object *current_layout, char *part, char* value);
 static void _set_displayed_sound_value(Evas_Object *layout);
 
 
@@ -66,15 +68,19 @@ Eina_Bool view_create(void)
 	return EINA_TRUE;
 }
 
-void updates_values(int raw, int leq, int avg_min, int avg_hour, int avg_8hour, int avg_day) {
-	s_info.sound_values.raw = raw;
-	s_info.sound_values.leq = leq;
-	s_info.sound_values.avg_min = avg_min;
-	s_info.sound_values.avg_hour = avg_hour;
-	s_info.sound_values.avg_8hour = avg_8hour;
-	s_info.sound_values.avg_day = avg_day;
+
+void updates_current_values(char* raw, char* leq) {
+	strcpy(s_info.sound_values.raw, raw);
+	strcpy(s_info.sound_values.leq, leq);
 
 	_set_displayed_sound_value(s_info.layout_setup);
+}
+void updates_values(char* leq_min, char* leq_hour, char* leq_8hours, char* leq_day, int network_status) {
+	strcpy(s_info.sound_values.leq_min, leq_min);
+	strcpy(s_info.sound_values.leq_hour, leq_hour);
+	strcpy(s_info.sound_values.leq_8hours, leq_8hours);
+	strcpy(s_info.sound_values.leq_day, leq_day);
+	s_info.network_status = network_status;
 }
 
 void set_token(char* token_id) {
@@ -196,7 +202,7 @@ Evas_Object *view_create_layout_for_win(Evas_Object *win, const char *file_path,
 	return layout;
 }
 
-static void _set_selected_part_displayed_value(Evas_Object *current_layout, char *part, unsigned value)
+static void _set_selected_part_displayed_value(Evas_Object *current_layout, char *part, char * value)
 {
 	Eina_Stringshare *txt = NULL;
 
@@ -205,7 +211,7 @@ static void _set_selected_part_displayed_value(Evas_Object *current_layout, char
 		return;
 	}
 
-	txt = eina_stringshare_printf("%.2d", value);
+	txt = eina_stringshare_printf("%s", value);
 	elm_layout_text_set(current_layout, part, txt);
 	eina_stringshare_del(txt);
 }
@@ -214,10 +220,15 @@ static void _set_displayed_sound_value(Evas_Object *layout)
 {
 	_set_selected_part_displayed_value(layout, PART_RAW, s_info.sound_values.raw);
 	_set_selected_part_displayed_value(layout, PART_LEQ, s_info.sound_values.leq);
-	_set_selected_part_displayed_value(layout, PART_LEQ_MIN, s_info.sound_values.avg_min);
-	_set_selected_part_displayed_value(layout, PART_LEQ_HOUR, s_info.sound_values.avg_hour);
-	_set_selected_part_displayed_value(layout, PART_LEQ_8HOUR, s_info.sound_values.avg_8hour);
-	_set_selected_part_displayed_value(layout, PART_LEQ_DAY, s_info.sound_values.avg_day);
+	_set_selected_part_displayed_value(layout, PART_LEQ_MIN, s_info.sound_values.leq_min);
+	_set_selected_part_displayed_value(layout, PART_LEQ_HOUR, s_info.sound_values.leq_hour);
+	_set_selected_part_displayed_value(layout, PART_LEQ_8HOUR, s_info.sound_values.leq_8hours);
+	_set_selected_part_displayed_value(layout, PART_LEQ_DAY, s_info.sound_values.leq_day);
+
+	if (s_info.network_status)
+		_set_selected_part_displayed_value(layout, PART_NETWORK, "connected");
+	else
+		_set_selected_part_displayed_value(layout, PART_NETWORK, "no connection");
 
 	int msg_id = MSG_ID_SET_VALUES;
 	Edje_Message_Int_Set *msg = NULL;
@@ -234,12 +245,12 @@ static void _set_displayed_sound_value(Evas_Object *layout)
 	}
 
 	msg->count = 6;
-	msg->val[0] = s_info.sound_values.raw;
-	msg->val[1] = s_info.sound_values.leq;
-	msg->val[2] = s_info.sound_values.avg_min;
-	msg->val[3] = s_info.sound_values.avg_hour;
-	msg->val[4] = s_info.sound_values.avg_8hour;
-	msg->val[5] = s_info.sound_values.avg_day;
+	msg->val[0] = atoi(s_info.sound_values.raw);
+	msg->val[1] = atoi(s_info.sound_values.leq);
+	msg->val[2] = atoi(s_info.sound_values.leq_min);
+	msg->val[3] = atoi(s_info.sound_values.leq_hour);
+	msg->val[4] = atoi(s_info.sound_values.leq_8hours);
+	msg->val[5] = atoi(s_info.sound_values.leq_day);
 
 	edje_object_message_send(elm_layout_edje_get(s_info.layout_setup), EDJE_MESSAGE_INT_SET, msg_id, msg);
 	free(msg);

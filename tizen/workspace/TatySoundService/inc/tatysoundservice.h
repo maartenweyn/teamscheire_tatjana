@@ -2,14 +2,15 @@
 #define __tatysoundservice_H__
 
 #include <dlog.h>
-
+#include <stdint.h>
 #include "settings.h"
+
 
 #define SAMPLE_RATE 44100
 #define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_S16_LE
 #define RECORDING_SEC 1
 #define RECORDING_INTERVAL 10
-#define AVG_RECORDING_INTERVAL 60
+#define MIN_RECORDING_INTERVAL 60
 
 #define POSTDATA_BUFFER_SIZE	60 * 24
 
@@ -24,8 +25,11 @@
 typedef struct
 {
 	double ts;
-	int avg_leq;
-	int corr_avg_leq;
+	double sound_level;
+	double leq_min;
+	double leq_hour;
+	double leq_8hours;
+	double leq_day;
 	int response;
 } post_data_s;
 
@@ -63,8 +67,7 @@ typedef struct
     }
 
 void push_current_values(double ts, int leq, int corrected);
-void push_average_values(double ts, int avg, int corrected);
-
+uint8_t push_average_values(double ts, double sound_level, double leq_min, double leq_hour, double leq_8hours, double leq_day);
 char thingsboard_url[100];
 
 #endif /* __tatysoundservice_H__ */

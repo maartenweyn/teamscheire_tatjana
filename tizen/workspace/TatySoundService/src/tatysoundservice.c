@@ -28,7 +28,7 @@ static post_data_s postdata[POSTDATA_BUFFER_SIZE];
 static int post_data_length	= 0;
 static bool permissions_initialized = false;
 static bool audio_initialized = false;
-static leq_data_s leq_data;
+//static leq_data_s leq_data;
 
 static void app_check_and_request_permissions();
 
@@ -152,27 +152,36 @@ static void app_check_and_request_permissions() {
 	}
 }
 
-void push_current_values(double ts, int leq, int corrected) {
-	dlog_print(DLOG_INFO, LOG_TAG, "Current %d / %d (%0.3f)", leq, corrected, ts);
-	leq_data.current_leq = leq;
-	leq_data.current_corrected_leq = corrected;
-}
+//void push_current_values(double ts, int leq, int corrected) {
+//	dlog_print(DLOG_INFO, LOG_TAG, "Current %d / %d (%0.3f)", leq, corrected, ts);
+//	leq_data.current_leq = leq;
+//	leq_data.current_corrected_leq = corrected;
+//}
 
-void push_average_values(double ts, int avg, int corrected) {
-	dlog_print(DLOG_INFO, LOG_TAG, "%d Avg %d / %d  (%0.3f)", avg, corrected, ts);
+uint8_t push_average_values(double ts, double sound_level, double leq_min, double leq_hour, double leq_8hours, double leq_day) {
+	dlog_print(DLOG_INFO, LOG_TAG, "%.3f (%.4f) %.1f %.1f %.1f %.1f", ts, sound_level, leq_min, leq_hour, leq_8hours, leq_day);
 	postdata[post_data_length].ts = ts;
-	postdata[post_data_length].avg_leq = avg;
-	postdata[post_data_length].corr_avg_leq = corrected;
+	postdata[post_data_length].sound_level = sound_level;
+	postdata[post_data_length].leq_min = leq_min;
+	postdata[post_data_length].leq_hour = leq_hour;
+	postdata[post_data_length].leq_8hours = leq_8hours;
+	postdata[post_data_length].leq_day = leq_day;
 	postdata[post_data_length].response = 0;
 	uint8_t response = post_to_thingsboard(postdata, post_data_length+1);
 	if (response == 0) {
 			post_data_length = 0;
 	} else {
+		if (post_data_length > 0)
+			response = postdata[post_data_length-1].response + 1;
+		else
+			response = 1;
 		postdata[post_data_length].response = response;
 		post_data_length++;
 	}
-	leq_data.avg_leq = avg;
-	leq_data.avg_corrected_leq = corrected;
+//	leq_data.avg_leq = avg;
+//	leq_data.avg_corrected_leq = corrected;
+
+	return response;
 }
 
 static Eina_Bool init_recording(void *data)
@@ -274,27 +283,27 @@ void service_app_control(app_control_h app_control, void *data)
 				free(action_value);
 				service_app_exit();
 				return;
-			} else if (!strncmp(action_value,"update", STRNCMP_LIMIT)) {
-				dlog_print(DLOG_INFO, LOG_TAG, "Requesting data update");
-				free(caller_id);
-				free(action_value);
-
-				app_control_h reply;
-				app_control_create(&reply);
-				//app_control_add_extra_data(reply, "leq", "0,0,0,0");
-
-				char leq[40];
-			    snprintf(leq, sizeof(leq), "%d,%d,%d,%d", leq_data.current_leq, leq_data.current_corrected_leq, leq_data.avg_leq, leq_data.avg_corrected_leq);
-				app_control_add_extra_data(reply, "leq", leq);
-
-				if (app_control_reply_to_launch_request(reply, app_control, APP_CONTROL_RESULT_SUCCEEDED) == APP_CONTROL_ERROR_NONE)
-				{
-					dlog_print(DLOG_INFO, LOG_TAG, "Update reply send");
-				} else {
-					dlog_print(DLOG_ERROR, LOG_TAG, "Update reply send failed");
-				}
-				app_control_destroy(reply);
-				return;
+//			} else if (!strncmp(action_value,"update", STRNCMP_LIMIT)) {
+//				dlog_print(DLOG_INFO, LOG_TAG, "Requesting data update");
+//				free(caller_id);
+//				free(action_value);
+//
+//				app_control_h reply;
+//				app_control_create(&reply);
+//				//app_control_add_extra_data(reply, "leq", "0,0,0,0");
+//
+//				char leq[40];
+//			    snprintf(leq, sizeof(leq), "%d,%d,%d,%d", leq_data.current_leq, leq_data.current_corrected_leq, leq_data.avg_leq, leq_data.avg_corrected_leq);
+//				app_control_add_extra_data(reply, "leq", leq);
+//
+//				if (app_control_reply_to_launch_request(reply, app_control, APP_CONTROL_RESULT_SUCCEEDED) == APP_CONTROL_ERROR_NONE)
+//				{
+//					dlog_print(DLOG_INFO, LOG_TAG, "Update reply send");
+//				} else {
+//					dlog_print(DLOG_ERROR, LOG_TAG, "Update reply send failed");
+//				}
+//				app_control_destroy(reply);
+//				return;
 			}  else {
 				dlog_print(DLOG_INFO, LOG_TAG, "Unsupported action %s! Doing nothing...", action_value);
 				free(caller_id);

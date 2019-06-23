@@ -60,9 +60,9 @@ double a_filter(double input) {
 	return output;
 }
 
-int correctdB(double input) {
+double correctdB(double input) {
 	double corrected = ((input - CORR_X0) * ((CORR_REF1 - CORR_REF0) / (CORR_X1 - CORR_X0))) + CORR_REF0;
-	return (int) corrected;
+	return corrected;
 }
 
 /// AUDIO
@@ -134,12 +134,6 @@ void measure_sound() {
 	//dlog_print(DLOG_DEBUG, LOG_TAG, "%s", __func__);
 
 	ecore_thread_run(synchronous_recording, synchronous_recording_ended, NULL, NULL);
-}
-
-static void user_event_cb(const char *event_name, bundle *event_data, void *user_data)
-{
-    dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: %s \n", event_name);
-    return;
 }
 
 /**
@@ -244,45 +238,48 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 
 	double ts = ecore_time_unix_get();
 	double Leq = ((10.0 * log10(soundLevel)) + 93.97940008672037609572522210551);
-	int currentLeq = (int16_t)Leq;
-	int correctedLeq = correctdB(Leq);
-	push_current_values(ts, currentLeq, correctedLeq);
+	double correctedLeq = correctdB(Leq);
+	//push_current_values(ts, currentLeq, correctedLeq);
 
 	bundle *event_data = NULL;
 	event_data = bundle_create();
 	int ret = EVENT_ERROR_NONE;
 
-	char currentleqString[10], correctedleqString[10];
-	snprintf(correctedleqString, sizeof(correctedleqString), "%d", correctedLeq);
-	snprintf(currentleqString, sizeof(currentleqString), "%d", currentLeq);
-	ret = bundle_add_str(event_data, "cleq", correctedleqString);
-	ret = bundle_add_str(event_data, "leq", currentleqString);
+	char rawString[5], leqString[5];
+	snprintf(rawString, sizeof(rawString), "%.1f", Leq);
+	snprintf(leqString, sizeof(leqString), "%.1f", correctedLeq);
+	ret = bundle_add_str(event_data, "leq", leqString);
+	ret = bundle_add_str(event_data, "raw", rawString);
 
-
-
-
-	//dlog_print(DLOG_ERROR, LOG_TAG, "timing %0.3f - %0.3f = %0.3f >= %0.3f?", ts, start_ts, ts - start_ts, AVG_RECORDING_INTERVAL);
-
-	if (ts - start_ts >= AVG_RECORDING_INTERVAL) {
+	if (ts - start_ts >= MIN_RECORDING_INTERVAL) {
 		double avg_sound_level = cumulativeSoundLevel / cumulativeSoundCounter;
 		double leq = ((10.0 * log10(avg_sound_level)) + 93.97940008672037609572522210551);
-		int avg_leg = (int16_t) leq;
-		int corr_avg_leq = correctdB(leq);
-		push_average_values(ts, avg_leg, corr_avg_leq);
+		double corr_avg_leqmin = correctdB(leq);
+
+		char sound_level_min[10], avg_min[5];
+		snprintf(avg_min, sizeof(avg_min), "%.1f", corr_avg_leqmin);
+		snprintf(sound_level_min, sizeof(sound_level_min), "%.4f", avg_sound_level);
+		ret = bundle_add_str(event_data, "soundlevel", sound_level_min);
+		ret = bundle_add_str(event_data, "leg_min", avg_min);
 
 		if (last_day_index == 60*24) {
 			//rotate
+			for (int i = 0; i < last_day_index-1; i++)
+			{
+				last_day_ts[i] = last_day_ts[i+1];
+				last_day_SoundLevel[i] = last_day_SoundLevel[i+1];
+			}
+			last_day_index--;
 		}
 		last_day_ts[last_day_index] = start_ts;
 		last_day_SoundLevel[last_day_index] = avg_sound_level;
-
 
 		int last_hour_counter = last_day_index < 60 ? last_day_index : 60;
 		double sum_last_hour = 0;
 		for (int i = last_day_index - last_hour_counter; i < last_day_index; i++) {
 			sum_last_hour += last_day_SoundLevel[i];
 		}
-		double last_hour = sum_last_hour/ last_hour_counter;
+		double last_hour = last_hour_counter > 0 ? sum_last_hour/ last_hour_counter : avg_sound_level;
 		double leq_last_hour = correctdB(((10.0 * log10(last_hour)) + 93.97940008672037609572522210551));
 
 		int last_8hour_counter = last_day_index < 8 * 60 ? last_day_index : 8 * 60;
@@ -291,38 +288,37 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 		for (int i = last_day_index - last_8hour_counter + last_8hour_start; i < last_day_index; i++) {
 			sum_last_8hour += last_day_SoundLevel[i];
 		}
-		double last_8hour = sum_last_8hour / last_8hour_counter;
+
+		double last_8hour = last_8hour_counter > 0 ? sum_last_8hour / last_8hour_counter : avg_sound_level;
 		double leq_last_8hour = correctdB(((10.0 * log10(last_8hour)) + 93.97940008672037609572522210551));
 
 		int last_day_counter = last_day_index < 24 * 60 ? last_day_index : 24 * 60;
 		int last_day_start = last_day_counter < 8 * 60 ? last_day_counter : 8 * 60;
-		double sum_last_day = last_8hour;
+		double sum_last_day = sum_last_8hour;
 		for (int i = last_day_index - last_day_counter + last_day_start; i < last_day_index; i++) {
 			sum_last_day += last_day_SoundLevel[i];
 		}
-		double last_day = sum_last_day / last_day_counter;
+		double last_day = last_day_counter > 0 ? sum_last_day / last_day_counter : avg_sound_level;
 		double leq_last_day = correctdB(((10.0 * log10(last_day)) + 93.97940008672037609572522210551));
+
+		char leqString_hour[5], leqString_8hour[5], leqString_day[5];
+		snprintf(leqString_hour, sizeof(leqString_hour), "%.1f", leq_last_hour);
+		snprintf(leqString_8hour, sizeof(leqString_8hour), "%.1f", leq_last_8hour);
+		snprintf(leqString_day, sizeof(leqString_day), "%.1f", leq_last_day);
+		ret = bundle_add_str(event_data, "leq_hour", leqString_hour);
+		ret = bundle_add_str(event_data, "leq_8hour", leqString_8hour);
+		ret = bundle_add_str(event_data, "leq_day", leqString_day);
+
+
+		if (push_average_values(ts, avg_sound_level, corr_avg_leqmin, leq_last_hour, leq_last_8hour, leq_last_day))
+			bundle_add_str(event_data, "network", "0");
+		else
+			bundle_add_str(event_data, "network", "1");
 
 		cumulativeSoundLevel = 0;
 		cumulativeSoundCounter = 0;
+		last_day_index++;
 		start_ts = ecore_time_unix_get();
-
-		char avgleqString[10], avgcorrectedleqString[10];
-		snprintf(avgcorrectedleqString, sizeof(avgcorrectedleqString), "%d", corr_avg_leq);
-		snprintf(avgleqString, sizeof(avgleqString), "%d", avg_leg);
-		ret = bundle_add_str(event_data, "avgleq", avgleqString);
-		ret = bundle_add_str(event_data, "avgcleq", avgcorrectedleqString);
-
-
-
-
-
-
-
-
-
-
-
 	}
 
 	dlog_print(DLOG_INFO, LOG_TAG, "event_publish_app_event");

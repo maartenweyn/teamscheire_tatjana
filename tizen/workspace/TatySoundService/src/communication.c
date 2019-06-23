@@ -58,15 +58,15 @@ int post_to_thingsboard(post_data_s data[], int lenght) {
 		list = curl_slist_append(list, "Content-Type: application/json");
 		curl_easy_setopt(curlHandler, CURLOPT_HTTPHEADER, list);
 		/* Now specify the POST data */
-		char json[100 * lenght];
+		char json[200 * lenght];
 		int current_length = 1;
 
 		json[0] = '[';
 
 		for (int i = 0; i < lenght; i++) {
-			char temp[100];
+			char temp[200];
 			dlog_print(DLOG_INFO, LOG_TAG, "ts %f  %.0f", data[i].ts, data[i].ts * 1000);
-			int temp_length = snprintf(temp, sizeof(temp), "{\"ts\":%.0f, \"values\":{\"leq\":%d, \"cleq\":%d, \"resp\":%d}}", data[i].ts * 1000, data[i].avg_leq, data[i].corr_avg_leq, data[i].response);
+			int temp_length = snprintf(temp, sizeof(temp), "{\"ts\":%.0f, \"values\":{\"sound_level\":%.4f, \"min\":%.1f,  \"hour\":%.1f, \"8hours\":%.1f,  \"day\":%.1f,\"resp\":%d}}", data[i].ts * 1000, data[i].sound_level, data[i].leq_min, data[i].leq_hour, data[i].leq_8hours, data[i].leq_day, data[i].response);
 			//int temp_length = snprintf(temp, sizeof(temp), "{\"ts\":%.0f, \"leq\":%d, \"cleq\":%d, \"resp\":%d}", data[i].ts * 1000, data[i].avg_leq, data[i].corr_avg_leq, data[i].response);
 			memcpy(&json[current_length], temp, temp_length);
 			current_length += temp_length;

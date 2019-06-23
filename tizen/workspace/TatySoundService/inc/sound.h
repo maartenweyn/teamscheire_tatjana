@@ -16,7 +16,7 @@
 #define	CORR_REF1	76.0 // ref
 
 double a_filter(double input);
-int correctdB(double input);
+double correctdB(double input);
 
 bool audio_device_init(void);
 void measure_sound();

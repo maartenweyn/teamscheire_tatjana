@@ -38,6 +38,7 @@
 
 #define IMAGE_FPATH_INDICATOR "../res/images/indicator.png"
 #define IMAGE_FPATH_INDICATOR1 "../res/images/indicator1.png"
+#define IMAGE_FPATH_INDICATORH "../res/images/indicatorH.png"
 #define IMAGE_FPATH_INDICATOR8 "../res/images/indicator8.png"
 #define IMAGE_FPATH_INDICATORD "../res/images/indicatorD.png"
 
@@ -75,7 +76,7 @@
 		}                                                                      \
 	}                                                                          \
 
-#define PART_INDICATOR(part_name, color_r, color_g, color_b, width, height) \
+#define PART_INDICATOR(part_name, image_path, color_r, color_g, color_b, width, height) \
 	part {                                                                  \
 		name: part_name;                                                    \
 		type: IMAGE;                                                        \
@@ -88,7 +89,7 @@
 				relative: 0.5+(width/2.0/360.0) 0.0694+(height/360.0);      \
 			}                                                               \
 			image {                                                         \
-				normal: IMAGE_FPATH_INDICATOR1;                       \
+				normal: image_path;                       				   \
 			}                                                               \
 			color: color_r color_g color_b 255;                             \
 			map {                                                           \

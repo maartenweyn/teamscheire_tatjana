@@ -9,6 +9,7 @@ images {
    image: IMAGE_FPATH_BUTTON_STOP_PRESSED COMP;
    image: IMAGE_FPATH_INDICATOR COMP;
    image: IMAGE_FPATH_INDICATOR1 COMP;
+   image: IMAGE_FPATH_INDICATORH COMP;
    image: IMAGE_FPATH_INDICATOR8 COMP;
    image: IMAGE_FPATH_INDICATORD COMP;
 }
@@ -108,19 +109,20 @@ collections {
          
          //part_name, txt, rel_x, width, rel_y, height, f_size, f_name, color_r, color_g, color_b
          SOUND_PART(PART_DEVID,   "00000000000000000000", 0.25, 0.5, 0.55, 0.2167, 3*4, FONT_STYLE_MEDIUM, 10, 10, 10)
+         SOUND_PART(PART_NETWORK,   "connecting", 0.25, 0.5, 0.65, 0.2167, 3*4, FONT_STYLE_MEDIUM, 100, 100, 100)
          
          
-         PART_INDICATOR(PART_INDICATOR_LEQ, 179, 179, 179, 5, 27)
-         PART_INDICATOR(PART_INDICATOR_LEQ_MIN, 179, 179, 179, 23, 27)
-         //PART_INDICATOR(PART_INDICATOR_LEQ_HOUR, 179, 179, 179, 23, 27)
-         //PART_INDICATOR(PART_INDICATOR_LEQ_8HOUR, 179, 179, 179, 23, 27)
-         //PART_INDICATOR(PART_INDICATOR_LEQ_DAY, 179, 179, 179, 23, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ, IMAGE_FPATH_INDICATOR, 179, 179, 179, 5, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ_MIN, IMAGE_FPATH_INDICATOR1, 179, 179, 179, 23, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ_HOUR, IMAGE_FPATH_INDICATORH, 179, 179, 179, 23, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ_8HOUR, IMAGE_FPATH_INDICATOR8, 179, 179, 179, 23, 27)
+         PART_INDICATOR(PART_INDICATOR_LEQ_DAY, IMAGE_FPATH_INDICATORD, 179, 179, 179, 23, 27)
       }
 
       script {
       
       		public _indicator_set_position(indicator_part, Float:value) {
-				new Float:final_rot = (360 * (value - 70) / 110);
+				new Float:final_rot = (360 * (value - 70) / 120);
 
 				custom_state(indicator_part, STATE_DEFAULT, 0.0);
 				set_state_val(indicator_part, STATE_MAP_ROT_Z, final_rot);
@@ -137,14 +139,14 @@ collections {
 						//new Float:raw = getarg(2);
 						new Float:leq = getarg(3);
 						new Float:leq_min = getarg(4);
-						//new Float:leq_hour = getarg(5);
-						//new Float:leq_8hour = getarg(6);
-						//new Float:leq_day = getarg(7);
+						new Float:leq_hour = getarg(5);
+						new Float:leq_8hour = getarg(6);
+						new Float:leq_day = getarg(7);
 						_indicator_set_position(PART:PART_INDICATOR_LEQ, leq);
 						_indicator_set_position(PART:PART_INDICATOR_LEQ_MIN, leq_min);
-						//_indicator_set_position(PART:PART_INDICATOR_LEQ_HOUR, leq_hour);
-						//_indicator_set_position(PART:PART_INDICATOR_LEQ_8HOUR, leq_8hour);
-						//_indicator_set_position(PART:PART_INDICATOR_LEQ_DAY, leq_day);
+						_indicator_set_position(PART:PART_INDICATOR_LEQ_HOUR, leq_hour);
+						_indicator_set_position(PART:PART_INDICATOR_LEQ_8HOUR, leq_8hour);
+						_indicator_set_position(PART:PART_INDICATOR_LEQ_DAY, leq_day);
 						
 					} 
 				}
