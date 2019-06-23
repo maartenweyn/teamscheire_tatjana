@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="4.0" package="be.wesdec.tatysoundviewer" version="1.0.0">
+<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3.2" package="be.wesdec.tatysoundviewer" version="1.0.1">
+    <author email="maarten@wesdec.be">Maarten Weyn</author>
     <profile name="wearable"/>
     <ui-application appid="be.wesdec.tatysoundviewer" exec="tatysoundviewer" multiple="false" nodisplay="false" taskmanage="true" type="capp">
         <label>tatysoundviewer</label>
-        <icon>logo.png</icon>
+        <icon>tatysoundviewer.png</icon>
     </ui-application>
     <privileges>
         <privilege>http://tizen.org/privilege/appmanager.launch</privilege>
         <privilege>http://tizen.org/privilege/display</privilege>
     </privileges>
+    <feature name="http://tizen.org/feature/screen.size.normal.360.360">true</feature>
 </manifest>

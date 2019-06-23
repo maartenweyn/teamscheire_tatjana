@@ -98,7 +98,7 @@ int post_to_thingsboard(post_data_s data[], int lenght) {
 		if (res == CURLE_OK)
 			return 0;
 		else
-			return 3;
+			return 1;
 		//free(jObj);
 	}
 

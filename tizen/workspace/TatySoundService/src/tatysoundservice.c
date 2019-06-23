@@ -171,15 +171,12 @@ uint8_t push_average_values(double ts, double sound_level, double leq_min, doubl
 	if (response == 0) {
 			post_data_length = 0;
 	} else {
+		postdata[post_data_length].response = 1;
 		if (post_data_length > 0)
-			response = postdata[post_data_length-1].response + 1;
-		else
-			response = 1;
-		postdata[post_data_length].response = response;
+			postdata[post_data_length].response += postdata[post_data_length-1].response;
+
 		post_data_length++;
 	}
-//	leq_data.avg_leq = avg;
-//	leq_data.avg_corrected_leq = corrected;
 
 	return response;
 }
@@ -211,34 +208,34 @@ static Eina_Bool init_recording(void *data)
 
    return ECORE_CALLBACK_RENEW;
 }
+//
+//void
+// sample_cb(const char *key, const int type, const bundle_keyval_t *kv, void *user_data)
+// {
+//     void *basic_val = NULL;
+//     size_t basic_size = 0;
+//     void **array_val = NULL;
+//     int array_len = 0;
+//     size_t *array_elem_size = NULL;
+//
+//     dlog_print(DLOG_INFO, LOG_TAG, "Key:%s, Type:%d\n", key, type);
+//     if (bundle_keyval_type_is_array(kv)) {
+//         bundle_keyval_get_array_val(kv, &array_val, &array_len, &array_elem_size);
+//         // Do something
+//     }
+//     else {
+//         bundle_keyval_get_basic_val(kv, &basic_val, &basic_size);
+//         dlog_print(DLOG_INFO, LOG_TAG, "Value:%s\n", basic_val);
+//     }
+// }
 
-void
- sample_cb(const char *key, const int type, const bundle_keyval_t *kv, void *user_data)
- {
-     void *basic_val = NULL;
-     size_t basic_size = 0;
-     void **array_val = NULL;
-     int array_len = 0;
-     size_t *array_elem_size = NULL;
 
-     dlog_print(DLOG_INFO, LOG_TAG, "Key:%s, Type:%d\n", key, type);
-     if (bundle_keyval_type_is_array(kv)) {
-         bundle_keyval_get_array_val(kv, &array_val, &array_len, &array_elem_size);
-         // Do something
-     }
-     else {
-         bundle_keyval_get_basic_val(kv, &basic_val, &basic_size);
-         dlog_print(DLOG_INFO, LOG_TAG, "Value:%s\n", basic_val);
-     }
- }
-
-
-static void user_event_cb(const char *event_name, bundle *event_data, void *user_data)
-{
-    dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: %s: %d\n", event_name, bundle_get_count(event_data));
-    bundle_foreach(event_data, sample_cb, NULL);
-    return;
-}
+//static void user_event_cb(const char *event_name, bundle *event_data, void *user_data)
+//{
+//    dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: %s: %d\n", event_name, bundle_get_count(event_data));
+//    bundle_foreach(event_data, sample_cb, NULL);
+//    return;
+//}
 
 bool service_app_create(void *data)
 {

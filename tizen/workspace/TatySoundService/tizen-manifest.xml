@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3.2" package="be.wesdec.tatysoundservice" version="1.0.0">
+<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3.2" package="be.wesdec.tatysoundservice" version="1.0.1">
     <author email="maarten@wesdec.be">Maarten Weyn</author>
     <profile name="wearable"/>
     <service-application appid="be.wesdec.tatysoundservice" exec="tatysoundservice" multiple="false" nodisplay="true" taskmanage="false" type="capp">
