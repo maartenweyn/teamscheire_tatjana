@@ -62,7 +62,7 @@ collections {
 
 
          part {
-            name: PART_START_BUTTON;
+            name: PART_BUTTON;
             type: IMAGE;
             description {
                state: STATE_DEFAULT 0.0;
@@ -95,7 +95,7 @@ collections {
             
             description {
                state: STATE_STOP_PRESSED 0.0;
-               inherit: STATE_DEFAULT 0.0;
+               inherit: STATE_RUNNING 0.0;
                image {
                   normal: IMAGE_FPATH_BUTTON_STOP_PRESSED;
                }
@@ -106,11 +106,15 @@ collections {
          SOUND_PART(PART_LEQ,   "00", 0.25, 0.1944, 0.2, 0.2167, FONT_SIZE_SMALL, FONT_STYLE_SMALL, 179, 179, 179)
          SOUND_PART(PART_LEQ_MIN,   "00", 0.4, 0.1944, 0.2, 0.2167, FONT_SIZE_SMALL, FONT_STYLE_SMALL, 179, 179, 179)
          
+         //part_name, txt, rel_x, width, rel_y, height, f_size, f_name, color_r, color_g, color_b
+         SOUND_PART(PART_DEVID,   "00000000000000000000", 0.25, 0.5, 0.55, 0.2167, 3*4, FONT_STYLE_MEDIUM, 10, 10, 10)
+         
+         
          PART_INDICATOR(PART_INDICATOR_LEQ, 179, 179, 179, 5, 27)
          PART_INDICATOR(PART_INDICATOR_LEQ_MIN, 179, 179, 179, 23, 27)
-         PART_INDICATOR(PART_INDICATOR_LEQ_HOUR, 179, 179, 179, 23, 27)
-         PART_INDICATOR(PART_INDICATOR_LEQ_8HOUR, 179, 179, 179, 23, 27)
-         PART_INDICATOR(PART_INDICATOR_LEQ_DAY, 179, 179, 179, 23, 27)
+         //PART_INDICATOR(PART_INDICATOR_LEQ_HOUR, 179, 179, 179, 23, 27)
+         //PART_INDICATOR(PART_INDICATOR_LEQ_8HOUR, 179, 179, 179, 23, 27)
+         //PART_INDICATOR(PART_INDICATOR_LEQ_DAY, 179, 179, 179, 23, 27)
       }
 
       script {
@@ -126,21 +130,21 @@ collections {
          public message(Msg_Type:type, id, ...) {
 				if (type == MSG_INT_SET) {
 					if (id == MSG_ID_SET_RUNNING_STATUS) {
-						set_state_val(PART:PART_START_BUTTON, STATE_IMAGE, IMAGE:IMAGE_FPATH_BUTTON_STOP);
+						set_state(PART:PART_BUTTON, STATE_RUNNING, 0.0);
 					} else if (id == MSG_ID_SET_NOT_RUNNING_STATUS) {
-						set_state_val(PART:PART_START_BUTTON, STATE_IMAGE, IMAGE:IMAGE_FPATH_BUTTON_START);
+						set_state(PART:PART_BUTTON, STATE_DEFAULT, 0.0);
 					} else if (id == MSG_ID_SET_VALUES) {
 						//new Float:raw = getarg(2);
 						new Float:leq = getarg(3);
 						new Float:leq_min = getarg(4);
-						new Float:leq_hour = getarg(5);
-						new Float:leq_8hour = getarg(6);
-						new Float:leq_day = getarg(7);
+						//new Float:leq_hour = getarg(5);
+						//new Float:leq_8hour = getarg(6);
+						//new Float:leq_day = getarg(7);
 						_indicator_set_position(PART:PART_INDICATOR_LEQ, leq);
 						_indicator_set_position(PART:PART_INDICATOR_LEQ_MIN, leq_min);
-						_indicator_set_position(PART:PART_INDICATOR_LEQ_HOUR, leq_hour);
-						_indicator_set_position(PART:PART_INDICATOR_LEQ_8HOUR, leq_8hour);
-						_indicator_set_position(PART:PART_INDICATOR_LEQ_DAY, leq_day);
+						//_indicator_set_position(PART:PART_INDICATOR_LEQ_HOUR, leq_hour);
+						//_indicator_set_position(PART:PART_INDICATOR_LEQ_8HOUR, leq_8hour);
+						//_indicator_set_position(PART:PART_INDICATOR_LEQ_DAY, leq_day);
 						
 					} 
 				}
@@ -151,19 +155,19 @@ collections {
       programs {
          program {
             signal: "mouse,down,1";
-            source: PART_START_BUTTON;
+            source: PART_BUTTON;
             action: STATE_SET STATE_BTN_PRESSED 0.0;
-            target: PART_START_BUTTON;
+            target: PART_BUTTON;
          }
          program {
             signal: "mouse,up,1";
-            source: PART_START_BUTTON;
+            source: PART_BUTTON;
             action: STATE_SET STATE_DEFAULT 0.0;
-            target: PART_START_BUTTON;
+            target: PART_BUTTON;
          }
          program {
             signal: "mouse,clicked,1";
-            source: PART_START_BUTTON;
+            source: PART_BUTTON;
             action: SIGNAL_EMIT START_CLICKED "";
          }
       }

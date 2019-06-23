@@ -16,6 +16,8 @@
 //#define MYSERVICELAUNCHER_APP_ID "be.wesdec.tatysoundviewer" // an ID of the UI application of our package
 #define MYSERVICELAUNCHER_APP_ID "arq901aCcl.TatySoundWebViewer" // an ID of the UI application of our package
 
+#define HOST_URL	 "http://teamscheire.wesdec.be:8080/api/v1/%s/telemetry"
+
 #define STRNCMP_LIMIT 256 // the limit of characters to be compared using strncmp function
 
 

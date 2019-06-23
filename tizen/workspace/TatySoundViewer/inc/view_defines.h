@@ -9,6 +9,7 @@
 #define PART_LEQ_HOUR 	"leq_hour"
 #define PART_LEQ_8HOUR 	"leq_8hour"
 #define PART_LEQ_DAY 	"leq_day"
+#define PART_DEVID 		"devid"
 
 
 #define START_CLICKED "button,start"

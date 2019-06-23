@@ -13,6 +13,8 @@
 #include <Ecore.h>
 #include <app_event.h>
 
+
+
 static audio_in_h input;
 static sound_stream_info_h g_stream_info_h = NULL;
 static void *g_buffer = NULL;  /* Buffer used for audio recording/playback */
@@ -21,6 +23,11 @@ static int g_buffer_size;  /* Size of the buffer used for audio recording/playba
 static double cumulativeSoundLevel = 0.0;
 static int cumulativeSoundCounter = 0;
 static double start_ts = 0.0;
+
+static double last_day_ts[24*60] = {0.0, };
+static double last_day_SoundLevel[24*60] = {0.0, };
+static int last_day_index = 0;
+
 
 static const double AFILTER_Acoef[] = {1.0, -4.0195761811158315, 6.1894064429206921, -4.4531989035441155,
                     1.4208429496218764, -0.14182547383030436,
@@ -34,6 +41,12 @@ static double AFILTER_conditions[] = {0, 0, 0, 0, 0, 0};
 
 static void synchronous_recording(void *data, Ecore_Thread *thread);
 static void synchronous_recording_ended(void *data, Ecore_Thread *thread);
+
+/// general
+
+void sound_init() {
+
+}
 
 /// DB filter
 
@@ -251,10 +264,45 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 	//dlog_print(DLOG_ERROR, LOG_TAG, "timing %0.3f - %0.3f = %0.3f >= %0.3f?", ts, start_ts, ts - start_ts, AVG_RECORDING_INTERVAL);
 
 	if (ts - start_ts >= AVG_RECORDING_INTERVAL) {
-		double leq = ((10.0 * log10(cumulativeSoundLevel / cumulativeSoundCounter)) + 93.97940008672037609572522210551);
+		double avg_sound_level = cumulativeSoundLevel / cumulativeSoundCounter;
+		double leq = ((10.0 * log10(avg_sound_level)) + 93.97940008672037609572522210551);
 		int avg_leg = (int16_t) leq;
 		int corr_avg_leq = correctdB(leq);
 		push_average_values(ts, avg_leg, corr_avg_leq);
+
+		if (last_day_index == 60*24) {
+			//rotate
+		}
+		last_day_ts[last_day_index] = start_ts;
+		last_day_SoundLevel[last_day_index] = avg_sound_level;
+
+
+		int last_hour_counter = last_day_index < 60 ? last_day_index : 60;
+		double sum_last_hour = 0;
+		for (int i = last_day_index - last_hour_counter; i < last_day_index; i++) {
+			sum_last_hour += last_day_SoundLevel[i];
+		}
+		double last_hour = sum_last_hour/ last_hour_counter;
+		double leq_last_hour = correctdB(((10.0 * log10(last_hour)) + 93.97940008672037609572522210551));
+
+		int last_8hour_counter = last_day_index < 8 * 60 ? last_day_index : 8 * 60;
+		int last_8hour_start = last_8hour_counter < 60 ? last_8hour_counter : 60;
+		double sum_last_8hour = sum_last_hour;
+		for (int i = last_day_index - last_8hour_counter + last_8hour_start; i < last_day_index; i++) {
+			sum_last_8hour += last_day_SoundLevel[i];
+		}
+		double last_8hour = sum_last_8hour / last_8hour_counter;
+		double leq_last_8hour = correctdB(((10.0 * log10(last_8hour)) + 93.97940008672037609572522210551));
+
+		int last_day_counter = last_day_index < 24 * 60 ? last_day_index : 24 * 60;
+		int last_day_start = last_day_counter < 8 * 60 ? last_day_counter : 8 * 60;
+		double sum_last_day = last_8hour;
+		for (int i = last_day_index - last_day_counter + last_day_start; i < last_day_index; i++) {
+			sum_last_day += last_day_SoundLevel[i];
+		}
+		double last_day = sum_last_day / last_day_counter;
+		double leq_last_day = correctdB(((10.0 * log10(last_day)) + 93.97940008672037609572522210551));
+
 		cumulativeSoundLevel = 0;
 		cumulativeSoundCounter = 0;
 		start_ts = ecore_time_unix_get();
@@ -264,6 +312,17 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 		snprintf(avgleqString, sizeof(avgleqString), "%d", avg_leg);
 		ret = bundle_add_str(event_data, "avgleq", avgleqString);
 		ret = bundle_add_str(event_data, "avgcleq", avgcorrectedleqString);
+
+
+
+
+
+
+
+
+
+
+
 	}
 
 	dlog_print(DLOG_INFO, LOG_TAG, "event_publish_app_event");

@@ -8,10 +8,12 @@
 
 #include <curl/curl.h>
 #include <net_connection.h>
+#include <bundle.h>
+#include <app_event.h>
 
 // Define the sample rate for recording audio
 #define SAMPLE_RATE 44100
-//#define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_U8
+//#define SAMPLE_TYPE AUDO_SAMPLE_TYPE_U8
 #define SAMPLE_TYPE AUDIO_SAMPLE_TYPE_S16_LE
 #define RECORDING_SEC 10
 #define MIN_RECORDING_INTERVAL  1
@@ -566,6 +568,16 @@ win_back_cb(void *data, Evas_Object *obj, void *event_info)
 	elm_win_lower(ad->win);
 }
 
+static void user_event_cb(const char *event_name, bundle *event_data, void *user_data)
+{
+    dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: %s: %d\n", event_name, bundle_get_count(event_data));
+    char *value;
+    bundle_get_str(event_data, "leq", &value);
+    dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq: %s\n", value);
+
+    return;
+}
+
 static void
 create_base_gui(appdata_s *ad)
 {
@@ -651,6 +663,7 @@ create_base_gui(appdata_s *ad)
 	evas_object_show(ad->win);
 
 	dlog_print(DLOG_DEBUG, LOG_TAG, "gui ok");
+
 }
 
 void
@@ -820,6 +833,14 @@ app_create(void *data)
 	appdata_s *ad = data;
 
 	create_base_gui(ad);
+
+	event_handler_h event_handler;
+	int ret = EVENT_ERROR_NONE;
+
+	ret = event_add_event_handler("event.arq901aCcl.tatysoundservice.new_data_event", user_event_cb, "new_data_event", &event_handler);
+
+	if (ret != EVENT_ERROR_NONE)
+	    dlog_print(DLOG_ERROR, LOG_TAG, "event_add_event_handler err: [%d]", ret);
 
 	return true;
 }

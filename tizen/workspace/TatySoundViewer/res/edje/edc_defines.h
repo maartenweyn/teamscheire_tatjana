@@ -7,6 +7,7 @@
 #define STATE_DEFAULT "default"
 #define STATE_CUSTOM "custom"
 #define STATE_BTN_PRESSED "pressed"
+#define STATE_RUNNING "running"
 
 #define FONT_STYLE_SMALL "BreezeSans:style=thin"
 #define FONT_SIZE_SMALL 5*4
@@ -20,7 +21,7 @@
 
 /* ---------------- Setup defines ---------------- */
 #define PART_BG "board_bg"
-#define PART_START_BUTTON "start_button"
+#define PART_BUTTON "button"
 #define PART_INDICATOR_LEQ "indicator_leq"
 #define PART_INDICATOR_LEQ_MIN "indicator_leq_min"
 #define PART_INDICATOR_LEQ_HOUR "indicator_leq_hour"

@@ -50,7 +50,7 @@ void get_device_id(void)
     dlog_print(DLOG_INFO, LOG_TAG, "Tizen ID: %s", value);
     dlog_print(DLOG_INFO, LOG_TAG, "token: %s", token);
 
-	snprintf(thingsboard_url, sizeof(thingsboard_url), "https://demo.thingsboard.io/api/v1/%s/telemetry", token);
+	snprintf(thingsboard_url, sizeof(thingsboard_url), HOST_URL, token);
 
     dlog_print(DLOG_INFO, LOG_TAG, "thingsboard_url: %s", thingsboard_url);
 
@@ -192,6 +192,7 @@ static Eina_Bool init_recording(void *data)
 		   ad->timer1 = ecore_timer_add(1, init_recording, ad);
 		   return ECORE_CALLBACK_CANCEL;
 	   } else {
+		   measure_sound();
 		   ad->timer1 = ecore_timer_add(RECORDING_INTERVAL, init_recording, ad);
 		   return ECORE_CALLBACK_CANCEL;
 	   }

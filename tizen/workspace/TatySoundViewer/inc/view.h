@@ -17,5 +17,6 @@ Evas_Object *view_create_layout_for_win(Evas_Object *win, const char *file_path,
 
 void updates_values(int current, int corrected, int avg_min, int avg_hour, int avg_8hour, int avg_day);
 void set_running_status(int running);
+void set_token(char* token_id);
 
 #endif /* VIEW_H_ */

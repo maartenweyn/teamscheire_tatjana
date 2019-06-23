@@ -3,6 +3,7 @@
 
 #include <app_control.h>
 #include <device/power.h>
+#include <system_info.h>
 
 
 #include <bundle.h>
@@ -16,17 +17,28 @@ typedef struct appdata {
 	Evas_Object *nf;
 } appdata_s;
 
-static Ecore_Timer *update_timer;
-static bool getting_data = false;
-
-static Evas_Object *startStopButton;
-static Evas_Object *getDataButton;
-static Evas_Object *dataLabel;
+//static Ecore_Timer *update_timer;
+//static bool getting_data = false;
+//
+//static Evas_Object *startStopButton;
+//static Evas_Object *getDataButton;
+//static Evas_Object *dataLabel;
 
 static bool serviceLaunced = false;
 
+static void launch_service();
+static void stop_service();
 
-static app_control_h app_update_control = NULL;
+
+void control_service()
+ {
+	if (serviceLaunced)
+	{
+		stop_service();
+	} else {
+		launch_service();
+	}
+ }
 
 static void new_data_event_cb(const char *event_name, bundle *event_data, void *user_data)
 {
@@ -61,7 +73,7 @@ static void new_data_event_cb(const char *event_name, bundle *event_data, void *
 }
 
 
-void launch_service()
+static void launch_service()
 {
 	static app_control_h app_control = NULL;
 	int response = app_control_create(&app_control);
@@ -98,8 +110,7 @@ void launch_service()
 
     if (response == APP_CONTROL_ERROR_NONE) {
     		serviceLaunced = true;
-    		//elm_object_text_set(startStopButton, "Stop Service");
-    		//set_running_status(1);
+    		set_running_status(1);
     }
 }
 
@@ -141,8 +152,8 @@ static void stop_service()
     }
 
     if (response == APP_CONTROL_ERROR_NONE) {
-			serviceLaunced = false;
-			elm_object_text_set(startStopButton, "Start Service");
+			serviceLaunced = 0;
+			set_running_status(0);
 	}
 }
 
@@ -163,164 +174,24 @@ void data_cb(app_control_h request, app_control_h reply, app_control_result_e re
 	}
 }
 
-//	int ret;
-//	char *value;
-//	//ret = app_control_get_extra_data(app_update_control, "leq", &value);
-//	ret = app_control_get_extra_data(app_update_control, APP_CONTROL_DATA_SELECTED, &value);
-//	if (ret != APP_CONTROL_ERROR_NONE)
-//	{
-//	  dlog_print(DLOG_ERROR, LOG_TAG, "app_control_get_extra_data() is failed. err = %d", ret);
-//	}
-//	dlog_print(DLOG_DEBUG, LOG_TAG, "[value] %s", value);
-//
-//	if (app_control_destroy(app_update_control) == APP_CONTROL_ERROR_NONE)
-//	{
-//		dlog_print(DLOG_INFO, LOG_TAG, "App control destroyed.");
-//	}
-//}
-
-
-static Eina_Bool get_data(void *data)
+void get_device_id(void)
 {
-	dlog_print(DLOG_DEBUG, LOG_TAG, "get_data");
+    char *value;
+    int ret;
+    char token[21];
 
-    if (app_control_create(&app_update_control)== APP_CONTROL_ERROR_NONE)
-    {
-    		int response = app_control_set_app_id(app_update_control, "be.wesdec.tatysoundservice");
-    		if (response == APP_CONTROL_ERROR_NONE) {
-    			response = app_control_add_extra_data(app_update_control, "service_action", "update");
-    			if (response == APP_CONTROL_ERROR_NONE) {
-    				response = app_control_send_launch_request(app_update_control, data_cb, NULL);
-    				if (response == APP_CONTROL_ERROR_NONE) {
-    					dlog_print(DLOG_INFO, LOG_TAG, "App launch request sent!");
-    				} else {
-    					dlog_print(DLOG_ERROR, LOG_TAG, "App launch request sending failed!");
-    				}
-			} else {
-				dlog_print(DLOG_ERROR, LOG_TAG, "App Control add extra data failed! %d", response);
-			}
-    		} else {
-    			dlog_print(DLOG_ERROR, LOG_TAG, "App Control set app id failed! %d", response);
-    		}
+    ret = system_info_get_platform_string("http://tizen.org/system/tizenid", &value);
+    if (ret != SYSTEM_INFO_ERROR_NONE) {
+        /* Error handling */
 
-
-        if (app_control_destroy(app_update_control) == APP_CONTROL_ERROR_NONE)
-        {
-            dlog_print(DLOG_INFO, LOG_TAG, "App control destroyed.");
-        }
-        //ui_app_exit();
-    }
-    else
-    {
-        dlog_print(DLOG_ERROR, LOG_TAG, "App control creation failed!");
+        return;
     }
 
-    if (getting_data)
-    		return ECORE_CALLBACK_RENEW;
-    else
-    		return ECORE_CALLBACK_CANCEL;
-}
+    memcpy(token, value, 20);
+    token[20] = '\0';
+    set_token(token);
 
-static void launch_service_cb(void *data, Evas_Object *obj, void *event_info)
- {
-	if (serviceLaunced)
-	{
-		stop_service();
-	} else {
-     launch_service();
-	}
- }
-
- static void get_data_cb(void *data, Evas_Object *obj, void *event_info)
- {
-	 dlog_print(DLOG_DEBUG, LOG_TAG, "get_data_cb");
-
-	 getting_data = !getting_data;
-
-	 if (getting_data) {
-		 update_timer = ecore_timer_add(UPDATE_INTERVAL, get_data, NULL);
-	 }
- }
-
-static void close_app_cb(void *data, Evas_Object *obj, void *event_info)
- {
-     ui_app_exit();
- }
-
-static void
-win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
-{
-	ui_app_exit();
-}
-
-static void
-win_back_cb(void *data, Evas_Object *obj, void *event_info)
-{
-	appdata_s *ad = data;
-	/* Let window go to hide state. */
-	elm_win_lower(ad->win);
-}
-
-static void
-create_base_gui(appdata_s *ad)
-{
-	/* Window */
-	/* Create and initialize elm_win.
-	   elm_win is mandatory to manipulate window. */
-	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
-	elm_win_autodel_set(ad->win, EINA_TRUE);
-
-	if (elm_win_wm_rotation_supported_get(ad->win)) {
-		int rots[4] = { 0, 90, 180, 270 };
-		elm_win_wm_rotation_available_rotations_set(ad->win, (const int *)(&rots), 4);
-	}
-
-	evas_object_smart_callback_add(ad->win, "delete,request", win_delete_request_cb, NULL);
-	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb, ad);
-
-	/* Conformant */
-	/* Create and initialize elm_conformant.
-	   elm_conformant is mandatory for base gui to have proper size
-	   when indicator or virtual keypad is visible. */
-	ad->conform = elm_conformant_add(ad->win);
-	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_SHOW);
-	elm_win_indicator_opacity_set(ad->win, ELM_WIN_INDICATOR_OPAQUE);
-	evas_object_size_hint_weight_set(ad->conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(ad->win, ad->conform);
-	evas_object_show(ad->conform);
-
-	/* Naviframe */
-	ad->nf = elm_naviframe_add(ad->conform);
-	evas_object_show(ad->nf);
-	elm_naviframe_prev_btn_auto_pushed_set(ad->nf, EINA_TRUE);
-	elm_object_content_set(ad->conform, ad->nf);
-
-	/* Add a box and push it into the naviframe */
-	ad->box = elm_box_add(ad->nf);
-	evas_object_show(ad->box);
-	elm_naviframe_item_push(ad->nf, NULL, NULL, NULL, ad->box, NULL);
-
-	startStopButton = elm_button_add(ad->box);
-	elm_object_text_set(startStopButton, "Start Service");
-	//elm_object_style_set(button, "bottom");
-	evas_object_size_hint_weight_set(startStopButton, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(startStopButton, EVAS_HINT_FILL, 0.5);
-	elm_box_pack_end(ad->box, startStopButton);
-	evas_object_show(startStopButton);
-	evas_object_smart_callback_add(startStopButton, "clicked", launch_service_cb, NULL);
-
-	getDataButton = elm_button_add(ad->box);
-	elm_object_text_set(getDataButton, "get Data");
-	//elm_object_style_set(button, "bottom");
-	evas_object_size_hint_weight_set(getDataButton, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(getDataButton, EVAS_HINT_FILL, 0.5);
-	elm_box_pack_end(ad->box, getDataButton);
-	evas_object_show(getDataButton);
-	evas_object_smart_callback_add(getDataButton, "clicked", get_data_cb, NULL);
-
-
-	/* Show window after base gui is set up */
-	evas_object_show(ad->win);
+    free(value); /* Release after use */
 }
 
 static bool
@@ -342,6 +213,8 @@ app_create(void *data)
 
 	if (ret != EVENT_ERROR_NONE)
 	    dlog_print(DLOG_ERROR, LOG_TAG, "event_add_event_handler err: [%d]", ret);
+
+	get_device_id();
 
 	return true;
 }

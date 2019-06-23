@@ -53,3 +53,7 @@ dkms.conf
 .DS_Store
 .sign
 tizen/workspace/TatySoundService/inc/settings.h
+RotaryTimer
+RotaryTimerWeb
+SpinningArrow
+.CustomProfile

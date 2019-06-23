@@ -54,7 +54,7 @@ Eina_Bool view_create(void)
 	}
 
 	s_info.layout_setup = view_create_layout_for_win(s_info.win, _create_resource_path(MAIN_EDJ), GRP_SETUP);
-	elm_layout_signal_callback_add(s_info.layout_setup, START_CLICKED, "", launch_service, NULL);
+	elm_layout_signal_callback_add(s_info.layout_setup, START_CLICKED, "", control_service, NULL);
 
 
 
@@ -77,6 +77,20 @@ void updates_values(int raw, int leq, int avg_min, int avg_hour, int avg_8hour, 
 	_set_displayed_sound_value(s_info.layout_setup);
 }
 
+void set_token(char* token_id) {
+
+	Eina_Stringshare *txt = NULL;
+
+	if (!s_info.layout_setup) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "[%s:%d] s_info.layout == NULL", __FILE__, __LINE__);
+		return;
+	}
+
+	txt = eina_stringshare_printf("%s", token_id);
+	elm_layout_text_set(s_info.layout_setup, PART_DEVID, txt);
+	eina_stringshare_del(txt);
+}
+
 void set_running_status(int running) {
 	int msg_id = MSG_ID_SET_RUNNING_STATUS;
 	Edje_Message_Int_Set *msg = NULL;
@@ -89,7 +103,15 @@ void set_running_status(int running) {
 	if (running == 0)
 		msg_id = MSG_ID_SET_NOT_RUNNING_STATUS;
 
-	edje_object_message_send(elm_layout_edje_get(s_info.layout_setup), EDJE_MESSAGE_INT_SET, msg_id, NULL);
+	msg = calloc(1, sizeof(Edje_Message_Int_Set));
+	if (!msg) {
+		dlog_print(DLOG_ERROR, LOG_TAG, "[%s:%d] msg == NULL", __FILE__, __LINE__);
+		return;
+	}
+
+	msg->count = 1;
+
+	edje_object_message_send(elm_layout_edje_get(s_info.layout_setup), EDJE_MESSAGE_INT_SET, msg_id, msg);
 	free(msg);
 }
 
