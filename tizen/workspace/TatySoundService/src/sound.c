@@ -306,7 +306,7 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 		snprintf(leqString_8hour, sizeof(leqString_8hour), "%.1f", leq_last_8hour);
 		snprintf(leqString_day, sizeof(leqString_day), "%.1f", leq_last_day);
 		ret = bundle_add_str(event_data, "leq_hour", leqString_hour);
-		ret = bundle_add_str(event_data, "leq_8hour", leqString_8hour);
+		ret = bundle_add_str(event_data, "leq_8hours", leqString_8hour);
 		ret = bundle_add_str(event_data, "leq_day", leqString_day);
 
 

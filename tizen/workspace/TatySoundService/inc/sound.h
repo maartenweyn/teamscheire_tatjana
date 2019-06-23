@@ -10,9 +10,9 @@
 
 #include <stdbool.h>
 
-#define CORR_X0		55.0 // watch
+#define CORR_X0		67.0 // watch
 #define CORR_X1		82.0 // watch
-#define CORR_REF0	20.0 // ref
+#define CORR_REF0	30.7 // ref
 #define	CORR_REF1	76.0 // ref
 
 double a_filter(double input);

@@ -35,7 +35,7 @@ static struct view_info {
 	.layout_setup = NULL,
 	.layout_run = NULL,
 	.sound_values = {"25.0", "25.0","25.0","25.0","25.0","25.0"},
-	.network_status = 0
+	.network_status = 2
 };
 
 static const char *_create_resource_path(const char *file_name);
@@ -225,10 +225,20 @@ static void _set_displayed_sound_value(Evas_Object *layout)
 	_set_selected_part_displayed_value(layout, PART_LEQ_8HOUR, s_info.sound_values.leq_8hours);
 	_set_selected_part_displayed_value(layout, PART_LEQ_DAY, s_info.sound_values.leq_day);
 
-	if (s_info.network_status)
-		_set_selected_part_displayed_value(layout, PART_NETWORK, "connected");
-	else
+	switch (s_info.network_status) {
+	case 0:
 		_set_selected_part_displayed_value(layout, PART_NETWORK, "no connection");
+		break;
+	case 1:
+		_set_selected_part_displayed_value(layout, PART_NETWORK, "connected");
+		break;
+	case 2:
+		_set_selected_part_displayed_value(layout, PART_NETWORK, "connecting");
+		break;
+	default:
+		_set_selected_part_displayed_value(layout, PART_NETWORK, "");
+		break;
+	}
 
 	int msg_id = MSG_ID_SET_VALUES;
 	Edje_Message_Int_Set *msg = NULL;

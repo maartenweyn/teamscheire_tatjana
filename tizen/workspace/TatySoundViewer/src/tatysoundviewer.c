@@ -72,18 +72,17 @@ static void new_data_event_cb(const char *event_name, bundle *event_data, void *
 		if (bundle_get_str(event_data, "leq_hour", &leq_hour) == BUNDLE_ERROR_NONE) {
 				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_hour: %s\n", leq_hour);
 		}
-//		if (bundle_get_str(event_data, "leq_8hours", &leq_8hours) == BUNDLE_ERROR_NONE) {
-//				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_8hours: %s\n", leq_8hours);
-//		}
-//		if (bundle_get_str(event_data, "leq_day", &leq_day) == BUNDLE_ERROR_NONE) {
-//				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_day: %s\n", leq_day);
-//		}
+		if (bundle_get_str(event_data, "leq_8hours", &leq_8hours) == BUNDLE_ERROR_NONE) {
+				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_8hours: %s\n", leq_8hours);
+		}
+		if (bundle_get_str(event_data, "leq_day", &leq_day) == BUNDLE_ERROR_NONE) {
+				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_day: %s\n", leq_day);
+		}
 		if (bundle_get_str(event_data, "network", &network_string) == BUNDLE_ERROR_NONE) {
 				dlog_print(DLOG_INFO, LOG_TAG, "user_event_cb: leq_day: %s\n", network_string);
 				network_status = atoi(network_string);
 		}
-		//updates_values(leq_min, leq_hour, leq_8hours, leq_day, network_status);
-		updates_values(leq_min, leq_hour, "30.0", "30.0", network_status);
+		updates_values(leq_min, leq_hour, leq_8hours, leq_day, network_status);
     }
 
     updates_current_values(raw, leq);
