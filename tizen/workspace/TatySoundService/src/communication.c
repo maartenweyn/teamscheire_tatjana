@@ -49,53 +49,71 @@ int post_to_thingsboard(post_data_s data[], int lenght) {
 			curl_easy_setopt(curlHandler, CURLOPT_PROXY, proxy_address);
 
 		/* Set CURL parameters */
-		//curl_easy_setopt(curlHandler, CURLOPT_URL, "http://demo.thingsboard.io/api/v1/ObCtJ5ttQ8U9tToxcQvD/telemetry");
-		//curl_easy_setopt(curlHandler, CURLOPT_URL, "https://demo.thingsboard.io/api/v1/w4ntKFw4M1eK0MEmMHvt/telemetry");
+
 		curl_easy_setopt(curlHandler, CURLOPT_URL, thingsboard_url);
-		//curl_easy_setopt(curlHandler, CURLOPT_URL, FIREBASE_HOST);
-		//json [{"ts":1560594942583, "values":{"leq":79, "cleq":71, "resp":0}}]
 		struct curl_slist *list = NULL;
 		list = curl_slist_append(list, "Content-Type: application/json");
 		curl_easy_setopt(curlHandler, CURLOPT_HTTPHEADER, list);
-		/* Now specify the POST data */
-		char json[200 * lenght];
-		int current_length = 1;
-
-		json[0] = '[';
-
-		for (int i = 0; i < lenght; i++) {
-			char temp[200];
-			dlog_print(DLOG_INFO, LOG_TAG, "ts %f  %.0f", data[i].ts, data[i].ts * 1000);
-			int temp_length = snprintf(temp, sizeof(temp), "{\"ts\":%.0f, \"values\":{\"sound_level\":%.4f, \"min\":%.1f,  \"hour\":%.1f, \"8hours\":%.1f,  \"day\":%.1f,\"resp\":%d}}", data[i].ts * 1000, data[i].sound_level, data[i].leq_min, data[i].leq_hour, data[i].leq_8hours, data[i].leq_day, data[i].response);
-			//int temp_length = snprintf(temp, sizeof(temp), "{\"ts\":%.0f, \"leq\":%d, \"cleq\":%d, \"resp\":%d}", data[i].ts * 1000, data[i].avg_leq, data[i].corr_avg_leq, data[i].response);
-			memcpy(&json[current_length], temp, temp_length);
-			current_length += temp_length;
-			if (i + 1 < lenght) {
-				json[current_length++] = ',';
-			} else {
-				json[current_length++] = ']';
-				json[current_length++] = '\0';
-			}
-		}
-		dlog_print(DLOG_INFO, LOG_TAG, "json %s", json);
-
-		curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS, json);
 		curl_easy_setopt(curlHandler, CURLOPT_READFUNCTION, read_callback);
 		curl_easy_setopt(curlHandler, CURLOPT_READDATA, (void *)&chunk);
-		//curl_easy_setopt(curlHandler, CURLOPT_VERBOSE, 1L);
+		curl_easy_setopt(curlHandler, CURLOPT_TIMEOUT, 5);
+		/* Now specify the POST data */
+		char json[300];
 
-		/* Perform the request */
-		CURLcode res = curl_easy_perform(curlHandler);
 
-		/* Check for errors */
-		if(res != CURLE_OK)
-			fprintf(stderr, "CURL failed: %s\n", curl_easy_strerror(res));
+		while (lenght > 0)
+		{
+			//int temp_length =
+			snprintf(json, sizeof(json), "{\"ts\":%.0f,\"values\":{\"sound_level\":%.4f,\"min\":%.1f, \"hour\":%.1f,\"8hours\":%.1f,\"day\":%.1f,\"id\":%d,\"length\":%d,\"resp\":%d}}", data[lenght-1].ts * 1000, data[lenght-1].sound_level, data[lenght-1].leq_min, data[lenght-1].leq_hour, data[lenght-1].leq_8hours, data[lenght-1].leq_day, data[lenght-1].id, lenght, data[lenght-1].response);
+			dlog_print(DLOG_INFO, LOG_TAG, "json %s", json);
+			curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS, json);
+
+			/* Perform the request */
+			CURLcode res = curl_easy_perform(curlHandler);
+
+			if(res != CURLE_OK) {
+				fprintf(stderr, "CURL failed: %s\n", curl_easy_strerror(res));
+				break;
+			}
+
+			lenght--;
+
+			//todo delay needed?
+		}
+
+//		for (int i = 0; i < lenght; i++) {
+//			char temp[200];
+//			//dlog_print(DLOG_INFO, LOG_TAG, "ts %f  %.0f", data[i].ts, data[i].ts * 1000);
+//			int temp_length = snprintf(temp, sizeof(temp), "{\"ts\":%.0f,\"values\":{\"sound_level\":%.4f,\"min\":%.1f, \"hour\":%.1f,\"8hours\":%.1f,\"day\":%.1f,\"id\":%d,\"length\":%d,\"resp\":%d}}", data[i].ts * 1000, data[i].sound_level, data[i].leq_min, data[i].leq_hour, data[i].leq_8hours, data[i].leq_day, data[i].id, lenght, data[i].response);
+//			memcpy(&json[current_length], temp, temp_length);
+//			current_length += temp_length;
+//			if (i + 1 < lenght) {
+//				json[current_length++] = ',';
+//			} else {
+//				json[current_length++] = ']';
+//				json[current_length++] = '\0';
+//			}
+//		}
+
+//		dlog_print(DLOG_INFO, LOG_TAG, "json %s", json);
+//
+//		curl_easy_setopt(curlHandler, CURLOPT_POSTFIELDS, json);
+//		//curl_easy_setopt(curlHandler, CURLOPT_VERBOSE, 1L);
+//
+//		/* Perform the request */
+//		CURLcode res = curl_easy_perform(curlHandler);
+//
+//		/* Check for errors */
+//		if(res != CURLE_OK)
+//			fprintf(stderr, "CURL failed: %s\n", curl_easy_strerror(res));
+
+
 		/* Clean up */
 		curl_easy_cleanup(curlHandler);
 		free(chunk.memory);
 		connection_destroy(connection);
 
-		if (res == CURLE_OK)
+		if (lenght == 0)
 			return 0;
 		else
 			return 1;

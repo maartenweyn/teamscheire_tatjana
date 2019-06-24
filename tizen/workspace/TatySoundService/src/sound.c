@@ -309,16 +309,15 @@ static void synchronous_recording(void *data, Ecore_Thread *thread)
 		ret = bundle_add_str(event_data, "leq_8hours", leqString_8hour);
 		ret = bundle_add_str(event_data, "leq_day", leqString_day);
 
-
-		if (push_average_values(ts, avg_sound_level, corr_avg_leqmin, leq_last_hour, leq_last_8hour, leq_last_day) == 0)
-			bundle_add_str(event_data, "network", "1");
-		else
-			bundle_add_str(event_data, "network", "0");
-
 		cumulativeSoundLevel = 0;
 		cumulativeSoundCounter = 0;
 		last_day_index++;
-		start_ts = ecore_time_unix_get();
+		start_ts += MIN_RECORDING_INTERVAL;
+
+		if (push_average_values(ts, last_day_index-1, avg_sound_level, corr_avg_leqmin, leq_last_hour, leq_last_8hour, leq_last_day) == 0)
+			bundle_add_str(event_data, "network", "1");
+		else
+			bundle_add_str(event_data, "network", "0");
 	}
 
 	dlog_print(DLOG_INFO, LOG_TAG, "event_publish_app_event");

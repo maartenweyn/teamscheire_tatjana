@@ -25,6 +25,7 @@
 typedef struct
 {
 	double ts;
+	int id;
 	double sound_level;
 	double leq_min;
 	double leq_hour;
@@ -67,7 +68,7 @@ typedef struct
     }
 
 void push_current_values(double ts, int leq, int corrected);
-uint8_t push_average_values(double ts, double sound_level, double leq_min, double leq_hour, double leq_8hours, double leq_day);
+uint8_t push_average_values(double ts, int id, double sound_level, double leq_min, double leq_hour, double leq_8hours, double leq_day);
 char thingsboard_url[100];
 
 #endif /* __tatysoundservice_H__ */

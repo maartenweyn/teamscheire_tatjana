@@ -166,9 +166,10 @@ static void app_check_and_request_permissions() {
 //	leq_data.current_corrected_leq = corrected;
 //}
 
-uint8_t push_average_values(double ts, double sound_level, double leq_min, double leq_hour, double leq_8hours, double leq_day) {
-	dlog_print(DLOG_INFO, LOG_TAG, "%.3f (%.4f) %.1f %.1f %.1f %.1f", ts, sound_level, leq_min, leq_hour, leq_8hours, leq_day);
+uint8_t push_average_values(double ts, int id, double sound_level, double leq_min, double leq_hour, double leq_8hours, double leq_day) {
+	dlog_print(DLOG_INFO, LOG_TAG, "%.3f %d (%.4f) %.1f %.1f %.1f %.1f", ts, id, sound_level, leq_min, leq_hour, leq_8hours, leq_day);
 	postdata[post_data_length].ts = ts;
+	postdata[post_data_length].id = id;
 	postdata[post_data_length].sound_level = sound_level;
 	postdata[post_data_length].leq_min = leq_min;
 	postdata[post_data_length].leq_hour = leq_hour;
