@@ -47,6 +47,14 @@ void get_device_id(void)
 
     memcpy(token, value, 20);
 
+    for (char* p = token; (p = strchr(p, '\\')); ++p) {
+		*p = '_';
+	}
+
+    for (char* p = token; (p = strchr(p, '/')); ++p) {
+		*p = '_';
+	}
+
     dlog_print(DLOG_INFO, LOG_TAG, "Tizen ID: %s", value);
     dlog_print(DLOG_INFO, LOG_TAG, "token: %s", token);
 

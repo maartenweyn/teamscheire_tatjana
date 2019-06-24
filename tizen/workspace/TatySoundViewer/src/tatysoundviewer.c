@@ -207,6 +207,15 @@ void get_device_id(void)
 
     memcpy(token, value, 20);
     token[20] = '\0';
+
+    for (char* p = token; (p = strchr(p, '\\')); ++p) {
+		*p = '_';
+	}
+
+    for (char* p = token; (p = strchr(p, '/')); ++p) {
+		*p = '_';
+	}
+
     set_token(token);
 
     free(value); /* Release after use */
