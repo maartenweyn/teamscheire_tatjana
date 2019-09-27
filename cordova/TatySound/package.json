@@ -1,0 +1,41 @@
+{
+  "name": "tatysound",
+  "displayName": "TatySound",
+  "version": "1.0.0",
+  "description": "Companion app for the TatySound sensor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Maarten Weyn",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "cordova-android": "^8.0.0",
+    "cordova-browser": "^6.0.0",
+    "cordova-plugin-advanced-http": "^2.1.1",
+    "cordova-plugin-ble-central": "^1.2.0",
+    "cordova-plugin-device": "^2.0.3",
+    "cordova-plugin-file": "^6.0.2",
+    "onsenui": "^2.10.4"
+  },
+  "devDependencies": {
+    "cordova-plugin-whitelist": "^1.3.4"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-ble-central": {},
+      "cordova-plugin-advanced-http": {
+        "OKHTTP_VERSION": "3.10.0"
+      },
+      "cordova-plugin-device": {}
+    },
+    "platforms": [
+      "android",
+      "browser"
+    ]
+  }
+}
