@@ -14,8 +14,11 @@
   "license": "Apache-2.0",
   "dependencies": {
     "cordova-android": "^8.0.0",
+    "cordova-background-timer": "git+https://github.com/dukhanov/cordova-background-timer.git",
     "cordova-browser": "^6.0.0",
     "cordova-plugin-advanced-http": "^2.1.1",
+    "cordova-plugin-background-mode": "^0.7.3",
+    "cordova-plugin-background-mode-bluetooth-central": "^1.0.0",
     "cordova-plugin-ble-central": "^1.2.0",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-file": "^6.0.2",
@@ -31,7 +34,10 @@
       "cordova-plugin-advanced-http": {
         "OKHTTP_VERSION": "3.10.0"
       },
-      "cordova-plugin-device": {}
+      "cordova-plugin-device": {},
+      "cordova-plugin-background-mode": {},
+      "cordova-plugin-background-mode-bluetooth-central": {},
+      "cordova-background-timer": {}
     },
     "platforms": [
       "android",

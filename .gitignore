@@ -57,3 +57,10 @@ RotaryTimer
 RotaryTimerWeb
 SpinningArrow
 .CustomProfile
+cordova/TatySound/plugins/
+cordova/TatySound/platforms/browser
+cordova/TatySound/platforms/android/
+cordova/TatySound/node_modules
+cordova/TatySound/.gradle
+*.code-workspace
+.vscode

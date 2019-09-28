@@ -8,6 +8,8 @@ var noiselevel = {
     leq_day: 0.0,
     leq: 0.0,
     corrected_leq: 0.0,
+    prev_length :0,
+    prev_ts: {ts:0, sensor_ts:0},
     upload_status: false,
     posturl : "",
     initialize: function () {
@@ -26,8 +28,25 @@ var noiselevel = {
                 return;
             }
 
+
+            var length      = parseInt(res[9]);
+            if (length == 0)
+            {
+                noiselevel.ts = (new Date()).getTime();
+            } else {
+                if (noiselevel.prev_length == 0) {
+                    noiselevel.ts = (new Date()).getTime();
+                    noiselevel.prev_ts.ts = noiselevel.ts;
+                    noiselevel.prev_ts.sensor_ts = parseInt(res[1]);
+                    noiselevel.prev_length = length
+                } else {
+                    noiselevel.ts = noiselevel.prev_ts.ts - ((noiselevel.prev_ts.sensor_ts - parseInt(res[1]))*1000);
+                    noiselevel.prev_length = length;
+                }
+            }
+
             //e.g. 0,4300,859,53.8,57.8,54.0,56.9,57.0,0
-            noiselevel.ts          = (new Date()).getTime(); //parseInt(res[1]);
+             //parseInt(res[1]);
             noiselevel.id          = parseInt(res[2]);
             noiselevel.sound_level = parseFloat(res[3]);
             noiselevel.leq_min     = parseFloat(res[4]);
@@ -35,7 +54,6 @@ var noiselevel = {
             noiselevel.leq_8hours  = parseFloat(res[6]);
             noiselevel.leq_day     = parseFloat(res[7]);
             var response    = parseInt(res[8]);
-            var length      = parseInt(res[9]);
 
             var json = {
                 //ts: ts,
@@ -82,6 +100,10 @@ var noiselevel = {
     },
     
     showNoiseLevel: function () {
+
+        if (cordova.plugins.backgroundMode.isActive()) 
+            return;
+            
         var date = new Date(noiselevel.ts);
         var hours = date.getHours();
         var minutes = "0" + date.getMinutes();

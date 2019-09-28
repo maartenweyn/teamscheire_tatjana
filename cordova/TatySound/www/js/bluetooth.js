@@ -10,10 +10,19 @@ var bluetooth = {
     messages: [],
     currentmessage: new Uint8Array(100),
     currentmessagepointer: 0,
+    background_timer_settings: {
+        timerInterval: 30000, // interval between ticks of the timer in milliseconds (Default: 60000)
+        startOnBoot: false, // enable this to start timer after the device was restarted (Default: false)
+        stopOnTerminate: true, // set to true to force stop timer in case the app is terminated (User closed the app and etc.) (Default: true)
+        hours: -1, // delay timer to start at certain time (Default: -1)
+        minutes: 1, // delay timer to start at certain time (Default: -1)
+    },
     initialize: function () {
         debug.log('Initialising bluetooth ...');
         bluetooth.refreshDeviceList();
         debug.log('Bluetooth Initialised', 'success');
+        window.BackgroundTimer.onTimerEvent(bluetooth.timer_callback);
+        window.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
     },
     refreshDeviceList: function () {
         var onlyUART = true;
@@ -23,7 +32,12 @@ var bluetooth = {
     },
     onDiscoverDevice: function (device) {
         var previousConnectedDevice = storage.getItem('connectedDevice');
-        debug.log('previousConnectedDevice ' + previousConnectedDevice.name, 'success');
+        console.log("previousConnectedDevice " + previousConnectedDevice);
+
+        if (previousConnectedDevice != undefined)
+            debug.log('previousConnectedDevice ' + previousConnectedDevice.name, 'success');
+        else
+            debug.log('no previousConnectedDevice ', 'error');
 
         //if (device.name.toLowerCase().replace(/[\W_]+/g, "").indexOf('cme') > -1) {
         var html = '<ons-list-item modifier="chevron" data-device-id="' + device.id + '" data-device-name="' + device.name + '" tappable>' +
@@ -67,6 +81,7 @@ var bluetooth = {
             //mqttclient.addMessage('device,1');
 
             bluetooth.toggleConnectionButtons();
+            window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
         };
 
         ble.connect(deviceId, onConnect, bluetooth.onError);
@@ -76,7 +91,7 @@ var bluetooth = {
         //mqttclient.addMessage('device,0');
         debug.log('Disconnected from ' + bluetooth.lastConnectedDeviceId, 'success');
         bluetooth.connectedDevice = {};
-        bluetooth.toggleConnectionButtons()();
+        bluetooth.toggleConnectionButtons();
     },
     disconnectDevice: function (event) {
         debug.log('Disconnecting from ' + bluetooth.connectedDevice.id);
@@ -141,6 +156,25 @@ var bluetooth = {
         
         //debug.log("end character found");
     },
+    timer_callback: function() {
+        ble.isConnected(bluetooth.connectedDevice.id, function () {
+            window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
+        }, function () {
+            bluetooth.refreshDeviceList();
+        });
+    },
+    timerstart_successCallback: function() {
+        debug.log("BLE: timer started", 'success');
+    },
+    timerstart_errorCallback: function(e) {
+        debug.log("BLE error: could not start timer", 'error');
+    },
+    timerstop_successCallback: function() {
+        debug.log("BLE: timer stopped", 'success');
+    },
+    timerstop_errorCallback: function(e) {
+        debug.log("BLE error: could not stop timer", 'error');
+    },
     onError: function (reason) {
         debug.log("BLE error: " + JSON.stringify(reason), 'error');
         ble.isConnected(bluetooth.connectedDevice.id, function () {
@@ -149,7 +183,8 @@ var bluetooth = {
             bluetooth.connectedDevice = {};
             //mqttclient.addMessage('device,0');
             debug.log('error and disconnected from ' + bluetooth.lastConnectedDeviceId, 'success');
-            bluetooth.toggleConnectionButtons()();
+            bluetooth.toggleConnectionButtons();
+            window.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
         });
     },
     toggleConnectionButtons: function () {

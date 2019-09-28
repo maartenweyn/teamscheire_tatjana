@@ -22,6 +22,20 @@ var app = {
         //gps.getLocation();
         bluetooth.initialize();
         noiselevel.initialize();
+
+        cordova.plugins.backgroundMode.enable();
+        cordova.plugins.backgroundMode.overrideBackButton();
+        //cordova.plugins.backgroundMode.setDefaults({ silent: true })
+
+        cordova.plugins.backgroundMode.setDefaults({
+            title: "TatySound",
+            text: "TatySound communication",
+            icon: 'ic_launcher.png', // this will look for icon.png in platforms/android/res/drawable|mipmap
+            color: 'F14F4D', // hex format like 'F14F4D'
+            resume: true,
+            hidden: true,
+            bigText: false
+        });
     },
 
     bindEvents: function () {
