@@ -64,3 +64,4 @@ cordova/TatySound/node_modules
 cordova/TatySound/.gradle
 *.code-workspace
 .vscode
+bluemic/Project/BlueNRG1_PER_BlueVoice/build/
