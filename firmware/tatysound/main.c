@@ -93,6 +93,8 @@ void set_all_leds_color(uint8_t color, uint8_t brightness);
 uint8_t sleep_status = 0; // 0 can go to sleep,  1 keep awake
 extern uint8_t ble_state;
 
+static bool first_sample = true;
+
                                                                            
 //static uint32_t m_buffer_rx[];
 //static int32_t soundbuffer[SHORT_SAMPLE];
@@ -132,7 +134,7 @@ void start_sound_measurement() {
   app_pwm_enable(&PWM1);
 
   app_pwm_channel_duty_set(&PWM2, 0, 50);
-  app_pwm_channel_duty_set(&PWM1, 0, 50);  // Set at 50% duty cycle for square wave
+  //app_pwm_channel_duty_set(&PWM1, 0, 50);  // Set at 50% duty cycle for square wave
 
 
   //while(pwm_ready < 2) {}
@@ -691,26 +693,32 @@ void process_sound_data() {
 
   
   NRF_LOG_DEBUG("process_sound_data from %d to %d", 0, soundbuffer_position);
+  if (first_sample) {
+    prev_avg = soundbuffer[0] >> 6;
+    first_sample = false;
+   }
 
-  prev_avg = 0.0;
-  int64_t sum = 0.0;
+  double sum = 0.0;
   for (int i = 0; i < I2S_BUFFER_SIZE ; i++) {
     soundbuffer[i] = soundbuffer[i] >> 6;
+
+    NRF_LOG_RAW_INFO("%d\n", soundbuffer[i]);
 
     prev_avg = 0.999 * prev_avg + 0.001 * soundbuffer[i];
     sum += soundbuffer[i];
   }
 
-  int32_t avg = (int)((sum + 0.5) /I2S_BUFFER_SIZE);
-  NRF_LOG_INFO("%d/%d %d, AVG: %d",(int) sum, I2S_BUFFER_SIZE,  avg, (int) prev_avg);
+  double avg = sum / I2S_BUFFER_SIZE;
+  NRF_LOG_INFO("%d/%d %d, AVG: %d",(int) sum, I2S_BUFFER_SIZE,  (int) avg, (int) prev_avg);
 
 
   for (int i = 0; i < I2S_BUFFER_SIZE ; i++) {
   
     temp_sum += soundbuffer[i];
-    soundbuffer[i] -= avg; //(int) (prev_avg + 0.5);
-    temp_sum2 += soundbuffer[i];
-    double filtered = a_filter(soundbuffer[i]);
+    double corrected = soundbuffer[i]  - prev_avg;
+    //soundbuffer[i] -= avg; //(int) (prev_avg + 0.5);
+    temp_sum2 += corrected;
+    double filtered = a_filter(corrected);
     sumsquare += filtered * filtered;
     temp_sum_avg += filtered;
   }
@@ -828,12 +836,37 @@ static void i2s_data_handler(nrf_drv_i2s_buffers_t const * buffers, uint32_t  st
 //    }
 //}
 
+__STATIC_INLINE void delay_ticks(uint32_t delay_ticks)
+{
+    if (delay_ticks == 0)
+    {
+        return;
+    }
 
+    __ALIGN(16)
+    static const uint16_t delay_machine_code[] = {
+        0x3800 + 3, // SUBS r0, #loop_cycles
+        0xd8fd, // BHI .-2
+        0x4770  // BX LR
+    };
+
+    typedef void (* delay_func_t)(uint32_t);
+    const delay_func_t delay_cycles =
+        // Set LSB to 1 to execute the code in the Thumb mode.
+        (delay_func_t)((((uint32_t)delay_machine_code) | 1));
+    delay_cycles(delay_ticks);
+}
 
 
 void pwm_ready_callback(uint32_t pwm_id) 
 {
-	pwm_ready++;
+
+  if (pwm_id == 2) {
+    app_pwm_channel_duty_set(&PWM1, 0, 50);
+  }
+  NRF_LOG_INFO("pwm_ready_callback %d", pwm_id);
+  pwm_ready++;
+
 }
 
 /**@brief Application main function.
@@ -874,7 +907,7 @@ void pwm_ready_callback(uint32_t pwm_id)
   app_pwm_config_t pwm1_cfg = APP_PWM_DEFAULT_CONFIG_1CH(CLOCK_PERIOD, 19);                           // SCK; pick a convenient gpio pin
   //pwm1_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH; 
   app_pwm_config_t pwm2_cfg = APP_PWM_DEFAULT_CONFIG_1CH(CLOCK_PERIOD*64, 26);                          // LRCK; pick a convenient gpio pin. LRCK period = 64X SCK period
-  pwm2_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH;
+  //pwm2_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH;
 
   // Initialize and enable PWM's
   err_code = app_pwm_ticks_init(&PWM1,&pwm1_cfg,pwm_ready_callback);
@@ -903,7 +936,7 @@ void pwm_ready_callback(uint32_t pwm_id)
   //init_battery_monitor();
 
   NRF_LOG_INFO("app start!\n");
-  //advertising_start();
+  advertising_start();
 
  // app_timer_start(m_acc_tmr, APP_TIMER_TICKS(ACC_TIMER_INTERVAL), NULL);
   app_timer_start(m_sound_tmr, APP_TIMER_TICKS(SOUND_TIMER_INTERVAL), NULL);

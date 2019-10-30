@@ -19,7 +19,7 @@
 #define MIC_OFFSET_DB     3.0103    // Default offset (sine-wave RMS vs. dBFS)
 #define MIC_REF_DB        94.0      // dB(SPL)
 #define MIC_REF_AMPL      6569 //Amplitude at 94dB(SPL) (-26dBFS from datasheet, i.e. (2^17-1)*10^(-26/20) )
-
+//#define MIC_REF_AMPL  0.050118723362727
 
 // ACC ALGORITHM
 #define NO_MOTION_THRESHOLD           1210000

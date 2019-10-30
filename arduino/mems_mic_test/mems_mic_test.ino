@@ -5,10 +5,10 @@
 #include "iir_filter.h"
 
 const i2s_port_t I2S_PORT = I2S_NUM_0;
-const int SAMPLE_RATE = 48000; // 32kHz
-const int SAMPLES_SHORT = SAMPLE_RATE / 8; // 125 ms
-const int BLOCK_SIZE = SAMPLES_SHORT / 6; // < 1024
-const int SAMPLE_LENGTH = SAMPLE_RATE * 1; // 1 second of data //128;
+const int SAMPLE_RATE = 16000; //48000; // 32kHz
+const int SAMPLES_SHORT = SAMPLE_RATE / 8; //SAMPLE_RATE / 8; // 125 ms
+const int BLOCK_SIZE = 1000; // < 1024
+const int SAMPLE_LENGTH = 48000; // 1 second of data //128;
 const int MIN_RECORDING_INTERVAL = 60000; //60*1000;
 
 #define MIC_OFFSET_DB     3.0103    // Default offset (sine-wave RMS vs. dBFS)
@@ -180,6 +180,8 @@ void get_samples() {
   uint64_t sum_sqr_weighted = 0;
   int32_t s;
 
+  double avg = 0;
+
   //discard samples 
        i2s_read(I2S_PORT, (char *)samples, 
                                         BLOCK_SIZE*4,     // the doc says bytes, but its elements.
@@ -196,8 +198,13 @@ void get_samples() {
     int samples_read = num_bytes_read /4;
 
     for (int i=0; i<samples_read; i++) {
-      samples[total_samples+i] = samples[total_samples+i]>>14; // only first 18 bits have value
-      meanval += samples[total_samples+i];
+      samples[total_samples+i] = samples[total_samples+i]>>14; 
+    }
+
+    for (int i=0; i<samples_read; i++) {
+      //samples[total_samples+i] = samples[total_samples+i]>>6; // only first 18 bits have value
+      //meanval += samples[total_samples+i];
+      avg = 0.999  * avg + 0.001 * samples[total_samples+i];
       //printf("%d: %ld, %lld\n", i, samples[total_samples+i], meanval);
     }
 
@@ -205,12 +212,15 @@ void get_samples() {
     //printf("+%d = %d\n", samples_read, total_samples);
   }
 
-  meanval /= total_samples;
+  //meanval /= total_samples;
+  meanval = avg;
   //printf("Meanvalue of %d =  %lld\n", total_samples, meanval);
 
     
   for (int i=0; i<total_samples; i++) {
       samples[i] -= meanval;
+      
+      //printf("%d\n", samples[i]);
 
       //samples[i] = ICS43434.filter(samples[i]);
       
@@ -227,6 +237,7 @@ void get_samples() {
       sum_sqr_weighted += weighted * weighted;
   
       //Serial.println(fraction);
+      //Serial.println(weighted);
       
       //double filtered = a_filter(fraction);
       //Serial.println(fraction);
@@ -423,7 +434,7 @@ void loop() {
   //Serial.println("Sampling...");
   get_samples();
 
-  //delay(4000);
-  //esp_sleep_enable_timer_wakeup(4000 * 1000);
-  //esp_light_sleep_start(); 
+  delay(500);
+  esp_sleep_enable_timer_wakeup(5000 * 1000);
+  esp_light_sleep_start(); 
 }

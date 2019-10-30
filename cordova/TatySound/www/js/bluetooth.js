@@ -112,7 +112,6 @@ var bluetooth = {
         data = new Uint8Array(data);
         var stringdata = String.fromCharCode.apply(null, data);
 
-
         for (var i = 0; i < data.length; i++)
         {
             //console.log("byte: '" +  stringdata + "' 0X" + ('0' + (data[i] & 0xFF).toString(16)).slice(-2));

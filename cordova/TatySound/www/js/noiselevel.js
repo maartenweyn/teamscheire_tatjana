@@ -11,6 +11,7 @@ var noiselevel = {
     prev_length :0,
     prev_ts: {ts:0, sensor_ts:0},
     upload_status: false,
+    sound_data: [],
     posturl : "",
     initialize: function () {
         noiselevel.posturl = "http://teamscheire.wesdec.be:8080/api/v1/" + device.uuid + "/telemetry";
@@ -21,16 +22,16 @@ var noiselevel = {
     parseData: function (datastring) {
         var res = datastring.split(',');
 
-        if (res[0] == '0') {
-            if (res.length != 10) {
-                debug.log("incorrect message length " + res.length + ": " + datastring, "error");
-                console.log("Array: " + res);
-                return;
-            }
+        if (res[0] == '1') {
+            // if (res.length != 10) {
+            //     debug.log("incorrect message length " + res.length + ": " + datastring, "error");
+            //     console.log("Array: " + res);
+            //     return;
+            // }
 
 
-            var length      = parseInt(res[9]);
-            if (length == 0)
+            var length_of_data_entries      = parseInt(res[3]);
+            if (length_of_data_entries == 0)
             {
                 noiselevel.ts = (new Date()).getTime();
             } else {
@@ -38,28 +39,68 @@ var noiselevel = {
                     noiselevel.ts = (new Date()).getTime();
                     noiselevel.prev_ts.ts = noiselevel.ts;
                     noiselevel.prev_ts.sensor_ts = parseInt(res[1]);
-                    noiselevel.prev_length = length
+                    noiselevel.prev_length = length_of_data_entries
                 } else {
                     noiselevel.ts = noiselevel.prev_ts.ts - ((noiselevel.prev_ts.sensor_ts - parseInt(res[1]))*1000);
-                    noiselevel.prev_length = length;
+                    noiselevel.prev_length = lenlength_of_data_entriesth;
                 }
             }
 
             //e.g. 0,4300,859,53.8,57.8,54.0,56.9,57.0,0
              //parseInt(res[1]);
-            noiselevel.id          = parseInt(res[2]);
-            noiselevel.sound_level = parseFloat(res[3]);
-            noiselevel.leq_min     = parseFloat(res[4]);
-            noiselevel.leq_hour    = parseFloat(res[5]);
-            noiselevel.leq_8hours  = parseFloat(res[6]);
-            noiselevel.leq_day     = parseFloat(res[7]);
-            var response    = parseInt(res[8]);
+            noiselevel.id          = parseInt(res[1]);
+            noiselevel.leq_min = parseInt(res[2]) / 100.0;
+            noiselevel.sound_level = noiselevel.leq_min;
+
+
+            noiselevel.sound_data.push({ts:noiselevel.ts, leq:Math.pow(10, noiselevel.leq_min)});
+
+            var nr_of_elements_avg = 0;
+            var sum_avg = 0;
+            for (var i = noiselevel.sound_data.length - 1; i >= 0 ; i--) {
+                if (noiselevel.ts - noiselevel.sound_data[i].ts < 360000) {
+                    sum_avg += noiselevel.sound_data[i].leq;
+                    nr_of_elements_avg++;
+                } else {
+                    break;
+                }
+            }
+
+            noiselevel.leq_hour    = Math.log10(sum_avg / nr_of_elements_avg);
+
+            for (var i = noiselevel.sound_data.length - 1 - nr_of_elements_avg; i >= 0 ; i--) {
+                if (noiselevel.ts - noiselevel.sound_data[i].ts < 8 * 360000) {
+                    sum_avg += noiselevel.sound_data[i].leq;
+                    nr_of_elements_avg++;
+                } else {
+                    break;
+                }
+            }
+
+            noiselevel.leq_8hours  = Math.log10(sum_avg / nr_of_elements_avg);
+
+            for (var i = noiselevel.sound_data.length - 1 - nr_of_elements_avg; i >= 0 ; i--) {
+                if (noiselevel.ts - noiselevel.sound_data[i].ts < 24 * 360000) {
+                    sum_avg += noiselevel.sound_data[i].leq;
+                    nr_of_elements_avg++;
+                } else {
+                    break;
+                }
+            }
+
+            noiselevel.leq_day     = Math.log10(sum_avg / nr_of_elements_avg);
+
+
+            while (nr_of_elements_avg < noiselevel.sound_data.length)
+                noiselevel.sound_data.shift();
+
+
+            var response    = 0;
 
             var json = {
                 //ts: ts,
                 ts: noiselevel.ts,
                 values: {
-                    sound_level: noiselevel.sound_level.toFixed(1),
                     min: noiselevel.leq_min.toFixed(1),
                     hour: noiselevel.leq_hour.toFixed(1),
                     hours8: noiselevel.leq_8hours.toFixed(1),
@@ -88,10 +129,12 @@ var noiselevel = {
                 debug.log("POST RESPONSE: " + response.status, "error");
                 noiselevel.upload_status = false;
             });
-        } else if (res[0] == "1") {
-            noiselevel.leq = parseFloat(res[1]);
-            noiselevel.corrected_leq = parseFloat(res[2]);
-            console.log("leq " + noiselevel.leq.toFixed(1) + ", " + "corr " + noiselevel.corrected_leq.toFixed(1) );
+
+            noiselevel.showNoiseLevel();
+        } else if (res[0] == "0") {
+            noiselevel.sound_level = parseInt(res[2]) / 100.0;
+            //noiselevel.corrected_leq = parseFloat(res[2]);
+            //console.log("leq " + noiselevel.leq.toFixed(1) + ", " + "corr " + noiselevel.corrected_leq.toFixed(1) );
             noiselevel.showNoiseLevel();
         } else {
             debug.log("unkown message type " + datastring, "error");
@@ -118,7 +161,6 @@ var noiselevel = {
             'Last hour: ' + noiselevel.leq_hour + ' dBA <br />' +
             'Last 8 Hours: ' + noiselevel.leq_8hours + ' dBA <br />' +
             'Last Day: ' + noiselevel.leq_day + ' dBA <br />'+
-            'leq: ' + noiselevel.leq + ' dBA <br />'+
             'Corrected: ' + noiselevel.corrected_leq + ' dBA <br />'+
             'Upload status: ' + noiselevel.upload_status + '<br />');
     }

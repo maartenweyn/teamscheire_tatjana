@@ -668,6 +668,7 @@ app_pwm_duty_t app_pwm_channel_duty_get(app_pwm_t const * const p_instance, uint
 }
 
 
+
 /**
  * @brief Function for initializing the PWM channel.
  *
