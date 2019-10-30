@@ -51,19 +51,35 @@ APP_TIMER_DEF(m_app_leds_tmr);
 APP_TIMER_DEF(m_app_alert_tmr);
 APP_TIMER_DEF(m_sound_tmr);
 
+
+
+typedef struct {
+  uint16_t time;
+  uint16_t cdBSPL;
+} sound_data_element_t;
+
+typedef struct {
+  uint8_t type;
+  uint16_t length;;
+  sound_data_element_t data[MAX_BLE_DATA];
+} sound_data_t;
+
+static sound_data_t ble_data = {
+      .type = 1, 
+      .length = 0,
+      .data[0].time = 0};
+
 static volatile uint8_t led_status[8][3] = {0};
 static uint8_t led_driver_status[3] = {0};
 static uint8_t light_brightness = 50;
 static uint8_t front_light_status = 0;
 
-static uint8_t ble_acc_list[4 + ACC_LIST_SIZE * 6] = {0};
-static Type3Axis16bit_U *acc_list = (Type3Axis16bit_U *)&ble_acc_list[4];
-static uint16_t *timestamp = (uint16_t *)&ble_acc_list[2];
+
+static uint16_t time_stamp = 0;
 static int16_t acc_list_pointer = 0;
 
 static uint8_t front_light_brightness_changed = 0;
 static uint8_t button_pushed = 0;
-static double totalBenZ = 0;
 
 uint32_t app_indication_set(bsp_indication_t indicate);
 static void app_leds_timer_handler(void *p_context);
@@ -77,12 +93,17 @@ void set_all_leds_color(uint8_t color, uint8_t brightness);
 uint8_t sleep_status = 0; // 0 can go to sleep,  1 keep awake
 extern uint8_t ble_state;
 
-                                                                           // Data handler is called when I2S data bufffer contains (I2S_BUFFER_SIZE/2) 32bit words
-static uint32_t m_buffer_rx[I2S_BUFFER_SIZE];
+                                                                           
+//static uint32_t m_buffer_rx[];
+//static int32_t soundbuffer[SHORT_SAMPLE];
+static int32_t soundbuffer[I2S_BUFFER_SIZE];
+static volatile bool i2s_running = false;
 
-static int32_t soundbuffer[SHORT_SAMPLE];
+APP_PWM_INSTANCE(PWM1,1);                                                                                  // Create the instance "PWM1" using TIMER0.
+APP_PWM_INSTANCE(PWM2,2);     
 
-static int soundbuffer_position = -1;
+
+static volatile int soundbuffer_position = -1;
 static double prev_avg = 0;
 static volatile bool parse_sound = false;
 
@@ -98,7 +119,50 @@ static const uint8_t led_addresses[8][3][2] = {
 
 static const uint8_t led_driver_addresses[3] = {ADDRESS0, ADDRESS1, ADDRESS2};
 
-static volatile bool     ready_flag;                                                                       // A PWM ready status
+static volatile uint8_t     pwm_ready = 0;                                                                       // A PWM ready status
+
+
+
+void start_sound_measurement() {
+  pwm_ready = 0;
+
+  NRF_LOG_DEBUG("Starting pwm");
+  
+  app_pwm_enable(&PWM2);
+  app_pwm_enable(&PWM1);
+
+  app_pwm_channel_duty_set(&PWM2, 0, 50);
+  app_pwm_channel_duty_set(&PWM1, 0, 50);  // Set at 50% duty cycle for square wave
+
+
+  //while(pwm_ready < 2) {}
+
+  NRF_LOG_DEBUG("Starting I2S");
+   nrf_drv_i2s_buffers_t const initial_buffers = {
+      .p_tx_buffer = NULL,
+      .p_rx_buffer = soundbuffer,
+  };
+  // Initialize I2S data callback buffer
+
+  uint32_t err_code = nrf_drv_i2s_start(&initial_buffers, I2S_BUFFER_SIZE, 0);
+
+  if (err_code != 0) {
+    NRF_LOG_INFO("cannot nrf_drv_i2s_startr\n");
+    return;
+  }    
+
+  i2s_running = true;
+
+}
+
+void stop_sound_measurement() {
+    app_pwm_disable(&PWM1);
+    app_pwm_disable(&PWM2);
+
+    nrf_drv_i2s_stop();
+
+    i2s_running = false;
+}
 
 /**@brief Function for handling the data from the Nordic UART Service.
  *
@@ -291,19 +355,16 @@ static void app_leds_timer_handler(void *p_context) {
  */
 
 static void sound_timer_handler(void *p_context) {
-  static bool show_led = true;
 
   UNUSED_PARAMETER(p_context);
 
-  NRF_LOG_INFO("sound_timer_handler");
-  NRF_LOG_FLUSH();
+  NRF_LOG_INFO("sound_timer_handler i2s: %d", i2s_running);
 
-  if (show_led)
-    set_led(3, BLUE, 50);
-  else
-    set_led(3, BLUE, 0);
-   
-  show_led = !show_led;
+  if (!i2s_running) {
+    start_sound_measurement();
+  } else {
+    app_indication_set(BSP_INDICATE_SEND_ERROR);
+  }
 }
 
 /**@brief Function for initializing the nrf log module.
@@ -564,10 +625,10 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
     m_stable_state = BSP_INDICATE_IDLE;
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
     break;
-  case BSP_INDICATE_USER_STATE_2: // peak
+  case BSP_INDICATE_USER_STATE_2: // measure
     set_led(LED_INDICATE_PEAK, LED_INDICATE_PEAK_COLOR, LED_BRIGHTNESS);
     m_stable_state = BSP_INDICATE_IDLE;
-    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
+    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(50), NULL);
     break;
     //
     //        case BSP_INDICATE_USER_STATE_3:
@@ -590,10 +651,6 @@ static const double AFILTER_Bcoef[] = {0.169994948147430, 0.280415310498794, -1.
 static double AFILTER_conditions[] = {0, 0, 0, 0, 0, 0};
 
 
-
-APP_PWM_INSTANCE(PWM1,1);                                                                                  // Create the instance "PWM1" using TIMER0.
-APP_PWM_INSTANCE(PWM2,2);     
-
 int32_t a_filter(double input) {
   double output = input * AFILTER_Bcoef[0] + AFILTER_conditions[0];
   for (int j = 0; j < 5; j++) {
@@ -604,69 +661,98 @@ int32_t a_filter(double input) {
   return (int32_t) output;
 }
 
-
 void process_sound_data() {
-  static uint64_t sumsquare = 0;
+  static double sumsquare = 0.0;
   static int total_samples = 0;
-  static int current_buffer_counter = 0;
 
-  //int64_t meanval = 0;
-  for (int i = current_buffer_counter*I2S_BUFFER_SIZE; i < I2S_BUFFER_SIZE * (current_buffer_counter+1) ; i++) {
-//    double fraction = 0.0;
-//    if (soundbuffer[i] < 0) 
-//       fraction = soundbuffer[i] / 8388608.0;
-//    else
-//      fraction = soundbuffer[i] / 8388607.0;
+  static double acc_min = 0;
+  static uint64_t acc_min_count = 0;
+  static double temp_sum, temp_sum2,temp_sum_avg = 0.0;
 
-    //NRF_LOG_DEBUG("%lx %d %d", soundbuffer[i], soundbuffer[i], (int)(1000*fraction));
+  uint8_t data[50];
 
+  parse_sound = false;
+
+  uint32_t new_ts = app_timer_cnt_get() / APP_TIMER_CLOCK_FREQ;
+
+  if (new_ts - time_stamp >= 60) {
+    if (acc_min_count > 0) {
+      double leq_min =  MIC_OFFSET_DB + MIC_REF_DB + 20 * log10(sqrt(acc_min / acc_min_count) / MIC_REF_AMPL);
+
+      sprintf(data, "1,%d,%d,0;", (int) (time_stamp), (uint16_t)(leq_min * 100));
+      send_data_to_ble(data,strlen(data));
+      NRF_LOG_DEBUG(data);
+
+      acc_min = 0;
+      acc_min_count = 0;
+      time_stamp = new_ts;
+    }
+  }
+
+  
+  NRF_LOG_DEBUG("process_sound_data from %d to %d", 0, soundbuffer_position);
+
+  prev_avg = 0.0;
+  int64_t sum = 0.0;
+  for (int i = 0; i < I2S_BUFFER_SIZE ; i++) {
     soundbuffer[i] = soundbuffer[i] >> 6;
-    //meanval += soundbuffer[i];
 
-    prev_avg = 0.99 * prev_avg + 0.01 * soundbuffer[i];
-  //}
- // meanval /= SHORT_SAMPLE;
-  //meanval = prev_avg;
+    prev_avg = 0.999 * prev_avg + 0.001 * soundbuffer[i];
+    sum += soundbuffer[i];
+  }
 
-  //for (int i = 0; i < SHORT_SAMPLE; i++) {
-    soundbuffer[i] -= (int) prev_avg;
-    int32_t filtered = a_filter(soundbuffer[i]);
+  int32_t avg = (int)((sum + 0.5) /I2S_BUFFER_SIZE);
+  NRF_LOG_INFO("%d/%d %d, AVG: %d",(int) sum, I2S_BUFFER_SIZE,  avg, (int) prev_avg);
+
+
+  for (int i = 0; i < I2S_BUFFER_SIZE ; i++) {
+  
+    temp_sum += soundbuffer[i];
+    soundbuffer[i] -= avg; //(int) (prev_avg + 0.5);
+    temp_sum2 += soundbuffer[i];
+    double filtered = a_filter(soundbuffer[i]);
     sumsquare += filtered * filtered;
+    temp_sum_avg += filtered;
   }
 
 
-//  NRF_LOG_DEBUG("sumsquared: %llu", sumsquare);
+  total_samples +=  I2S_BUFFER_SIZE;
 
-  total_samples += I2S_BUFFER_SIZE;
-  //NRF_LOG_DEBUG("mean after %d (%d): %d", total_samples,current_buffer_counter,  (int) prev_avg);
-
-//  if (total_samples % SHORT_SAMPLE == 0) {
-//    double leq_temp = MIC_OFFSET_DB + MIC_REF_DB + 20 * log10(sqrt(sumsquare / total_samples) / MIC_REF_AMPL);
-//    NRF_LOG_DEBUG("l %d",  (int) leq_temp);
-//  }
-
-  if (total_samples >= SAMPLE_RATE) {
+  if (total_samples >= SHORT_SAMPLE) {
     double soundLevel = sumsquare / total_samples;
     double leq =  MIC_OFFSET_DB + MIC_REF_DB + 20 * log10(sqrt(sumsquare / total_samples) / MIC_REF_AMPL);
+    acc_min += sumsquare / total_samples;
+    acc_min_count++;
 
-    sumsquare = 0;
+    NRF_LOG_INFO("LEQ %d, AVG: %d",(int)leq, (int) prev_avg);
+    NRF_LOG_INFO("(%d, %d,  %d) -> sqrt(%d / %d) / %d",  (int) temp_sum, (int) temp_sum2, (int) temp_sum_avg, (int) sumsquare, total_samples, MIC_REF_AMPL);
+
+    stop_sound_measurement();
+
+    app_indication_set(BSP_INDICATE_USER_STATE_2);
+
+    ble_data.length = 1;
+    ble_data.data[0].time++;
+    ble_data.data[0].cdBSPL = (uint16_t)(leq * 100);
+
+    sprintf(data, "0,%d,%d,0;", (int) (new_ts), (uint16_t)(leq * 100));
+    send_data_to_ble(data,strlen(data));
+
+    sumsquare = 0.0;
     total_samples = 0;
+    temp_sum = 0.0;
+    temp_sum2 = 0.0;
+    temp_sum_avg = 0.0;
 
-    NRF_LOG_INFO("LEQ %d\n",  (int)leq);
-
-    nrf_drv_i2s_stop();
-    app_pwm_disable(&PWM1);
-    app_pwm_disable(&PWM2);
+    soundbuffer_position = -1;
+    return;
   }
 
-  current_buffer_counter++;
-  if (current_buffer_counter < soundbuffer_position) {
-    process_sound_data();
-  } else {
-    current_buffer_counter = 0;
-    soundbuffer_position = 0;
-    parse_sound = false;
-  }
+
+
+  soundbuffer_position = -1;
+
+  start_sound_measurement();
   
 }
 
@@ -683,37 +769,36 @@ static void i2s_data_handler(nrf_drv_i2s_buffers_t const * buffers, uint32_t  st
 
     if (!buffers->p_rx_buffer) {
           nrf_drv_i2s_buffers_t const next_buffers = {
-            .p_rx_buffer = m_buffer_rx,
+            .p_rx_buffer = soundbuffer,
             .p_tx_buffer = NULL,
         };
         APP_ERROR_CHECK(nrf_drv_i2s_next_buffers_set(&next_buffers));
     } else {
-        //check_rx_data(buffers->p_rx_buffer, I2S_BUFFER_SIZE);
-
-        if (soundbuffer_position == -1) {
+        if (soundbuffer_position == -1) { // skip first buffer since sensor needs to start
           APP_ERROR_CHECK(nrf_drv_i2s_next_buffers_set(buffers));
           soundbuffer_position++;
           return;
-        }
+        } 
 
-        if ((soundbuffer_position >= 0) && (soundbuffer_position <= 5)) { // skip first buffer since sensor needs to start
-          memcpy(&soundbuffer[soundbuffer_position*I2S_BUFFER_SIZE], buffers->p_rx_buffer, 4*I2S_BUFFER_SIZE);
-          //memcpy(soundbuffer, buffers->p_rx_buffer, 4*I2S_BUFFER_SIZE);
-          parse_sound = true;
-        }
-
-        if (soundbuffer_position > 5) { 
-          //parse_sound = true;
-          //soundbuffer_position = -1;
-          //if (parse_sound) NRF_LOG_ERROR("did not process sound data on time");
-        } else {
-          soundbuffer_position++;
-        }
-
-//        for (int i = 0; i < I2S_BUFFER_SIZE; i++) {
-//          NRF_LOG_INFO("%lx", m_buffer_rx[i]);
+//        if ((soundbuffer_position >= 0) && (soundbuffer_position <= 5)) { 
+//          NRF_LOG_DEBUG("i2s_data_handler memcpy %d", soundbuffer_position*I2S_BUFFER_SIZE);
+//          //memcpy(&soundbuffer[soundbuffer_position*I2S_BUFFER_SIZE], buffers->p_rx_buffer, 4*I2S_BUFFER_SIZE);
 //        }
-        APP_ERROR_CHECK(nrf_drv_i2s_next_buffers_set(buffers));
+
+        stop_sound_measurement();
+        process_sound_data();
+        return;
+
+//        soundbuffer_position++;
+//
+//        if (soundbuffer_position == 1) { 
+//          stop_sound_measurement();
+//         
+//          parse_sound = true;
+//          return;
+//        } 
+//
+//        APP_ERROR_CHECK(nrf_drv_i2s_next_buffers_set(buffers));
 
     }
 
@@ -744,16 +829,16 @@ static void i2s_data_handler(nrf_drv_i2s_buffers_t const * buffers, uint32_t  st
 //}
 
 
-void pwm_ready_callback(uint32_t pwm_id)                                                                   // PWM ready callback function
+
+
+void pwm_ready_callback(uint32_t pwm_id) 
 {
-	ready_flag = true;
+	pwm_ready++;
 }
 
 /**@brief Application main function.
  */
-
-
-                                                                             // Create the instance "PWM2" using TIMER1.
+ 
 
  int main(void) {
   uint32_t err_code;
@@ -786,71 +871,26 @@ void pwm_ready_callback(uint32_t pwm_id)                                        
   err_code = nrf_drv_i2s_init(&config, i2s_data_handler);
   APP_ERROR_CHECK(err_code);
 
-  // 1-channel PWM; 16MHz clock and period set in ticks.
-  // The user is responsible for selecting the periods to guve the correct ratio for the I2S frame length
-  uint32_t period = 5L;
-  app_pwm_config_t pwm1_cfg = APP_PWM_DEFAULT_CONFIG_1CH(period, 19);                           // SCK; pick a convenient gpio pin
+  app_pwm_config_t pwm1_cfg = APP_PWM_DEFAULT_CONFIG_1CH(CLOCK_PERIOD, 19);                           // SCK; pick a convenient gpio pin
   //pwm1_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH; 
-  app_pwm_config_t pwm2_cfg = APP_PWM_DEFAULT_CONFIG_1CH(period*64, 26);                          // LRCK; pick a convenient gpio pin. LRCK period = 64X SCK period
+  app_pwm_config_t pwm2_cfg = APP_PWM_DEFAULT_CONFIG_1CH(CLOCK_PERIOD*64, 26);                          // LRCK; pick a convenient gpio pin. LRCK period = 64X SCK period
+  pwm2_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH;
 
   // Initialize and enable PWM's
   err_code = app_pwm_ticks_init(&PWM1,&pwm1_cfg,pwm_ready_callback);
   APP_ERROR_CHECK(err_code);
  err_code = app_pwm_ticks_init(&PWM2,&pwm2_cfg,pwm_ready_callback);
  APP_ERROR_CHECK(err_code);
-  app_pwm_enable(&PWM1);
-  app_pwm_enable(&PWM2);
-  app_pwm_channel_duty_set(&PWM1, 0, 50);                                                                // Set at 50% duty cycle for square wave
-  app_pwm_channel_duty_set(&PWM2, 0, 50);
 
 
-// nrfx_pdm_config_t pdm_cfg = NRF_DRV_PDM_DEFAULT_CONFIG(11, 19);
-// 
-//// 
-//// ,
-////                                                              m_buffer_rx[0],
-////                                                              m_buffer_rx[1],
-////                                                              I2S_BUFFER_SIZE);
-//
-//
-//  nrfx_pdm_init(&pdm_cfg, nrfx_pdm_event_handler);
-//
-//  
-//  nrfx_pdm_buffer_set(pdm_buffer[0], I2S_BUFFER_SIZE);
-//
-//  err_code =  nrfx_pdm_start();
-//  APP_ERROR_CHECK(err_code);
-
-  //memset(m_buffer_rx, 0xCC, sizeof(m_buffer_rx));
+  start_sound_measurement();
                                                          
-  nrf_drv_i2s_buffers_t const initial_buffers = {
-      .p_tx_buffer = NULL,
-      .p_rx_buffer = m_buffer_rx,
-  };
-  // Initialize I2S data callback buffer
 
-  //err_code = nrf_drv_i2s_start(&initial_buffers, I2S_BUFFER_SIZE, 0);
-
-  if (err_code != 0) {
-    NRF_LOG_INFO("cannot nrf_drv_i2s_startr\n");
-  }    
-  NRF_LOG_FLUSH();
-
-//  while (1) {
-//    // Wait for an event.
-//  //__WFE();
-//  // Clear the event register.
-//  //__SEV();
-//  //__WFE();
-//  }
-
-  //nrf_drv_i2s_stop();
+  time_stamp = app_timer_cnt_get() / APP_TIMER_CLOCK_FREQ;
 
 
-//  ble_acc_list[1] = ACC_TIMER_INTERVAL;
-//
-//  app_indication_set(BSP_INDICATE_USER_STATE_0);
-//
+  app_indication_set(BSP_INDICATE_USER_STATE_0);
+
   ble_stack_init(&app_indication_set);
   gap_params_init();
   gatt_init();
@@ -863,7 +903,7 @@ void pwm_ready_callback(uint32_t pwm_id)                                        
   //init_battery_monitor();
 
   NRF_LOG_INFO("app start!\n");
-//  advertising_start();
+  //advertising_start();
 
  // app_timer_start(m_acc_tmr, APP_TIMER_TICKS(ACC_TIMER_INTERVAL), NULL);
   app_timer_start(m_sound_tmr, APP_TIMER_TICKS(SOUND_TIMER_INTERVAL), NULL);
@@ -873,9 +913,10 @@ void pwm_ready_callback(uint32_t pwm_id)                                        
   for (;;) {
     while (NRF_LOG_PROCESS());
 
-    if (parse_sound) {
-      process_sound_data();
-    }
+//    if (parse_sound) {
+//      NRF_LOG_DEBUG("parse_sound");
+//      process_sound_data();
+//    }
 
     idle_state_handle();
   }

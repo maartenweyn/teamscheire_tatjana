@@ -8,11 +8,13 @@
 
 #define ACC_LIST_SIZE 40 // restricted by max size of ble
 
-#define I2S_BUFFER_SIZE     1000
-#define SHORT_SAMPLE        6000
-#define SAMPLE_RATE   48000//15650
+#define I2S_BUFFER_SIZE     8000
+#define SHORT_SAMPLE        8000
+#define SAMPLE_RATE   16000//15650
+#define CLOCK_PERIOD        16000000/(64*SAMPLE_RATE) 
+#define MAX_BLE_DATA  100
 
-#define SOUND_TIMER_INTERVAL  1*1000
+#define SOUND_TIMER_INTERVAL  10*1000
 
 #define MIC_OFFSET_DB     3.0103    // Default offset (sine-wave RMS vs. dBFS)
 #define MIC_REF_DB        94.0      // dB(SPL)
@@ -125,7 +127,7 @@
 #define LED_INDICATE_SEND_ERROR            1
 #define LED_INDICATE_RCV_OK                1
 #define LED_INDICATE_RCV_ERROR             1
-#define LED_INDICATE_CONNECTED             0
+#define LED_INDICATE_CONNECTED             7
 #define LED_INDICATE_BONDING               0
 #define LED_INDICATE_ADVERTISING_DIRECTED  0
 #define LED_INDICATE_ADVERTISING_SLOW      0

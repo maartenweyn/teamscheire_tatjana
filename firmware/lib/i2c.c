@@ -55,7 +55,7 @@ void i2c_deinit(void) {
 
 
 uint8_t i2c_write(uint8_t data[], uint8_t length, uint8_t addr, bool no_stop) {
-  NRF_LOG_DEBUG("writing %x%x of length %d to %x\n", data[0], data[1], length, addr);
+  //NRF_LOG_DEBUG("writing %x%x of length %d to %x\n", data[0], data[1], length, addr);
 
   ret_code_t err_code;
   uint32_t timeout = TWI_TIMEOUT;
@@ -76,7 +76,7 @@ uint8_t i2c_write(uint8_t data[], uint8_t length, uint8_t addr, bool no_stop) {
 }
 
 uint8_t i2c_read(uint8_t buf[], uint8_t reg, uint8_t length, uint8_t device_address) {
-  NRF_LOG_DEBUG("reading register %x", reg);
+  //NRF_LOG_DEBUG("reading register %x", reg);
 
   
   uint32_t timeout = TWI_TIMEOUT;
@@ -132,11 +132,11 @@ uint8_t i2c_write_register(uint8_t reg, uint8_t val, uint8_t device_address) {
 }
 
 void twi_handler(nrf_drv_twi_evt_t const *p_event, void *p_context) {
-  NRF_LOG_DEBUG("twi_handler %d", p_event->type);
+  //NRF_LOG_DEBUG("twi_handler %d", p_event->type);
   m_xfer_done = true;
   switch (p_event->type) {
   case NRF_DRV_TWI_EVT_DONE:
-    NRF_LOG_DEBUG("twi_handler NRF_DRV_TWI_EVT_DONE");
+    //NRF_LOG_DEBUG("twi_handler NRF_DRV_TWI_EVT_DONE");
 
     if (p_event->xfer_desc.type == NRF_DRV_TWI_XFER_RX) {
       uint8_t m_sample = 1;
@@ -146,7 +146,7 @@ void twi_handler(nrf_drv_twi_evt_t const *p_event, void *p_context) {
     m_xfer_done = true;
     break;
   case NRF_DRV_TWI_EVT_ADDRESS_NACK:
-    NRF_LOG_DEBUG("twi_handler NRF_DRV_TWI_EVT_ADDRESS_NACK");
+    //NRF_LOG_DEBUG("twi_handler NRF_DRV_TWI_EVT_ADDRESS_NACK");
     break;
   default:
     break;
