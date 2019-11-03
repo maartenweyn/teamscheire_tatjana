@@ -8,11 +8,13 @@
 
 #define ACC_LIST_SIZE 40 // restricted by max size of ble
 
-#define I2S_BUFFER_SIZE     8000
-#define SHORT_SAMPLE        8000
+#define I2S_BUFFER_SIZE     2000
+#define SHORT_SAMPLE        16000
+#define SKIP_BUFFERS        8
 #define SAMPLE_RATE   16000//15650
 #define CLOCK_PERIOD        16000000/(64*SAMPLE_RATE) 
 #define MAX_BLE_DATA  100
+#define MAX_BLE_DATA_THRESHOLD  5
 
 #define SOUND_TIMER_INTERVAL  10*1000
 

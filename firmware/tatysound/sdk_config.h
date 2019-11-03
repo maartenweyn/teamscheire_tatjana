@@ -4249,7 +4249,7 @@
 // <268435456=> 1000000 baud 
 
 #ifndef NRFX_UARTE_DEFAULT_CONFIG_BAUDRATE
-#define NRFX_UARTE_DEFAULT_CONFIG_BAUDRATE 30801920
+#define NRFX_UARTE_DEFAULT_CONFIG_BAUDRATE 67108864
 #endif
 
 // <o> NRFX_UARTE_DEFAULT_CONFIG_IRQ_PRIORITY  - Interrupt priority
@@ -7200,7 +7200,7 @@
 // <i> longer one will be fragmented.
 
 #ifndef NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE
-#define NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE 64
+#define NRF_LOG_BACKEND_RTT_TEMP_BUFFER_SIZE 255
 #endif
 
 // <o> NRF_LOG_BACKEND_RTT_TX_RETRY_DELAY_MS - Period before retrying writing to RTT 
@@ -7315,7 +7315,7 @@
 // <i> Log data is buffered and can be processed in idle.
 
 #ifndef NRF_LOG_DEFERRED
-#define NRF_LOG_DEFERRED 1
+#define NRF_LOG_DEFERRED 0
 #endif
 
 // <o> NRF_LOG_BUFSIZE  - Size of the buffer for storing logs (in bytes).
@@ -7333,7 +7333,7 @@
 // <16384=> 16384 
 
 #ifndef NRF_LOG_BUFSIZE
-#define NRF_LOG_BUFSIZE 1024
+#define NRF_LOG_BUFSIZE 4096
 #endif
 
 // <q> NRF_LOG_ALLOW_OVERFLOW  - Configures behavior when circular buffer is full.

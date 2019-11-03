@@ -337,12 +337,12 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt) {
     NRF_LOG_INFO("on_adv_evt BLE_ADV_EVT_IDLE");
     //if (ble_state > 0)
     //{
-    //  NRF_LOG_INFO("Start slow adverstising");
-    //  slow_advertising_init();
-    //  slow_advertising_start();
+      NRF_LOG_INFO("Start slow adverstising");
+      slow_advertising_init();
+      slow_advertising_start();
     //} else {
-      ble_state = 0;
-      sleep_mode_enter();
+//      ble_state = 0;
+//      sleep_mode_enter();
     //}
     break;
   default:

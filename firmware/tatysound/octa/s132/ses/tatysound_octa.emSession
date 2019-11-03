@@ -33,6 +33,7 @@
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;Application"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;Board Definition"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;Board Support"/>
+  <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_BLE"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_Drivers"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_Libraries"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_Log"/>
@@ -74,7 +75,7 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="26" y="696" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="661" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="4" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="49" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/i2c.c" selected="0" top="23" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1458" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../sdk_config.h" selected="0" top="1441" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="26" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/battery.c" selected="0" top="19" codecName="Default"/>
@@ -114,6 +115,8 @@
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/boards/boards.c" selected="0" top="0" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/bsp/bsp_btn_ble.c" selected="0" top="49" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="53" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/bsp/bsp.c" selected="0" top="41" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="341" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/ble_app.c" selected="1" top="328" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="633" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/ble/ble_advertising/ble_advertising.c" selected="0" top="624" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="tatysound_octa" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" debugSearchFileMap="" fileDialogInitialDirectory="/Users/maartenweyn/git/verkeersveiligheid/code/sdkv150/modules/nrfx/drivers/src" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="tatysound_octa" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" debugSearchFileMap="" fileDialogInitialDirectory="/Users/maartenweyn/git/verkeersveiligheid/code/sdkv150/modules/nrfx/drivers/src" debugSearchPath="" autoConnectCapabilities="3199"/>
 </session>

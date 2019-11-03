@@ -54,20 +54,13 @@ APP_TIMER_DEF(m_sound_tmr);
 
 
 typedef struct {
+  uint8_t type;
   uint16_t time;
   uint16_t cdBSPL;
 } sound_data_element_t;
 
-typedef struct {
-  uint8_t type;
-  uint16_t length;;
-  sound_data_element_t data[MAX_BLE_DATA];
-} sound_data_t;
-
-static sound_data_t ble_data = {
-      .type = 1, 
-      .length = 0,
-      .data[0].time = 0};
+sound_data_element_t ble_data[MAX_BLE_DATA];
+uint8_t ble_data_size = 0;
 
 static volatile uint8_t led_status[8][3] = {0};
 static uint8_t led_driver_status[3] = {0};
@@ -98,14 +91,15 @@ static bool first_sample = true;
                                                                            
 //static uint32_t m_buffer_rx[];
 //static int32_t soundbuffer[SHORT_SAMPLE];
-static int32_t soundbuffer[I2S_BUFFER_SIZE];
+static int32_t soundbuffer[3][I2S_BUFFER_SIZE];
+static uint8_t buffer_index = 0;
 static volatile bool i2s_running = false;
 
 APP_PWM_INSTANCE(PWM1,1);                                                                                  // Create the instance "PWM1" using TIMER0.
 APP_PWM_INSTANCE(PWM2,2);     
 
 
-static volatile int soundbuffer_position = -1;
+static volatile int soundbuffer_position = -SKIP_BUFFERS;
 static double prev_avg = 0;
 static volatile bool parse_sound = false;
 
@@ -126,7 +120,6 @@ static volatile uint8_t     pwm_ready = 0;                                      
 
 
 void start_sound_measurement() {
-  pwm_ready = 0;
 
   NRF_LOG_DEBUG("Starting pwm");
   
@@ -142,7 +135,7 @@ void start_sound_measurement() {
   NRF_LOG_DEBUG("Starting I2S");
    nrf_drv_i2s_buffers_t const initial_buffers = {
       .p_tx_buffer = NULL,
-      .p_rx_buffer = soundbuffer,
+      .p_rx_buffer = soundbuffer[buffer_index],
   };
   // Initialize I2S data callback buffer
 
@@ -262,7 +255,7 @@ void boot_LP55231(void) {
 }
 
 void set_led(uint8_t led_nr, uint8_t color, uint8_t brightness) {
-  NRF_LOG_INFO("set_led %d %d to %d", led_nr, color, brightness);
+  //NRF_LOG_INFO("set_led %d %d to %d", led_nr, color, brightness);
 
   if (color & RED) {
     led_status[led_nr][0] = brightness;
@@ -365,7 +358,9 @@ static void sound_timer_handler(void *p_context) {
   if (!i2s_running) {
     start_sound_measurement();
   } else {
+    NRF_LOG_INFO("sound_timer_handler i2s ERROR: %d", i2s_running);
     app_indication_set(BSP_INDICATE_SEND_ERROR);
+    stop_sound_measurement();
   }
 }
 
@@ -663,7 +658,20 @@ int32_t a_filter(double input) {
   return (int32_t) output;
 }
 
-void process_sound_data() {
+void transmit_ble_data () {
+  uint8_t txt_data[200];
+  for (int i = 0; i<ble_data_size; i++) {
+    sprintf(txt_data, "%d,%d,%d,0;", ble_data[i].type, ble_data[i].time, ble_data[i].cdBSPL);
+    send_data_to_ble(txt_data,strlen(txt_data));
+    NRF_LOG_DEBUG("BLE TX: %s", txt_data);
+  }
+
+  ble_data_size = 0;
+}
+
+
+
+void process_sound_data(int32_t data[I2S_BUFFER_SIZE]) {
   static double sumsquare = 0.0;
   static int total_samples = 0;
 
@@ -671,7 +679,7 @@ void process_sound_data() {
   static uint64_t acc_min_count = 0;
   static double temp_sum, temp_sum2,temp_sum_avg = 0.0;
 
-  uint8_t data[50];
+  uint8_t txt_data[200];
 
   parse_sound = false;
 
@@ -681,9 +689,12 @@ void process_sound_data() {
     if (acc_min_count > 0) {
       double leq_min =  MIC_OFFSET_DB + MIC_REF_DB + 20 * log10(sqrt(acc_min / acc_min_count) / MIC_REF_AMPL);
 
-      sprintf(data, "1,%d,%d,0;", (int) (time_stamp), (uint16_t)(leq_min * 100));
-      send_data_to_ble(data,strlen(data));
-      NRF_LOG_DEBUG(data);
+      if (ble_data_size < MAX_BLE_DATA) {
+        ble_data[ble_data_size].type = 1;
+        ble_data[ble_data_size].time = (int) (time_stamp);
+        ble_data[ble_data_size].cdBSPL = (uint16_t)(leq_min * 100);
+        ble_data_size++;
+      }
 
       acc_min = 0;
       acc_min_count = 0;
@@ -691,42 +702,30 @@ void process_sound_data() {
     }
   }
 
-  
-  NRF_LOG_DEBUG("process_sound_data from %d to %d", 0, soundbuffer_position);
-  if (first_sample) {
-    prev_avg = soundbuffer[0] >> 6;
-    first_sample = false;
-   }
-
-  double sum = 0.0;
-  for (int i = 0; i < I2S_BUFFER_SIZE ; i++) {
-    soundbuffer[i] = soundbuffer[i] >> 6;
-
-    NRF_LOG_RAW_INFO("%d\n", soundbuffer[i]);
-
-    prev_avg = 0.999 * prev_avg + 0.001 * soundbuffer[i];
-    sum += soundbuffer[i];
+  prev_avg = 0.0;
+  for (int i = 0; i < 10; i++) {
+    prev_avg += data[0] >> 6;
   }
 
-  double avg = sum / I2S_BUFFER_SIZE;
-  NRF_LOG_INFO("%d/%d %d, AVG: %d",(int) sum, I2S_BUFFER_SIZE,  (int) avg, (int) prev_avg);
+  prev_avg /= 10;
 
+  for (int i = 0; i < I2S_BUFFER_SIZE; i++)
+  {
+    data[i] = data[i]>>6;
+    prev_avg = 0.999 * prev_avg + 0.001 * data[i];
 
-  for (int i = 0; i < I2S_BUFFER_SIZE ; i++) {
-  
-    temp_sum += soundbuffer[i];
-    double corrected = soundbuffer[i]  - prev_avg;
-    //soundbuffer[i] -= avg; //(int) (prev_avg + 0.5);
-    temp_sum2 += corrected;
+    double corrected = data[i]  - prev_avg;
     double filtered = a_filter(corrected);
     sumsquare += filtered * filtered;
-    temp_sum_avg += filtered;
-  }
 
+    //sprintf(txt_data, "%d,%d,%d,%d,%d,%d\n", i, data[i], (int) prev_avg, (int) corrected, (int) filtered, (int) sumsquare);
+    //NRF_LOG_RAW_INFO("%s", txt_data);
+  }
 
   total_samples +=  I2S_BUFFER_SIZE;
 
-  if (total_samples >= SHORT_SAMPLE) {
+  if (total_samples >= SHORT_SAMPLE) 
+  {
     double soundLevel = sumsquare / total_samples;
     double leq =  MIC_OFFSET_DB + MIC_REF_DB + 20 * log10(sqrt(sumsquare / total_samples) / MIC_REF_AMPL);
     acc_min += sumsquare / total_samples;
@@ -739,12 +738,15 @@ void process_sound_data() {
 
     app_indication_set(BSP_INDICATE_USER_STATE_2);
 
-    ble_data.length = 1;
-    ble_data.data[0].time++;
-    ble_data.data[0].cdBSPL = (uint16_t)(leq * 100);
+//    sprintf(txt_data, "0,%d,%d,0;", (int) (new_ts), (uint16_t)(leq * 100));
+//    send_data_to_ble(txt_data,strlen(txt_data));
 
-    sprintf(data, "0,%d,%d,0;", (int) (new_ts), (uint16_t)(leq * 100));
-    send_data_to_ble(data,strlen(data));
+    if (ble_data_size < MAX_BLE_DATA_THRESHOLD) {
+      ble_data[ble_data_size].type = 0;
+      ble_data[ble_data_size].time = (int) (new_ts);
+      ble_data[ble_data_size].cdBSPL = (uint16_t)(leq * 100);
+      ble_data_size++;
+    }
 
     sumsquare = 0.0;
     total_samples = 0;
@@ -752,131 +754,57 @@ void process_sound_data() {
     temp_sum2 = 0.0;
     temp_sum_avg = 0.0;
 
-    soundbuffer_position = -1;
+    soundbuffer_position = -SKIP_BUFFERS;
     return;
   }
-
-
-
-  soundbuffer_position = -1;
-
-  start_sound_measurement();
-  
 }
 
 static void i2s_data_handler(nrf_drv_i2s_buffers_t const * buffers, uint32_t  status)
 {
-    //NRF_LOG_DEBUG("i2s_data_handler status %d\n", status);
+  //NRF_LOG_DEBUG("i2s_data_handler status %d %d %d", status, buffers->p_rx_buffer, soundbuffer[buffer_index]);
 
-    ASSERT(buffers);
+  ASSERT(buffers);
 
-    if (!(status & NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED))
-    {
-        return;
-    }
-
-    if (!buffers->p_rx_buffer) {
-          nrf_drv_i2s_buffers_t const next_buffers = {
-            .p_rx_buffer = soundbuffer,
-            .p_tx_buffer = NULL,
-        };
-        APP_ERROR_CHECK(nrf_drv_i2s_next_buffers_set(&next_buffers));
-    } else {
-        if (soundbuffer_position == -1) { // skip first buffer since sensor needs to start
-          APP_ERROR_CHECK(nrf_drv_i2s_next_buffers_set(buffers));
-          soundbuffer_position++;
-          return;
-        } 
-
-//        if ((soundbuffer_position >= 0) && (soundbuffer_position <= 5)) { 
-//          NRF_LOG_DEBUG("i2s_data_handler memcpy %d", soundbuffer_position*I2S_BUFFER_SIZE);
-//          //memcpy(&soundbuffer[soundbuffer_position*I2S_BUFFER_SIZE], buffers->p_rx_buffer, 4*I2S_BUFFER_SIZE);
-//        }
-
-        stop_sound_measurement();
-        process_sound_data();
-        return;
-
-//        soundbuffer_position++;
-//
-//        if (soundbuffer_position == 1) { 
-//          stop_sound_measurement();
-//         
-//          parse_sound = true;
-//          return;
-//        } 
-//
-//        APP_ERROR_CHECK(nrf_drv_i2s_next_buffers_set(buffers));
-
-    }
-
-   // NRF_LOG_FLUSH();
-
-}
+  if (!(status & NRFX_I2S_STATUS_NEXT_BUFFERS_NEEDED))
+  {
+      return;
+  }
 
 
-
-//static void i2s_data_handler(uint32_t const * p_data_received,
-//                         uint32_t       * p_data_to_send,
-//                         uint16_t         number_of_words)
-//{
-//    // Non-NULL value in 'p_data_received' indicates that a new portion of
-//    // data has been received and should be processed.
-//    if (p_data_received != NULL)
-//    {
-//      //  check_rx_data(p_data_received, number_of_words);
-//    }
-//
-//    NRF_LOG_INFO("i2s_data_handler %d\n", number_of_words);
-//
-//    // Non-NULL value in 'p_data_to_send' indicates that the driver needs
-//    // a new portion of data to send. Nothing done here; RX only...
-//    if (p_data_to_send != NULL)
-//    {
-//    }
-//}
-
-__STATIC_INLINE void delay_ticks(uint32_t delay_ticks)
-{
-    if (delay_ticks == 0)
-    {
-        return;
-    }
-
-    __ALIGN(16)
-    static const uint16_t delay_machine_code[] = {
-        0x3800 + 3, // SUBS r0, #loop_cycles
-        0xd8fd, // BHI .-2
-        0x4770  // BX LR
+ buffer_index = (buffer_index + 1) % 3;
+  nrf_drv_i2s_buffers_t const next_buffers = {
+        .p_rx_buffer = soundbuffer[buffer_index],
+        .p_tx_buffer = NULL,
     };
+  APP_ERROR_CHECK(nrf_drv_i2s_next_buffers_set(&next_buffers));
 
-    typedef void (* delay_func_t)(uint32_t);
-    const delay_func_t delay_cycles =
-        // Set LSB to 1 to execute the code in the Thumb mode.
-        (delay_func_t)((((uint32_t)delay_machine_code) | 1));
-    delay_cycles(delay_ticks);
+  if (!buffers->p_rx_buffer)  return;
+
+  if (soundbuffer_position < 0) { // skip first buffer since sensor needs to start
+    soundbuffer_position++;
+    //NRF_LOG_DEBUG("i2s_data_handler neglect buffers");
+    return;
+  } 
+
+  process_sound_data(buffers->p_rx_buffer);
+
+
 }
-
 
 void pwm_ready_callback(uint32_t pwm_id) 
 {
-
   if (pwm_id == 2) {
     app_pwm_channel_duty_set(&PWM1, 0, 50);
   }
-  NRF_LOG_INFO("pwm_ready_callback %d", pwm_id);
-  pwm_ready++;
-
 }
 
 /**@brief Application main function.
  */
- 
 
  int main(void) {
   uint32_t err_code;
   ble_state = 255;
-  sleep_status = 0; // 0 can go to sleep,  1 keep awake
+  sleep_status = 1; // 0 can go to sleep,  1 keep awake
 
   // Initialize.
   log_init();
@@ -950,6 +878,10 @@ void pwm_ready_callback(uint32_t pwm_id)
 //      NRF_LOG_DEBUG("parse_sound");
 //      process_sound_data();
 //    }
+
+    if (!i2s_running && ble_data_size > 0) {
+      transmit_ble_data();
+    }
 
     idle_state_handle();
   }
