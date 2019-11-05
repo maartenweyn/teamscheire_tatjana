@@ -80,7 +80,7 @@ static void app_alert_timer_handler(void *p_context);
 static void sound_timer_handler(void *p_context);
 void set_led(uint8_t led_nr, uint8_t color, uint8_t brightness);
 void set_front_light(uint8_t status);
-static void send_data_to_ble(uint8_t *data, uint16_t length);
+static uint32_t send_data_to_ble(uint8_t *data, uint16_t length);
 void set_all_leds_color(uint8_t color, uint8_t brightness);
 
 uint8_t sleep_status = 0; // 0 can go to sleep,  1 keep awake
@@ -298,20 +298,21 @@ void set_all_leds_color(uint8_t color, uint8_t brightness) {
   set_led(7, color, brightness);
 }
 
-static void send_data_to_ble(uint8_t *data, uint16_t length) {
+static uint32_t send_data_to_ble(uint8_t *data, uint16_t length) {
   NRF_LOG_INFO("send_data_to_ble");
 
   uint32_t err_code;
 
   do {
     err_code = send_data(data, length);
-    if ((err_code != NRF_ERROR_INVALID_STATE) && (err_code != NRF_ERROR_BUSY) &&
-        (err_code != NRF_ERROR_NOT_FOUND)) {
+    if (err_code != NRF_ERROR_BUSY) {
       if (err_code != NRF_SUCCESS) {
         NRF_LOG_INFO("send_data error %d\n", err_code);
       }
     }
   } while (err_code == NRF_ERROR_BUSY);
+
+  return err_code;
 }
 
 /* TIMERS */
@@ -660,13 +661,15 @@ int32_t a_filter(double input) {
 
 void transmit_ble_data () {
   uint8_t txt_data[200];
+  uint32_t error = 0;
   for (int i = 0; i<ble_data_size; i++) {
     sprintf(txt_data, "%d,%d,%d,0;", ble_data[i].type, ble_data[i].time, ble_data[i].cdBSPL);
-    send_data_to_ble(txt_data,strlen(txt_data));
+    error |= send_data_to_ble(txt_data,strlen(txt_data));
     NRF_LOG_DEBUG("BLE TX: %s", txt_data);
   }
 
-  ble_data_size = 0;
+  if (error == NRF_SUCCESS)
+    ble_data_size = 0;
 }
 
 

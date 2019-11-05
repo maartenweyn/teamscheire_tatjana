@@ -482,6 +482,8 @@ ret_code_t slow_advertising_start(void)
 
 ret_code_t send_data(uint8_t * p_data, uint16_t  length)
 {
-  return ble_nus_data_send(&m_nus, p_data, &length, m_conn_handle);
+  uint32_t err_code =  ble_nus_data_send(&m_nus, p_data, &length, m_conn_handle);
+  NRF_LOG_INFO("ble_nus_data_send return with error %d", err_code);
+  return err_code;
 }
 
