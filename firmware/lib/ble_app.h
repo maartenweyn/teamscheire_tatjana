@@ -21,7 +21,6 @@ ret_code_t services_init(nus_data_handler_t handler);
 ret_code_t advertising_init();
 ret_code_t conn_params_init();
 ret_code_t advertising_start();
-ret_code_t slow_advertising_init(void);
 ret_code_t slow_advertising_start(void);
 void sleep_mode_enter(void);
 

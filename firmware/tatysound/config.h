@@ -10,28 +10,33 @@
 
 #define I2S_BUFFER_SIZE     2000
 #define SHORT_SAMPLE        16000
-#define SKIP_BUFFERS        8
+#define SKIP_BUFFERS        1
 #define SAMPLE_RATE   16000//15650
 #define CLOCK_PERIOD        16000000/(64*SAMPLE_RATE) 
-#define MAX_BLE_DATA  100
+#define MAX_BLE_DATA  1440
+#define BLE_DATA_FREE  60 //if buffer full free 1 hour
 #define MAX_BLE_DATA_THRESHOLD  5
 
 #define SOUND_TIMER_INTERVAL  10*1000
 
+//PCM
+#define CONFIG_IO_PDM_CLK		23
+#define CONFIG_IO_PDM_DATA		16
+
+#define CONFIG_AUDIO_PDM_GAIN 		0x38
+#define CONFIG_AUDIO_FRAME_SIZE_BYTES   64
+#define CONFIG_AUDIO_FRAME_SIZE_SAMPLES 64
+#define CONFIG_PDM_FRAME_SIZE_SAMPLES	64
+#define CONFIG_AUDIO_FRAME_BUFFERS 	16
+
+#define SOUND_BUFFER_SIZE     2000
+
+// ADUIO PROCESSING
 #define MIC_OFFSET_DB     3.0103    // Default offset (sine-wave RMS vs. dBFS)
 #define MIC_REF_DB        94.0      // dB(SPL)
-#define MIC_REF_AMPL      6569 //Amplitude at 94dB(SPL) (-26dBFS from datasheet, i.e. (2^17-1)*10^(-26/20) )
+  #define MIC_REF_AMPL      1642 //Amplitude at 94dB(SPL) (-26dBFS from datasheet, i.e. (2^15-1)*10^(-26/20) )
+//#define MIC_REF_AMPL      6569 //Amplitude at 94dB(SPL) (-26dBFS from datasheet, i.e. (2^17-1)*10^(-26/20) )
 //#define MIC_REF_AMPL  0.050118723362727
-
-// ACC ALGORITHM
-#define NO_MOTION_THRESHOLD           1210000
-#define NO_MOTION_SUM_TO_MEAN_SHIFT   9
-#define NO_MOTION_COUNTER_THRESHOLD   1 << NO_MOTION_SUM_TO_MEAN_SHIFT
-#define HF_FILTER_APHA                0.06
-#define PEAK_DETECTION_LAG            ODR
-#define PEAK_DETECTION_THRESHOLD      2
-#define PEAK_MIN_DETECTION_THRESHOLD      200
-#define PEAK_DETECTION_DIFFERENCE     ODR / 2
 
 // BLE
 
@@ -52,9 +57,9 @@
 #define APP_BLE_OBSERVER_PRIO           3                                           /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
-#define APP_ADV_DURATION                18000                                       /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
+#define APP_ADV_DURATION                10//18000                                       /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
 
-#define SLOW_APP_ADV_INTERVAL           3200
+#define SLOW_APP_ADV_INTERVAL           2056   //1285 ms * 1.6
 #define SLOW_APP_ADV_TIMEOUT_IN_SECONDS 0
 
 

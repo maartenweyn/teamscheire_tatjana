@@ -13,6 +13,7 @@ var noiselevel = {
     upload_status: false,
     sound_data: [],
     posturl : "",
+    ref_date: new Date('1/1/2019'),
     initialize: function () {
         noiselevel.posturl = "http://teamscheire.wesdec.be:8080/api/v1/" + device.uuid + "/telemetry";
         debug.log("UUID " + device.uuid, "success");
@@ -31,19 +32,27 @@ var noiselevel = {
 
 
             var length_of_data_entries      = parseInt(res[3]);
-            if (length_of_data_entries == 0)
+
+
+            noiselevel.ts = parseInt(res[1])*1000;
+            if (noiselevel.ts < 26265600)
             {
-                noiselevel.ts = (new Date()).getTime();
-            } else {
-                if (noiselevel.prev_length == 0) {
+                if (length_of_data_entries == 0)
+                {
                     noiselevel.ts = (new Date()).getTime();
-                    noiselevel.prev_ts.ts = noiselevel.ts;
-                    noiselevel.prev_ts.sensor_ts = parseInt(res[1]);
-                    noiselevel.prev_length = length_of_data_entries
                 } else {
-                    noiselevel.ts = noiselevel.prev_ts.ts - ((noiselevel.prev_ts.sensor_ts - parseInt(res[1]))*1000);
-                    noiselevel.prev_length = lenlength_of_data_entriesth;
+                    if (noiselevel.prev_length == 0) {
+                        noiselevel.ts = (new Date()).getTime();
+                        noiselevel.prev_ts.ts = noiselevel.ts;
+                        noiselevel.prev_ts.sensor_ts = noiselevel.ts;
+                        noiselevel.prev_length = length_of_data_entries
+                    } else {
+                        noiselevel.ts = noiselevel.prev_ts.ts - (noiselevel.prev_ts.sensor_ts - noiselevel.ts);
+                        noiselevel.prev_length = lenlength_of_data_entriesth;
+                    }
                 }
+            } else {
+                noiselevel.ts += (noiselevel.ref_date).getTime();
             }
 
             //e.g. 0,4300,859,53.8,57.8,54.0,56.9,57.0,0

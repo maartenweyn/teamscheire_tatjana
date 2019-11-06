@@ -82,9 +82,23 @@ var bluetooth = {
 
             bluetooth.toggleConnectionButtons();
             window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
+
+
+            var data32 = new Uint32Array(2);
+            data32[0] = 0; 
+            data32[1] = Math.ceil((new Date()-noiselevel.ref_date) / 1000); // seconds since 1 January 2019
+            var data = new Uint8Array(data32.buffer, 2, 6);
+            data[0] = 1; // time info
+            data[1] = 4; // 4 byte
+
+            debug.log('Sending time ' + data32[1], 'success');
+            bluetooth.sendData(data.buffer);
         };
 
         ble.connect(deviceId, onConnect, bluetooth.onError);
+    },
+    sendData(data) {
+        ble.write(bluetooth.connectedDevice.id, bluetooth.serviceUuids.serviceUUID, bluetooth.serviceUuids.txCharacteristic, data, bluetooth.onSend, bluetooth.onError);
     },
     onDisconnectDevice: function () {
         storage.removeItem('connectedDevice');
@@ -103,6 +117,9 @@ var bluetooth = {
             debug.log('Disconnecting failed', 'error');
             console.log(error);
         }
+    },
+    onSend: function () {
+        debug.log('Has send data', 'success');
     },
     onData: function (data) {
         //mqttclient.addMessage(bytesToString(data));

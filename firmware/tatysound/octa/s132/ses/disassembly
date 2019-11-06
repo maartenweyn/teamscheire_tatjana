@@ -1,0 +1,237 @@
+    4603        mov r3, r0
+    460C        mov r4, r1
+    EC443B17    vmov d7, r3, r4
+    EEB00A47    vmov.f32 s0, s14
+    EEF00A67    vmov.f32 s1, s15
+    F006F94B    bl 0x000342A0 <sqrt>
+    EC510B10    vmov r0, r1, d0
+    A354        adr r3, 0x0002E160
+    E9D32300    ldrd r2, r3, [r3, #0]
+    F005FE2E    bl 0x00033C74 <__float64_div>
+    4603        mov r3, r0
+    460C        mov r4, r1
+    EC443B17    vmov d7, r3, r4
+    EEB00A47    vmov.f32 s0, s14
+    EEF00A67    vmov.f32 s1, s15
+    F006F926    bl 0x00034278 <log10>
+    EC510B10    vmov r0, r1, d0
+    F04F0200    mov.w r2, #0
+    4B52        ldr r3, =0x40340000
+    F005FD67    bl 0x00033B08 <__aeabi_dmul>
+    4603        mov r3, r0
+    460C        mov r4, r1
+    4618        mov r0, r3
+    4621        mov r1, r4
+    A349        adr r3, 0x0002E168
+    E9D32300    ldrd r2, r3, [r3, #0]
+    F005FC1A    bl 0x00033880 <__float64_add>
+    4603        mov r3, r0
+    460C        mov r4, r1
+    E9CD3440    strd r3, r4, [sp, #0x100]
+--- main.c -- 723 ------------------------------------------
+if (acc_min_count > 0) {
+double leq_min = MIC_OFFSET_DB + MIC_REF_DB + 20 * log10(sqrt(acc_min / acc_min_count) / MIC_REF_AMPL);
+if (ble_data_size < MAX_BLE_DATA) {
+ble_data[ble_data_size].type = 1;
+    4B4B        ldr r3, =0x2000841C <ble_data_size>
+    781B        ldrb r3, [r3]
+    4619        mov r1, r3
+    4A4B        ldr r2, =0x2000409C <ble_data>
+    460B        mov r3, r1
+    005B        lsls r3, r3, #1
+    440B        add r3, r1
+    009B        lsls r3, r3, #2
+    4413        add r3, r2
+    2201        movs r2, #1
+    701A        strb r2, [r3]
+--- main.c -- 728 ------------------------------------------
+ble_data[ble_data_size].time = (uint32_t) (time_stamp) + time_offset;
+    4B42        ldr r3, =0x2000843C <time_stamp>
+    881B        ldrh r3, [r3]
+    4619        mov r1, r3
+    4B46        ldr r3, =0x2000B324 <time_offset>
+    681B        ldr r3, [r3]
+    4A43        ldr r2, =0x2000841C <ble_data_size>
+    7812        ldrb r2, [r2]
+    4610        mov r0, r2
+    18CA        adds r2, r1, r3
+    4942        ldr r1, =0x2000409C <ble_data>
+    4603        mov r3, r0
+    005B        lsls r3, r3, #1
+    4403        add r3, r0
+    009B        lsls r3, r3, #2
+    440B        add r3, r1
+    3304        adds r3, #4
+    601A        str r2, [r3]
+--- main.c -- 729 ------------------------------------------
+ble_data[ble_data_size].cdBSPL = (uint16_t)(leq_min * 100);
+    F04F0200    mov.w r2, #0
+    4B3F        ldr r3, =0x40590000
+    E9DD0140    ldrd r0, r1, [sp, #0x100]
+    F005FD37    bl 0x00033B08 <__aeabi_dmul>
+    4603        mov r3, r0
+    460C        mov r4, r1
+    4619        mov r1, r3
+    4622        mov r2, r4
+    4B38        ldr r3, =0x2000841C <ble_data_size>
+    781B        ldrb r3, [r3]
+    461C        mov r4, r3
+    4608        mov r0, r1
+    4611        mov r1, r2
+    F005FBCC    bl 0x00033848 <__float64_to_uint32>
+    4603        mov r3, r0
+    B299        uxth r1, r3
+    4A34        ldr r2, =0x2000409C <ble_data>
+    4623        mov r3, r4
+    005B        lsls r3, r3, #1
+    4423        add r3, r4
+    009B        lsls r3, r3, #2
+    4413        add r3, r2
+    3308        adds r3, #8
+    460A        mov r2, r1
+    801A        strh r2, [r3]
+--- main.c -- 730 ------------------------------------------
+ble_data_size++;
+    4B2F        ldr r3, =0x2000841C <ble_data_size>
+    781B        ldrb r3, [r3]
+    3301        adds r3, #1
+    B2DA        uxtb r2, r3
+    4B2D        ldr r3, =0x2000841C <ble_data_size>
+    701A        strb r2, [r3]
+--- main.c -- 731 ------------------------------------------
+}
+acc_min = 0;
+    4A2A        ldr r2, =0x2000B370 <acc_min.14718>
+    F04F0300    mov.w r3, #0
+    F04F0400    mov.w r4, #0
+    E9C23400    strd r3, r4, [r2, #0]
+--- main.c -- 734 ------------------------------------------
+acc_min_count = 0;
+    4A25        ldr r2, =0x2000B368 <acc_min_count.14719>
+    F04F0300    mov.w r3, #0
+    F04F0400    mov.w r4, #0
+    E9C23400    strd r3, r4, [r2, #0]
+--- main.c -- 735 ------------------------------------------
+time_stamp = new_ts;
+    9B43        ldr r3, [sp, #0x10C]
+    B29A        uxth r2, r3
+    4B20        ldr r3, =0x2000843C <time_stamp>
+    801A        strh r2, [r3]
+--- main.c -- 736 ------------------------------------------
+}
+}
+prev_avg = 0.0;
+    4A27        ldr r2, =0x2000B328 <prev_avg>
+    F04F0300    mov.w r3, #0
+    F04F0400    mov.w r4, #0
+    E9C23400    strd r3, r4, [r2, #0]
+--- main.c -- 740 ------------------------------------------
+for (int i = 0; i < 10; i++) {
+    2300        movs r3, #0
+    9345        str r3, [sp, #0x114]
+    E015        b 0x0002E136
+--- main.c -- 741 ------------------------------------------
+prev_avg += data[0];
+    AB05        add r3, sp, #20
+    681B        ldr r3, [r3]
+    F9B33000    ldrsh.w r3, [r3, #0]
+    4618        mov r0, r3
+    F005FB00    bl 0x00033718 <__aeabi_i2d>
+    4B1E        ldr r3, =0x2000B328 <prev_avg>
+    E9D33400    ldrd r3, r4, [r3, #0]
+    461A        mov r2, r3
+    4623        mov r3, r4
+    F005FBAD    bl 0x00033880 <__float64_add>
+    4603        mov r3, r0
+    460C        mov r4, r1
+    4A1A        ldr r2, =0x2000B328 <prev_avg>
+    E9C23400    strd r3, r4, [r2, #0]
+--- main.c -- 740 ------------------------------------------
+for (int i = 0; i < 10; i++) {
+    9B45        ldr r3, [sp, #0x114]
+    3301        adds r3, #1
+    9345        str r3, [sp, #0x114]
+--- main.c -- 740 ------------------------------------------
+for (int i = 0; i < 10; i++) {
+    9B45        ldr r3, [sp, #0x114]
+    2B09        cmp r3, #9
+    DDE6        ble 0x0002E10A
+--- main.c -- 741 ------------------------------------------
+prev_avg += data[0];
+}
+prev_avg /= 10;
+    4B15        ldr r3, =0x2000B328 <prev_avg>
+    E9D30100    ldrd r0, r1, [r3, #0]
+    F04F0200    mov.w r2, #0
+    4B14        ldr r3, =0x40240000
+    F005FD94    bl 0x00033C74 <__float64_div>
+    4603        mov r3, r0
+    460C        mov r4, r1
+    4A10        ldr r2, =0x2000B328 <prev_avg>
+    E9C23400    strd r3, r4, [r2, #0]
+--- main.c -- 745 ------------------------------------------
+for (int i = 0; i < I2S_BUFFER_SIZE; i++)
+    2300        movs r3, #0
+    9344        str r3, [sp, #0x110]
+    E07F        b 0x0002E25C
+    F3AF8000    nop.w
+    0000        movs r0, r0
+    0000        movs r0, r0
+    A800        add r0, sp, #0
+    4099        lsls r1, r3
+    C986        ldm r1, {r1-r2, r7}
+    C154        stm r1!, {r2, r4, r6}
+    40A8        lsls r0, r5
+    4058        eors r0, r3
+    B330        cbz r0, 0x0002E1C0
+    2000        movs r0, #0
+    2000843C    .word 0x2000843C
+    2000B368    .word 0x2000B368
+    2000B370    .word 0x2000B370
+    40340000    .word 0x40340000
+    2000841C    .word 0x2000841C
+    2000409C    .word 0x2000409C
+    2000B324    .word 0x2000B324
+    40590000    .word 0x40590000
+    2000B328    .word 0x2000B328
+    40240000    .word 0x40240000
+--- main.c -- 747 ------------------------------------------
+{
+prev_avg = 0.999 * prev_avg + 0.001 * data[i];
+    4BC0        ldr r3, =0x2000B328 <prev_avg>
+    E9D30100    ldrd r0, r1, [r3, #0]
+    A3B7        adr r3, 0x0002E480
+    E9D32300    ldrd r2, r3, [r3, #0]
+    F005FCAE    bl 0x00033B08 <__aeabi_dmul>
+    4603        mov r3, r0
+    460C        mov r4, r1
+    4625        mov r5, r4
+    461C        mov r4, r3
+    9B44        ldr r3, [sp, #0x110]
+    005B        lsls r3, r3, #1
+    AA05        add r2, sp, #20
+    6812        ldr r2, [r2]
+    4413        add r3, r2
+    F9B33000    ldrsh.w r3, [r3, #0]
+    4618        mov r0, r3
+    F005FAA8    bl 0x00033718 <__aeabi_i2d>
+    A3AF        adr r3, 0x0002E488
+    E9D32300    ldrd r2, r3, [r3, #0]
+    F005FC9B    bl 0x00033B08 <__aeabi_dmul>
+    4602        mov r2, r0
+    460B        mov r3, r1
+    4620        mov r0, r4
+    4629        mov r1, r5
+    F005FB51    bl 0x00033880 <__float64_add>
+    4603        mov r3, r0
+    460C        mov r4, r1
+    4AAF        ldr r2, =0x2000B328 <prev_avg>
+    E9C23400    strd r3, r4, [r2, #0]
+--- main.c -- 749 ------------------------------------------
+double corrected = data[i] - prev_avg;
+    9B44        ldr r3, [sp, #0x110]
+    005B        lsls r3, r3, #1
+    AA05        add r2, sp, #20
+    6812        ldr r2, [r2]
+    4413        add r3, r2
+    F9B33000    ldrsh.w r3, [r3, #0]
