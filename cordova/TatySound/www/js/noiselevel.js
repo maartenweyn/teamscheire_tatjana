@@ -14,6 +14,7 @@ var noiselevel = {
     sound_data: [],
     posturl : "",
     ref_date: new Date('1/1/2019'),
+    prev_update_date: new Date('1/1/2019'),
     initialize: function () {
         noiselevel.posturl = "http://teamscheire.wesdec.be:8080/api/v1/" + device.uuid + "/telemetry";
         debug.log("UUID " + device.uuid, "success");
@@ -37,7 +38,7 @@ var noiselevel = {
             noiselevel.ts = parseInt(res[1])*1000;
             if (noiselevel.ts < 26265600)
             {
-                if (length_of_data_entries == 0)
+                if (length_of_data_entries == 1)
                 {
                     noiselevel.ts = (new Date()).getTime();
                 } else {
@@ -48,7 +49,7 @@ var noiselevel = {
                         noiselevel.prev_length = length_of_data_entries
                     } else {
                         noiselevel.ts = noiselevel.prev_ts.ts - (noiselevel.prev_ts.sensor_ts - noiselevel.ts);
-                        noiselevel.prev_length = lenlength_of_data_entriesth;
+                        noiselevel.prev_length = length_of_data_entries;
                     }
                 }
             } else {

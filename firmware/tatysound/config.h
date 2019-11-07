@@ -17,7 +17,8 @@
 #define BLE_DATA_FREE  60 //if buffer full free 1 hour
 #define MAX_BLE_DATA_THRESHOLD  5
 
-#define SOUND_TIMER_INTERVAL  10*1000
+#define SOUND_TIMER_INTERVAL_SEC  10
+#define SOUND_TIMER_INTERVAL  SOUND_TIMER_INTERVAL_SEC*1000
 
 //PCM
 #define CONFIG_IO_PDM_CLK		23
@@ -59,7 +60,7 @@
 #define APP_ADV_INTERVAL                64                                          /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
 #define APP_ADV_DURATION                10//18000                                       /**< The advertising duration (180 seconds) in units of 10 milliseconds. */
 
-#define SLOW_APP_ADV_INTERVAL           2056   //1285 ms * 1.6
+#define SLOW_APP_ADV_INTERVAL           1600   //1000 ms * 1.6
 #define SLOW_APP_ADV_TIMEOUT_IN_SECONDS 0
 
 

@@ -38,6 +38,7 @@
 #include "nrf_log_default_backends.h"
 
 #include "nrfx_pdm.h"
+#include "nrf_calendar.h"
 
 #include <nrf_drv_gpiote.h>
 #include <nrf_pwr_mgmt.h>
@@ -70,6 +71,7 @@ static uint8_t light_brightness = 50;
 static uint8_t front_light_status = 0;
 
 static uint32_t time_stamp = 0;
+static uint32_t prev_stamp = 0;
 
 static uint8_t front_light_brightness_changed = 0;
 static uint8_t button_pushed = 0;
@@ -95,9 +97,6 @@ static int16_t soundbuffer[3][SOUND_BUFFER_SIZE];
 static uint16_t buffer_offset = 0;
 static uint8_t buffer_index = 0;
 static volatile bool sampling_running = true;
-
-uint32_t time_offset = 0;
-
 
 static nrfx_pdm_config_t pdm_cfg = NRFX_PDM_DEFAULT_CONFIG(CONFIG_IO_PDM_CLK, CONFIG_IO_PDM_DATA);
 
@@ -187,9 +186,7 @@ static void nus_data_handler(ble_nus_evt_t *p_evt) {
       {
         uint32_t* ts = (uint32_t*) &p_evt->params.rx_data.p_data[4];
         NRF_LOG_INFO("Received time: %d", *ts);
-        uint32_t mcu_ts = app_timer_cnt_get() / APP_TIMER_CLOCK_FREQ;
-
-        time_offset = *ts - mcu_ts;
+        time_stamp = *ts;
         break;
       }
       default:
@@ -371,6 +368,8 @@ static void app_leds_timer_handler(void *p_context) {
  */
 
 static void sound_timer_handler(void *p_context) {
+
+  time_stamp += SOUND_TIMER_INTERVAL_SEC;
 
   UNUSED_PARAMETER(p_context);
 
@@ -680,16 +679,18 @@ int32_t a_filter(double input) {
 }
 
 void transmit_ble_data () {
+  NRF_LOG_DEBUG("transmit_ble_data %d", ble_data_size);
   uint8_t txt_data[200];
   uint32_t error = 0;
+  int i = 0;
   for (int i = 0; i<ble_data_size; i++) {
-    sprintf(txt_data, "%d,%d,%d,0;", ble_data[i].type, ble_data[i].time, ble_data[i].cdBSPL);
+    sprintf(txt_data, "%d,%d,%d,%d;", ble_data[i].type, ble_data[i].time, ble_data[i].cdBSPL, ble_data_size - i);
     error = send_data_to_ble(txt_data,strlen(txt_data));
-    NRF_LOG_DEBUG("BLE TX: %s", txt_data);
+    NRF_LOG_DEBUG("BLE TX: %d of %d '%s' error %d", i, ble_data_size, txt_data, error);
 
     if (error != NRF_SUCCESS) {
       if (i > 0) {
-        for (int j = i; j < ble_data_size; i++) {
+        for (int j = i; j < ble_data_size; j++) {
           memcpy((uint8_t*) &ble_data[j-i], (uint8_t*) &ble_data[j], sizeof(sound_data_element_t));
         }
         ble_data_size -= i;
@@ -700,6 +701,9 @@ void transmit_ble_data () {
 
   if (error == NRF_SUCCESS)
     ble_data_size = 0;
+
+  
+  NRF_LOG_DEBUG("transmit_ble_data clear  %d", ble_data_size);
 }
 
 
@@ -716,9 +720,9 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
 
   parse_sound = false;
 
-  uint32_t new_ts = app_timer_cnt_get() / APP_TIMER_CLOCK_FREQ;
+  //uint32_t new_ts = app_timer_cnt_get() / APP_TIMER_CLOCK_FREQ;
 
-  if (new_ts - time_stamp >= 60) {
+  if (time_stamp - prev_stamp >= 60) {
     if (acc_min_count > 0) {
       double leq_min =  MIC_OFFSET_DB + MIC_REF_DB + 20 * log10(sqrt(acc_min / acc_min_count) / MIC_REF_AMPL);
 
@@ -732,15 +736,15 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
 
       if (ble_data_size < MAX_BLE_DATA) {
         ble_data[ble_data_size].type = 1;
-        ble_data[ble_data_size].time = (uint32_t) (time_stamp) + time_offset;
+        ble_data[ble_data_size].time = time_stamp;
         ble_data[ble_data_size].cdBSPL = (uint16_t)(leq_min * 100);
-        NRF_LOG_INFO("Add Data 1 %d + %d = %d, lea: %d",time_stamp, time_offset, ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
+        NRF_LOG_INFO("Add Data 1 %d, lea: %d", ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
       ble_data_size++;
       }
 
       acc_min = 0;
       acc_min_count = 0;
-      time_stamp = new_ts;
+      prev_stamp = time_stamp;
     }
   }
 
@@ -784,9 +788,9 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
 
     if (ble_data_size < MAX_BLE_DATA_THRESHOLD) {
       ble_data[ble_data_size].type = 0;
-      ble_data[ble_data_size].time = new_ts + time_offset;
+      ble_data[ble_data_size].time = time_stamp;
       ble_data[ble_data_size].cdBSPL = (uint16_t)(leq * 100);
-      NRF_LOG_INFO("Add Data 0 %d + %d = %d, lea: %d",new_ts, time_offset, ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
+      NRF_LOG_INFO("Add Data 0 %d, lea: %d",ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
       ble_data_size++;
     }
 
@@ -829,34 +833,12 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
 
   if (soundbuffer_position < 0) { // skip first buffer since sensor needs to start
     soundbuffer_position++;
-    NRF_LOG_DEBUG("pdm_event_handler neglect buffers");
+    //NRF_LOG_DEBUG("pdm_event_handler neglect buffers");
     return;
   } 
 
   process_sound_data(p_evt->buffer_released);
 }
-
-//static void m_audio_handler(void * p_event_data, uint16_t event_size)
-//{
-//  uint32_t    err_code = NRF_SUCCESS;
-//  drv_audio_frame_t *p_frame;
-//
-//  ASSERT(event_size == sizeof(p_frame));
-//  p_frame = *(drv_audio_frame_t **)(p_event_data);
-//
-//  if (buffer_offset <= SOUND_BUFFER_SIZE)
-//  {
-//    memcpy((uint8_t*) &soundbuffer[buffer_offset], p_frame->buffer, p_frame->buffer_size);
-//    p_frame->buffer_free_flag	 = true;
-//  }
-//  else
-//  {
-//    NRF_LOG_INFO("Stop Recording\n");
-//    drv_audio_transmission_disable();
-//  }
-//
-//  buffer_offset += p_frame->buffer_size / 2;
-//}
 
 /**@brief Application main function.
  */
@@ -888,28 +870,6 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
   }  
   NRF_LOG_FLUSH();
 
-//  nrf_drv_i2s_config_t config = NRF_DRV_I2S_DEFAULT_CONFIG;
-//  err_code = nrf_drv_i2s_init(&config, i2s_data_handler);
-//  APP_ERROR_CHECK(err_code);
-//
-//  app_pwm_config_t pwm1_cfg = APP_PWM_DEFAULT_CONFIG_1CH(CLOCK_PERIOD, 19);                           // SCK; pick a convenient gpio pin
-//  //pwm1_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH; 
-//  app_pwm_config_t pwm2_cfg = APP_PWM_DEFAULT_CONFIG_1CH(CLOCK_PERIOD*64, 26);                          // LRCK; pick a convenient gpio pin. LRCK period = 64X SCK period
-//  //pwm2_cfg.pin_polarity[0] = APP_PWM_POLARITY_ACTIVE_HIGH;
-//
-//  // Initialize and enable PWM's
-//  err_code = app_pwm_ticks_init(&PWM1,&pwm1_cfg,pwm_ready_callback);
-//  APP_ERROR_CHECK(err_code);
-// err_code = app_pwm_ticks_init(&PWM2,&pwm2_cfg,pwm_ready_callback);
-// APP_ERROR_CHECK(err_code);
-
-
-  //start_sound_measurement();
-                                                         
-
-  time_stamp = app_timer_cnt_get() / APP_TIMER_CLOCK_FREQ;
-
-
   app_indication_set(BSP_INDICATE_USER_STATE_0);
 
 
@@ -917,19 +877,19 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
   NRF_LOG_INFO("\n Audio Init\n");	
   pdm_cfg.gain_l = NRF_PDM_GAIN_MINIMUM;
   pdm_cfg.gain_r = NRF_PDM_GAIN_MINIMUM;
-  err_code = nrfx_pdm_init(&pdm_cfg, pdm_event_handler);
+
+  err_code = ble_stack_init(&app_indication_set); 
   APP_ERROR_CHECK(err_code);
-
-//  err_code = nrfx_pdm_buffer_set(soundbuffer[0], SOUND_BUFFER_SIZE);
-//  APP_ERROR_CHECK(err_code);
-
-
-  ble_stack_init(&app_indication_set);
-  gap_params_init();
-  gatt_init();
-  services_init(&nus_data_handler);
-  advertising_init();
-  conn_params_init();
+  err_code = gap_params_init(); 
+  APP_ERROR_CHECK(err_code);
+  err_code = gatt_init(); 
+  APP_ERROR_CHECK(err_code);
+  err_code = services_init(&nus_data_handler); 
+  APP_ERROR_CHECK(err_code);
+  err_code = advertising_init(); 
+  APP_ERROR_CHECK(err_code);
+  err_code = conn_params_init(); 
+  APP_ERROR_CHECK(err_code);
 
   NRF_LOG_INFO("\n Start:PDM --> PCM\n");
   err_code =  start_sound_measurement(); 

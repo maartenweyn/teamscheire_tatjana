@@ -6,6 +6,7 @@ var bluetooth = {
     },
     writeWithoutResponse: true,
     connectedDevice: {},
+    connectingDevice: {},
     lastConnectedDeviceId: false,
     messages: [],
     currentmessage: new Uint8Array(100),
@@ -15,7 +16,7 @@ var bluetooth = {
         startOnBoot: false, // enable this to start timer after the device was restarted (Default: false)
         stopOnTerminate: true, // set to true to force stop timer in case the app is terminated (User closed the app and etc.) (Default: true)
         hours: -1, // delay timer to start at certain time (Default: -1)
-        minutes: 1, // delay timer to start at certain time (Default: -1)
+        minutes: -1, // delay timer to start at certain time (Default: -1)
     },
     initialize: function () {
         debug.log('Initialising bluetooth ...');
@@ -23,6 +24,13 @@ var bluetooth = {
         debug.log('Bluetooth Initialised', 'success');
         window.BackgroundTimer.onTimerEvent(bluetooth.timer_callback);
         window.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
+
+        //autoconnect
+
+        // var previousConnectedDevice = storage.getItem('connectedDevice');
+        // if (previousConnectedDevice != undefined) {
+        //     ble.autoConnect(previousConnectedDevice.id, bluetooth.onConnect, bluetooth.onDisconnectDevice);
+        // }
     },
     refreshDeviceList: function () {
         var onlyUART = true;
@@ -56,52 +64,59 @@ var bluetooth = {
         }
 
     },
-    connectDevice: function (deviceId, deviceName) {
-        debug.log('connecting to ' + deviceId);
-
-        var onConnect = function (peripheral) {
-            bluetooth.connectedDevice = {
-                id: deviceId,
-                name: deviceName
-            };
-
-            // used to send disconnected messages 
-            bluetooth.lastConnectedDedviceId = deviceId;
-
-            storage.setItem('connectedDevice', bluetooth.connectedDevice);
-
-            // subscribe for incoming data
-            ble.startNotification(deviceId,
-                bluetooth.serviceUuids.serviceUUID,
-                bluetooth.serviceUuids.rxCharacteristic,
-                bluetooth.onData,
-                bluetooth.onError);
-
-            debug.log('Connected to ' + deviceId, 'success');
-            //mqttclient.addMessage('device,1');
-
-            bluetooth.toggleConnectionButtons();
-            window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
-
-
-            var data32 = new Uint32Array(2);
-            data32[0] = 0; 
-            data32[1] = Math.ceil((new Date()-noiselevel.ref_date) / 1000); // seconds since 1 January 2019
-            var data = new Uint8Array(data32.buffer, 2, 6);
-            data[0] = 1; // time info
-            data[1] = 4; // 4 byte
-
-            debug.log('Sending time ' + data32[1], 'success');
-            bluetooth.sendData(data.buffer);
+    onConnect: function (peripheral) {
+        bluetooth.connectedDevice = {
+            id: bluetooth.connectingDevice.id,
+            name: bluetooth.connectingDevice.name
         };
 
-        ble.connect(deviceId, onConnect, bluetooth.onError);
+        console.log("onConnect " + bluetooth.connectedDevice.id);
+
+        // used to send disconnected messages 
+        bluetooth.lastConnectedDedviceId = bluetooth.connectedDevice.id;
+
+        storage.setItem('connectedDevice', bluetooth.connectedDevice);
+
+        // subscribe for incoming data
+        ble.startNotification(bluetooth.connectedDevice.id,
+            bluetooth.serviceUuids.serviceUUID,
+            bluetooth.serviceUuids.rxCharacteristic,
+            bluetooth.onData,
+            bluetooth.onError);
+
+        debug.log('Connected to ' + bluetooth.connectedDevice.id, 'success');
+        //mqttclient.addMessage('device,1');
+
+        bluetooth.toggleConnectionButtons();
+        window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
+
+        //bluetooth.sendTime();
+    },
+    connectDevice: function (deviceId, deviceName) {
+        bluetooth.connectingDevice = {
+            id: deviceId,
+            name: deviceName
+        };
+        debug.log('connecting to ' + deviceId);
+        ble.connect(deviceId, bluetooth.onConnect, bluetooth.onError);
     },
     sendData(data) {
         ble.write(bluetooth.connectedDevice.id, bluetooth.serviceUuids.serviceUUID, bluetooth.serviceUuids.txCharacteristic, data, bluetooth.onSend, bluetooth.onError);
     },
+    sendTime() {
+        var data32 = new Uint32Array(2);
+        data32[0] = 0; 
+        data32[1] = Math.ceil((new Date()-noiselevel.ref_date) / 1000); // seconds since 1 January 2019
+        var data = new Uint8Array(data32.buffer, 2, 6);
+        data[0] = 1; // time info
+        data[1] = 4; // 4 byte
+
+        debug.log('Sending time ' + data32[1], 'success');
+        bluetooth.sendData(data.buffer);
+        noiselevel.prev_update_date = new Date();
+    },
     onDisconnectDevice: function () {
-        storage.removeItem('connectedDevice');
+        //storage.removeItem('connectedDevice');
         //mqttclient.addMessage('device,0');
         debug.log('Disconnected from ' + bluetooth.lastConnectedDeviceId, 'success');
         bluetooth.connectedDevice = {};
@@ -156,6 +171,11 @@ var bluetooth = {
                 bluetooth.refreshSentMessageList();
         
                 noiselevel.parseData(stringdata);
+
+                if ((new Date() - noiselevel.prev_update_date) > 1000*60*15)
+                {
+                    bluetooth.sendTime();
+                }
             }
         }
 

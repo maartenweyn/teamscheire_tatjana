@@ -380,6 +380,8 @@ ret_code_t advertising_init(void) {
     return err_code;
 
   ble_advertising_conn_cfg_tag_set(&m_advertising, APP_BLE_CONN_CFG_TAG);
+
+  return NRF_SUCCESS;
 }
 
 
