@@ -22,6 +22,7 @@ var app = {
         //gps.getLocation();
         bluetooth.initialize();
         noiselevel.initialize();
+        storage.openDatabase();
 
         cordova.plugins.backgroundMode.enable();
         cordova.plugins.backgroundMode.overrideBackButton();

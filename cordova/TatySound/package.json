@@ -22,6 +22,7 @@
     "cordova-plugin-ble-central": "^1.2.0",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-file": "^6.0.2",
+    "cordova-sqlite-storage": "3.4.0",
     "onsenui": "^2.10.4"
   },
   "devDependencies": {
@@ -37,7 +38,8 @@
       "cordova-plugin-device": {},
       "cordova-plugin-background-mode": {},
       "cordova-plugin-background-mode-bluetooth-central": {},
-      "cordova-background-timer": {}
+      "cordova-background-timer": {},
+      "cordova-sqlite-storage": {}
     },
     "platforms": [
       "android",
