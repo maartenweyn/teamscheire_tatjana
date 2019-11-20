@@ -11,6 +11,8 @@ var storage = {
 
         storage.db.transaction(function(tx) {
             tx.executeSql('CREATE TABLE IF NOT EXISTS Sound (timestamp, dbA, leq, minutes)');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS Status (timestamp, action)');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS Upload (timestamp, status, min, hour, hours8, day, hours8dose, daydose, id, length)');
         }, function(error) {
             console.log('Transaction ERROR: ' + error.message);
         }, function() {
@@ -41,11 +43,21 @@ var storage = {
             tx.executeSql('SELECT SUM(leq * minutes) / SUM(minutes) as average  FROM Sound WHERE timestamp >= ? and timestamp <= ?', [from, to], function(tx, rs) {
                 average = Math.round(1000 * Math.log10(rs.rows.item(0).average)) / 100;
                 console.log('Average leq is : ' + average);
-                callback(average);
+                callback(rs.rows.item(0).average, average);
             }, function(tx, error) {
               console.log('SELECT error: ' + error.message);
               callback(0);
             });
+          });
+    },
+    addUploadEntry(timestamp, status, min, hour, hours8, day, hours8dose, daydose, id, length) {
+        leqValue = Math.pow(10, dbValue/10);
+        storage.db.transaction(function(tx) {
+            tx.executeSql('INSERT INTO Upload VALUES (?,?,?,?,?,?,?,?,?,?)', [timestamp, status, min, hour, hours8, day, hours8dose, daydose, id, length]);
+          }, function(error) {
+            console.log('Transaction ERROR: ' + error.message);
+          }, function() {
+            console.log('Inserted values: ' + timestamp + ", " + status + ", " + min + ", " + hour +  ", " + hours8 + ", " + day + ", " + hours8dose + ", " + daydose + ", " + id + ", " + length);
           });
     },
     setItem: function (referenceName, object) {

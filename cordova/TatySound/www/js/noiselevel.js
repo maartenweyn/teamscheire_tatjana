@@ -7,6 +7,8 @@ var noiselevel = {
     leq_8hours: 0.0,
     leq_day: 0.0,
     leq: 0.0,
+    hours8dose: 0,
+    daydose: 0,
     corrected_leq: 0.0,
     prev_length :0,
     prev_ts: {ts:0, sensor_ts:0},
@@ -22,20 +24,25 @@ var noiselevel = {
         debug.log("UUID " + device.uuid, "success");
         debug.log("posturl " + noiselevel.posturl , "success");
     },
-    avgHourCallback: function(value) {
-        noiselevel.leq_hour = value;
+    avgHourCallback: function(value, valuedb) {
+        noiselevel.leq_hour = valuedb;
         console.log("leq_hour:" + noiselevel.leq_hour);
     },
-    avg8HourCallback: function(value) {
-        noiselevel.leq_8hours = value;
-        console.log("leq_8hours:" + noiselevel.leq_8hours);
+    avg8HourCallback: function(value, valuedb) {
+        noiselevel.leq_8hours = valuedb;
+        noiselevel.hours8dose = Math.round(100*value/100000000);
+        console.log("leq_8hours:" + noiselevel.leq_8hours + ", " + noiselevel.hours8dose);
     },
-    avgDayCallback: function(value) {
-        noiselevel.leq_day = value;
-        console.log("leq_day:" + noiselevel.leq_day);
+    avgDayCallback: function(value, valuedb) {
+        noiselevel.leq_day = valuedb;
+        noiselevel.daydose = Math.round(100*value/31622777);
+        console.log("leq_day:" + noiselevel.leq_day + ", " + noiselevel.daydose);
         noiselevel.processNoiseData();
     },
     processNoiseData: function() {
+        addUploadEntry(noiselevel.ts, 0, noiselevel.leq_min, noiselevel.leq_hour, noiselevel.leq_8hours, noiselevel.leq_day, noiselevel.hours8dose, noiselevel.daydose, noiselevel.id, noiselevel.data_length);
+    },
+    uploadNoiseData: function() {
         storage.callbackcount = 0;
         var response  = 0;
         var json = {
