@@ -297,12 +297,6 @@ void sleep_mode_enter(void)
     err_code = btn_ble_sleep_mode_prepare();
 
     APP_ERROR_CHECK(err_code);
-    lp55231_disable(ADDRESS0);
-    lp55231_disable(ADDRESS1);
-    lp55231_disable(ADDRESS2);
-
-    i2c_deinit();
-
 
      // Go to system-off mode (this function will not return; wakeup will cause a reset).
      nrf_delay_ms(100);

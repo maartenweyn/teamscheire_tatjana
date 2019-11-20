@@ -65,77 +65,23 @@
 
 
 // Buttons
-#define BUTTON1 28
+#define BUTTON1 3
 
 // LEDS
 
-#define ADDRESS0 0x35 
-#define ADDRESS1 0x32 
-#define ADDRESS2 0x34 
+#define LED1  5
+#define LED2  8
+#define LED3  6
 
-#define LED8RED_ADDR    2
-#define LED8RED_ID      7
-#define LED8GREEN_ADDR  2
-#define LED8GREEN_ID    2
-#define LED8BLUE_ADDR   2
-#define LED8BLUE_ID     3
+#define LED_RED LED1
+#define LED_GREEN LED2
+#define LED_BLUE LED3
 
-#define LED7RED_ADDR    2
-#define LED7RED_ID      8
-#define LED7GREEN_ADDR  2
-#define LED7GREEN_ID    4
-#define LED7BLUE_ADDR   2
-#define LED7BLUE_ID     5
-
-#define LED6RED_ADDR    0
-#define LED6RED_ID      6
-#define LED6GREEN_ADDR  0
-#define LED6GREEN_ID    0
-#define LED6BLUE_ADDR   0
-#define LED6BLUE_ID     1
-
-#define LED5RED_ADDR    0
-#define LED5RED_ID      7
-#define LED5GREEN_ADDR  0
-#define LED5GREEN_ID    2
-#define LED5BLUE_ADDR   0
-#define LED5BLUE_ID     3
-
-#define LED4RED_ADDR    0
-#define LED4RED_ID      8
-#define LED4GREEN_ADDR  0
-#define LED4GREEN_ID    4
-#define LED4BLUE_ADDR   0
-#define LED4BLUE_ID     5
-
-
-#define LED3RED_ADDR    1
-#define LED3RED_ID      7
-#define LED3GREEN_ADDR  1
-#define LED3GREEN_ID    2
-#define LED3BLUE_ADDR   1
-#define LED3BLUE_ID     3
-
-#define LED2RED_ADDR    1
-#define LED2RED_ID      6
-#define LED2GREEN_ADDR  1
-#define LED2GREEN_ID    0
-#define LED2BLUE_ADDR   1
-#define LED2BLUE_ID     1
-
-#define LED1RED_ADDR    2
-#define LED1RED_ID      6
-#define LED1GREEN_ADDR  2
-#define LED1GREEN_ID    0
-#define LED1BLUE_ADDR   2
-#define LED1BLUE_ID     1
-
-
-#define LED_INDICATE_SENT_OK               1
-#define LED_INDICATE_SEND_ERROR            1
-#define LED_INDICATE_RCV_OK                1
-#define LED_INDICATE_RCV_ERROR             1
-#define LED_INDICATE_CONNECTED             7
+#define LED_INDICATE_SENT_OK               0
+#define LED_INDICATE_SEND_ERROR            0
+#define LED_INDICATE_RCV_OK                0
+#define LED_INDICATE_RCV_ERROR             0
+#define LED_INDICATE_CONNECTED             LED_BLUE
 #define LED_INDICATE_BONDING               0
 #define LED_INDICATE_ADVERTISING_DIRECTED  0
 #define LED_INDICATE_ADVERTISING_SLOW      0
@@ -143,10 +89,7 @@
 #define LED_INDICATE_ADVERTISING  0
 
 #define LED_INDICATE_TX  0
-#define LED_INDICATE_PEAK  1
 
-#define LED_INDICATE_BUTTON_STATE_01         1
-#define LED_INDICATE_BUTTON_STATE_02         7
 
 #define RED 1
 #define GREEN 2
@@ -157,22 +100,6 @@
 #define GREEN_ID 1
 #define BLUE_ID  2
 
-#define LED_INDICATE_ADVERTISING_COLOR      BLUE
-#define LED_INDICATE_CONNECTED_COLOR        GREEN
-#define LED_INDICATE_TX_COLOR               GREEN
-#define LED_INDICATE_PEAK_COLOR               GREEN
-#define LED_INDICATE_BOOT                   GREEN
-#define LED_INDICATE_BOOT_DEBUG             RED
-
-#define LED_INDICATE_SENT_OK_COLOR         GREEN
-#define LED_INDICATE_SENT_ERROR_COLOR         RED
-
-#define LED_INDICATE_ADVERTISING_COLOR_ID      BLUE_ID
-#define LED_INDICATE_CONNECTED_COLOR_ID        GREEN_ID
-#define LED_INDICATE_BOOT_ID                   GREEN_ID
-#define LED_INDICATE_BOOT_DEBUG_ID             RED_ID
-#define LED_INDICATE_SENT_OK_COLOR_ID          GREEN_ID
-#define LED_INDICATE_SENT_ERROR_COLOR_ID       RED_ID
 
 #define LED_BRIGHTNESS  10
 
