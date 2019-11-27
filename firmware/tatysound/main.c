@@ -67,6 +67,7 @@ sound_data_element_t ble_data[MAX_BLE_DATA];
 uint16_t ble_data_size = 0;
 
 static volatile uint8_t led_status[8][3] = {0};
+static volatile bool transmitting = false;
 static uint8_t led_driver_status[3] = {0};
 static uint8_t light_brightness = 50;
 static uint8_t front_light_status = 0;
@@ -112,6 +113,8 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt);
 uint32_t start_sound_measurement() {
 
   NRF_LOG_DEBUG("Starting pdm");
+  
+  app_indication_set(BSP_INDICATE_USER_STATE_2);
 
   //buffer_index = 0;
   int32_t err_code = 0;
@@ -456,7 +459,12 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(next_delay), NULL);
     break;
 
-  case BSP_INDICATE_SENT_OK:
+  case BSP_INDICATE_SENT_OK:  
+    on(LED_GREEN);
+
+    m_stable_state = BSP_INDICATE_IDLE;
+    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
+    break;
 //    if (led_status[LED_INDICATE_SENT_OK][LED_INDICATE_SENT_OK_COLOR_ID]) {
 //      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_OK_COLOR, 0);
 //      m_stable_state = BSP_INDICATE_IDLE;
@@ -468,7 +476,11 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
     break;
 
   case BSP_INDICATE_SEND_ERROR:
+    on(LED_RED);
 
+    m_stable_state = BSP_INDICATE_IDLE;
+    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
+    break;
 //    if (led_status[LED_INDICATE_SENT_OK][LED_INDICATE_SENT_ERROR_COLOR_ID]) {
 //      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_ERROR_COLOR, 0);
 //      m_stable_state = BSP_INDICATE_IDLE;
@@ -543,11 +555,14 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
     break;
   case BSP_INDICATE_USER_STATE_1: // TX
 //    set_led(LED_INDICATE_TX, LED_INDICATE_TX_COLOR, LED_BRIGHTNESS);
+    
+    on(LED_BLUE);
     m_stable_state = BSP_INDICATE_IDLE;
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
     break;
   case BSP_INDICATE_USER_STATE_2: // measure
 //    set_led(LED_INDICATE_PEAK, LED_INDICATE_PEAK_COLOR, LED_BRIGHTNESS);
+    on(LED_GREEN);
     m_stable_state = BSP_INDICATE_IDLE;
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(50), NULL);
     break;
@@ -583,6 +598,7 @@ int32_t a_filter(double input) {
 }
 
 void transmit_ble_data () {
+  transmitting = true;
   NRF_LOG_DEBUG("transmit_ble_data %d", ble_data_size);
   uint8_t txt_data[200];
   uint32_t error = 0;
@@ -592,6 +608,7 @@ void transmit_ble_data () {
     error = send_data_to_ble(txt_data,strlen(txt_data));
     NRF_LOG_DEBUG("BLE TX: %d of %d '%s' error %d", i, ble_data_size, txt_data, error);
 
+
     if (error != NRF_SUCCESS) {
       if (i > 0) {
         for (int j = i; j < ble_data_size; j++) {
@@ -599,6 +616,8 @@ void transmit_ble_data () {
         }
         ble_data_size -= i;
       }
+      
+      app_indication_set(BSP_INDICATE_SEND_ERROR);
       return;
     }
   }
@@ -608,6 +627,8 @@ void transmit_ble_data () {
 
   
   NRF_LOG_DEBUG("transmit_ble_data clear  %d", ble_data_size);
+  app_indication_set(BSP_INDICATE_SENT_OK);
+  transmitting = false;
 }
 
 
@@ -643,7 +664,8 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
         ble_data[ble_data_size].time = time_stamp;
         ble_data[ble_data_size].cdBSPL = (uint16_t)(leq_min * 100);
         NRF_LOG_INFO("Add Data 1 %d, lea: %d", ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
-      ble_data_size++;
+        ble_data_size++;
+        transmitting = false;
       }
 
       acc_min = 0;
@@ -667,8 +689,8 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
     double filtered = a_filter(corrected);
     sumsquare += filtered * filtered;
 
-    sprintf(txt_data, "%d,%d,%d,%d,%d,%d\n", i, data[i], (int) prev_avg, (int) corrected, (int) filtered, (int) sumsquare);
-    NRF_LOG_RAW_INFO("%s", txt_data);
+//    sprintf(txt_data, "%d,%d,%d,%d,%d,%d\n", i, data[i], (int) prev_avg, (int) corrected, (int) filtered, (int) sumsquare);
+//    NRF_LOG_RAW_INFO("%s", txt_data);
   }
  
   total_samples +=  I2S_BUFFER_SIZE;
@@ -685,7 +707,7 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
 
     stop_sound_measurement();
 
-    app_indication_set(BSP_INDICATE_USER_STATE_2);
+    //app_indication_set(BSP_INDICATE_USER_STATE_2);
 
 //    sprintf(txt_data, "0,%d,%d,0;", (int) (new_ts), (uint16_t)(leq * 100));
 //    send_data_to_ble(txt_data,strlen(txt_data));
@@ -696,6 +718,7 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
       ble_data[ble_data_size].cdBSPL = (uint16_t)(leq * 100);
       NRF_LOG_INFO("Add Data 0 %d, lea: %d",ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
       ble_data_size++;
+      transmitting = false;
     }
 
     sumsquare = 0.0;
@@ -747,7 +770,7 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
 /**@brief Application main function.
  */
 
- int main(void) {
+int main(void) {
   uint32_t err_code;
   ble_state = 255;
   sleep_status = 1; // 0 can go to sleep,  1 keep awake
@@ -805,7 +828,7 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
 //      process_sound_data();
 //    }
 
-    if (!sampling_running && ble_data_size > 0) {
+    if (!transmitting && !sampling_running && ble_data_size > 0) {
       transmit_ble_data();
     }
 

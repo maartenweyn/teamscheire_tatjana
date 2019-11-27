@@ -57,6 +57,7 @@ var app = {
         debug.log('out of pause');
         bluetooth.refreshDeviceList();
         noiselevel.showNoiseLevel();
+        noiselevel.checkUploadData();
         // mqttclient.addMessage('app,3');
     },
     onMenuKeyDown: function () {

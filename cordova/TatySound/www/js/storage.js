@@ -51,13 +51,31 @@ var storage = {
           });
     },
     addUploadEntry(timestamp, status, min, hour, hours8, day, hours8dose, daydose, id, length) {
-        leqValue = Math.pow(10, dbValue/10);
         storage.db.transaction(function(tx) {
             tx.executeSql('INSERT INTO Upload VALUES (?,?,?,?,?,?,?,?,?,?)', [timestamp, status, min, hour, hours8, day, hours8dose, daydose, id, length]);
           }, function(error) {
             console.log('Transaction ERROR: ' + error.message);
           }, function() {
             console.log('Inserted values: ' + timestamp + ", " + status + ", " + min + ", " + hour +  ", " + hours8 + ", " + day + ", " + hours8dose + ", " + daydose + ", " + id + ", " + length);
+          });
+    },
+    setUploadStatus(timestamp, id, status) {
+        storage.db.transaction(function(tx) {
+            tx.executeSql('UPDATE Upload SET status==? WHERE timestamp==? and id==?', [status, timestamp, id]);
+          }, function(error) {
+            console.log('setUploadStatus Transaction ERROR: ' + error.message);
+          }, function() {
+            console.log('setUploadStatus changed ' + timestamp + ", " + id + ", " + status);
+          });
+    },
+    getUnploadedEntries(callback) {
+        storage.db.transaction(function(tx) {
+            tx.executeSql('SELECT *  FROM Upload WHERE status == 0', [], function(tx, rs) {
+                callback(rs.rows);
+            }, function(tx, error) {
+              console.log('SELECT error: ' + error.message);
+              callback(0);
+            });
           });
     },
     setItem: function (referenceName, object) {

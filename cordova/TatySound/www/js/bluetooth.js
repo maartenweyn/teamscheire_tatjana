@@ -166,9 +166,7 @@ var bluetooth = {
         
                 bluetooth.currentmessagepointer = 0;
         
-                console.log(stringdata);
-        
-                bluetooth.refreshSentMessageList();
+                console.log("from ble: " + stringdata);
         
                 noiselevel.parseData(stringdata);
 
@@ -176,6 +174,8 @@ var bluetooth = {
                 {
                     bluetooth.sendTime();
                 }
+
+                bluetooth.refreshSentMessageList();
             }
         }
 

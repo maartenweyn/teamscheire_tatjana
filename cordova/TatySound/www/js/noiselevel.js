@@ -38,26 +38,41 @@ var noiselevel = {
         noiselevel.daydose = Math.round(100*value/31622777);
         console.log("leq_day:" + noiselevel.leq_day + ", " + noiselevel.daydose);
         noiselevel.processNoiseData();
+        //for testing
+
+        noiselevel.checkUploadData();
+    },
+    unuploadedDataCallback: function(rows) {
+        if (rows.length != 0) {
+            console.log("unuploadedDataCallback nr of rows " + rows.length + " " + rows.item(0).timestamp);
+            var json = {
+                //ts: ts,
+                ts: rows.item(0).timestamp,
+                values: {
+                    min: rows.item(0).min,
+                    hour: rows.item(0).hour,
+                    hours8: rows.item(0).hours8,
+                    day: rows.item(0).hours8,
+                    hours8dose: rows.item(0).hours8dose,
+                    daydose: rows.item(0).daydose,
+                    id: rows.item(0).id,
+                    length: rows.item(0).length,
+                    upload: rows.length
+                }
+            };
+            noiselevel.uploadNoiseData(json);
+        } else {
+            console.log("unuploadedDataCallback no rows");
+        }
     },
     processNoiseData: function() {
-        addUploadEntry(noiselevel.ts, 0, noiselevel.leq_min, noiselevel.leq_hour, noiselevel.leq_8hours, noiselevel.leq_day, noiselevel.hours8dose, noiselevel.daydose, noiselevel.id, noiselevel.data_length);
+        storage.addUploadEntry(noiselevel.ts, 0, noiselevel.leq_min, noiselevel.leq_hour, noiselevel.leq_8hours, noiselevel.leq_day, noiselevel.hours8dose, noiselevel.daydose, noiselevel.id, noiselevel.data_length);
     },
-    uploadNoiseData: function() {
+    checkUploadData: function() {
+        storage.getUnploadedEntries(noiselevel.unuploadedDataCallback);
+    },
+    uploadNoiseData: function(json) {
         storage.callbackcount = 0;
-        var response  = 0;
-        var json = {
-            //ts: ts,
-            ts: noiselevel.ts,
-            values: {
-                min: noiselevel.leq_min.toFixed(1),
-                hour: noiselevel.leq_hour.toFixed(1),
-                hours8: noiselevel.leq_8hours.toFixed(1),
-                day: noiselevel.leq_day.toFixed(1),
-                id: noiselevel.id,
-                length: noiselevel.data_length,
-                resp: response
-            }
-        };
         console.log(JSON.stringify(json));
 
         //curl  -X POST -H "Content-Type: application/json" -d '{"ts":1569580418000,"values":{"sound_level":"21.6","min":"31.4","hour":"36.4","hours8":"36.6","day":"36.6","id":390,"length":0,"resp":0}}' http://teamscheire.wesdec.be:8080/api/v1/9MoLAEg7QEqU5TDjCH2k/telemetry -v
@@ -70,15 +85,21 @@ var noiselevel = {
         cordova.plugin.http.setDataSerializer('json');
         cordova.plugin.http.sendRequest(noiselevel.posturl, options, function(response) {
             // prints 200
-            debug.log("POST RESPONSE: " + response.status, "succes");
+            debug.log("POST RESPONSE: " + response.status + " for id " + options.data.values.id + " on ts " + options.data.ts, "succes");
             noiselevel.upload_status = true;
+            storage.setUploadStatus(options.data.ts, options.data.values.id, 1);
+            if (options.data.values.upload > 1) 
+            {
+                noiselevel.checkUploadData();
+            }
             }, function(response) {
             // prints 403
             debug.log("POST RESPONSE: " + response.status, "error");
             noiselevel.upload_status = false;
         });
 
-        noiselevel.showNoiseLevel();
+        //noiselevel.showNoiseLevel();
+        console.log("uploadNoiseData done");
     },
     parseData: function (datastring) {
         var res = datastring.split(',');
@@ -160,6 +181,8 @@ var noiselevel = {
             'Last hour: ' + noiselevel.leq_hour + ' dBA <br />' +
             'Last 8 Hours: ' + noiselevel.leq_8hours + ' dBA <br />' +
             'Last Day: ' + noiselevel.leq_day + ' dBA <br />'+
+            'Noise Dose 8 Hours: ' + noiselevel.hours8dose + '%<br />'+
+            'Noise dose Last Day: ' + noiselevel.daydose + '% <br />'+
             'Corrected: ' + noiselevel.corrected_leq + ' dBA <br />'+
             'Upload status: ' + noiselevel.upload_status + '<br />');
     }
