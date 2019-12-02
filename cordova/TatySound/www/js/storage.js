@@ -38,12 +38,12 @@ var storage = {
             console.log('Inserted values: ' + timestamp + ", " + dbValue + ", " + leqValue + ", " + nrofMinutes);
           });
     },
-    getAverage(from, to, callback) {
+    getAverage(noise_data, from, to, callback) {
         storage.db.transaction(function(tx) {
             tx.executeSql('SELECT SUM(leq * minutes) / SUM(minutes) as average  FROM Sound WHERE timestamp >= ? and timestamp <= ?', [from, to], function(tx, rs) {
                 average = Math.round(1000 * Math.log10(rs.rows.item(0).average)) / 100;
                 console.log('Average leq is : ' + average);
-                callback(rs.rows.item(0).average, average);
+                callback(noise_data, rs.rows.item(0).average, average);
             }, function(tx, error) {
               console.log('SELECT error: ' + error.message);
               callback(0);

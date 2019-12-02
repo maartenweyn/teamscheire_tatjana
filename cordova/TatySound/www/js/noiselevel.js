@@ -15,7 +15,7 @@ var noiselevel = {
     upload_status: false,
     data_length:0,
     callbackcount : 0,
-    //sound_data: [],
+    sound_data: [],
     posturl : "",
     ref_date: new Date('1/1/2019'),
     prev_update_date: new Date('1/1/2019'),
@@ -24,23 +24,27 @@ var noiselevel = {
         debug.log("UUID " + device.uuid, "success");
         debug.log("posturl " + noiselevel.posturl , "success");
     },
-    avgHourCallback: function(value, valuedb) {
-        noiselevel.leq_hour = valuedb;
-        console.log("leq_hour:" + noiselevel.leq_hour);
+    avgHourCallback: function(noise_data, value, valuedb) {
+      noise_data.hour = valuedb;
+      console.log("leq_hour:" + noise_data.hour);
+        
+      storage.getAverage(noise_data, noise_data.ts - (8 * 360000), noise_data.ts, noiselevel.avg8HourCallback);
     },
-    avg8HourCallback: function(value, valuedb) {
-        noiselevel.leq_8hours = valuedb;
-        noiselevel.hours8dose = Math.round(100*value/100000000);
-        console.log("leq_8hours:" + noiselevel.leq_8hours + ", " + noiselevel.hours8dose);
+    avg8HourCallback: function(noise_data, value, valuedb) {
+      noise_data.hours8 = valuedb;
+      noise_data.hours8dose = Math.round(100*value/100000000);
+      console.log("leq_8hours:" + noise_data.hours8 + ", " + noise_data.hours8dose);
+        
+      storage.getAverage(noise_data, noise_data.ts - (24 * 360000), noise_data.ts, noiselevel.avgDayCallback);
     },
-    avgDayCallback: function(value, valuedb) {
-        noiselevel.leq_day = valuedb;
-        noiselevel.daydose = Math.round(100*value/31622777);
-        console.log("leq_day:" + noiselevel.leq_day + ", " + noiselevel.daydose);
-        noiselevel.processNoiseData();
-        //for testing
+    avgDayCallback: function(noise_data, value, valuedb) {
+      noise_data.day = valuedb;
+      noise_data.daydose = Math.round(100*value/31622777);
+      console.log("leq_day:" + noise_data.day + ", " + noise_data.daydose);
+      noiselevel.processNoiseData(noise_data);
+      //for testing
 
-        noiselevel.checkUploadData();
+      noiselevel.checkUploadData();
     },
     unuploadedDataCallback: function(rows) {
         if (rows.length != 0) {
@@ -65,8 +69,9 @@ var noiselevel = {
             console.log("unuploadedDataCallback no rows");
         }
     },
-    processNoiseData: function() {
-        storage.addUploadEntry(noiselevel.ts, 0, noiselevel.leq_min, noiselevel.leq_hour, noiselevel.leq_8hours, noiselevel.leq_day, noiselevel.hours8dose, noiselevel.daydose, noiselevel.id, noiselevel.data_length);
+    processNoiseData: function(noise_data) {
+      noiselevel.sound_data = noise_data;
+      storage.addUploadEntry(noise_data.ts, 0, noise_data.min, noise_data.hour, noise_data.hours8, noise_data.day, noise_data.hours8dose, noise_data.daydose, noise_data.id, noise_data.length);
     },
     checkUploadData: function() {
         storage.getUnploadedEntries(noiselevel.unuploadedDataCallback);
@@ -83,6 +88,7 @@ var noiselevel = {
             headers: {}
             };
         cordova.plugin.http.setDataSerializer('json');
+        debug.log("sendRequest: "+ noiselevel.posturl + " with " + options);
         cordova.plugin.http.sendRequest(noiselevel.posturl, options, function(response) {
             // prints 200
             debug.log("POST RESPONSE: " + response.status + " for id " + options.data.values.id + " on ts " + options.data.ts, "succes");
@@ -94,7 +100,7 @@ var noiselevel = {
             }
             }, function(response) {
             // prints 403
-            debug.log("POST RESPONSE: " + response.status, "error");
+            debug.log("POST RESPONSE: " + response.status  + " " + response.error, "error");
             noiselevel.upload_status = false;
         });
 
@@ -145,12 +151,21 @@ var noiselevel = {
 
             storage.addSoundEntry(noiselevel.ts, noiselevel.leq_min, 1);
 
-            storage.callbackcount = 0;
-            storage.getAverage(noiselevel.ts - 360000, noiselevel.ts, noiselevel.avgHourCallback);
-            storage.getAverage(noiselevel.ts - (8 * 360000), noiselevel.ts, noiselevel.avg8HourCallback);
-            storage.getAverage(noiselevel.ts - (24 * 360000), noiselevel.ts, noiselevel.avgDayCallback);
+            var noise_data = {
+              ts: noiselevel.ts,
+              min: noiselevel.leq_min,
+              hour: 0,
+              hours8: 0,
+              day: 0,
+              hours8dose: 0,
+              daydose: 0,
+              id: noiselevel.id,
+              length: length_of_data_entries
+          };
 
-            
+            storage.callbackcount = 0;
+            storage.getAverage(noise_data, noiselevel.ts - 360000, noiselevel.ts, noiselevel.avgHourCallback);
+
         } else if (res[0] == "0") {
             noiselevel.sound_level = parseInt(res[2]) / 100.0;
             //noiselevel.corrected_leq = parseFloat(res[2]);
@@ -175,15 +190,15 @@ var noiselevel = {
 
 
         $('#soundlevelinfo').html('Timestamp: ' + formattedTime + '<br />' +
-            'Last ID: ' + noiselevel.id + '<br />' +
+            'Last ID: ' + noiselevel.sound_data.id + '<br />' +
             'Last leq: ' + noiselevel.sound_level + ' dBA <br />' +
-            'Last minute: ' + noiselevel.leq_min + ' dBA <br />' +
-            'Last hour: ' + noiselevel.leq_hour + ' dBA <br />' +
-            'Last 8 Hours: ' + noiselevel.leq_8hours + ' dBA <br />' +
-            'Last Day: ' + noiselevel.leq_day + ' dBA <br />'+
-            'Noise Dose 8 Hours: ' + noiselevel.hours8dose + '%<br />'+
-            'Noise dose Last Day: ' + noiselevel.daydose + '% <br />'+
-            'Corrected: ' + noiselevel.corrected_leq + ' dBA <br />'+
+            'Last minute: ' + noiselevel.sound_data.min + ' dBA <br />' +
+            'Last hour: ' + noiselevel.sound_data.hour + ' dBA <br />' +
+            'Last 8 Hours: ' + noiselevel.sound_data.hours8 + ' dBA <br />' +
+            'Last Day: ' + noiselevel.sound_data.day + ' dBA <br />'+
+            'Noise Dose 8 Hours: ' + noiselevel.sound_data.hours8dose + '%<br />'+
+            'Noise dose Last Day: ' + noiselevel.sound_data.daydose + '% <br />'+
+            'Corrected: ' + noiselevel.sound_data.corrected_leq + ' dBA <br />'+
             'Upload status: ' + noiselevel.upload_status + '<br />');
     }
 }
