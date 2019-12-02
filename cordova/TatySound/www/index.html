@@ -13,86 +13,38 @@
 </head>
 
 <body>
-    <ons-navigator id="appNavigator" swipeable swipe-target-width="80px">
-        <ons-page>
-            <ons-splitter id="appSplitter">
-                <ons-splitter-side id="logscreen" page="logs.html" swipeable side="right" collapse="" width="80%"></ons-splitter-side>
-                <ons-splitter-content page="tabbar.html"></ons-splitter-content>
-            </ons-splitter>
-        </ons-page>
-    </ons-navigator>
-
-    <template id="tabbar.html">
-        <ons-page id="tabbar-page">
-            <ons-toolbar>
-                <div class="center">home</div>
-                <div class="right">
-                    <ons-toolbar-button id="btnLogscreen">
-                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
-                    </ons-toolbar-button>
-                </div>
-            </ons-toolbar>
-            <ons-tabbar swipeable id="appTabbar" position="auto">
-                <ons-tab label="home" icon="fa-home" page="home.html" active></ons-tab>
-                <ons-tab label="user" icon="fa-user" page="user.html"></ons-tab>
-                <ons-tab label="device" icon="fa-bluetooth" page="device.html"></ons-tab>
-                <ons-tab label="settings" icon="fa-wrench" page="settings.html"></ons-tab>
-            </ons-tabbar>
-
-            <script>
-                ons.getScriptPage().addEventListener('prechange', function (event) {
-                    if (event.target.matches('#appTabbar')) {
-                        event.currentTarget.querySelector('ons-toolbar .center').innerHTML = event.tabItem.getAttribute(
-                            'label');
-                    }
-                });
-
-                $('body').on('click', '#btnLogscreen', function (e) {
-                    document.getElementById('appSplitter').right.toggle();
-                });
-                $('body').on('click', 'a', function (e) {
-                    e.preventDefault();
-                    var page = $(this).attr('data-label');
-                    var pageItem = $('#appTabbar [label="' + page + '"]');
-                    document.querySelector('#appTabbar').setActiveTab($('ons-tab').index(pageItem));
-                });
-            </script>
-        </ons-page>
-    </template>
-
-    <template id="home.html">
-        <ons-page>
-            <!-- <img src="img/becme-banner.png" alt="BeCME" />
-            <ons-card>
-                <p>Text
-                </p>
-            </ons-card> -->
-            <ons-card>
-                <div class="title">Sound Level Info</div>
-                <div id="soundlevelinfo" class="content">
-                    <div class="card">
-                        <div id="plot_container" class="card__content"></div>
-                    </div>
-            </ons-card>
-            <!-- <ons-card>
-                Veel fietsplezier!
-            </ons-card> -->
-            <!-- <div style="text-align: center;">
-                <img src="img/sponsers.png" alt="imec" />
-            </div> -->
-        </ons-page>
-    </template>
-
-    <template id="logs.html">
-        <ons-page>
-            <ons-card>
-                <div class="title">Log</div>
-                <div id="logs" class="content">
-
-                </div>
-            </ons-card>
-        </ons-page>
-    </template>
+  <ons-page>
+    <div id="main-page">
+        <h1 class="center">Bluetooth devices</h1>
+        <ul id="ble-found-devices"></ul>
+        <div class="center">
+            <ons-button id="refreshDeviceList">Refresh device list</ons-button>
+        </div>
+    </div>
+    <div id="device-detail-page">
+        <h1 id="deviceName" class="center"></h1>
+        <div class="center">
+            <ons-button id="disconnectDevice">Disconnect ble device</ons-button>    
+        </div>
+        <div>
+            
+        <div class="card">
+            <div id="soundlevelinfo" class="card__content"></div>
+            <div id="plot_container" class="card__content"></div>
+        </div>
+            <div class="card">
+                <h2>Incoming UART messages</h2>
+                <div id="ble-received-messages" class="card__content"></div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="card">
+            <h2>log</h2>
+            <div id="logs" class="card__content"></div>
+        </div>
+    </div>
+</ons-page>
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/OnsenUI/js/onsenui.min.js"></script>

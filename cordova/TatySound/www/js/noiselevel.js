@@ -17,6 +17,8 @@ var noiselevel = {
     callbackcount : 0,
     sound_data: [],
     posturl : "",
+    chart_data_points: 8 * 60,
+    is_uploading: false,
     ref_date: new Date('1/1/2019'),
     prev_update_date: new Date('1/1/2019'),
     initialize: function () {
@@ -43,8 +45,9 @@ var noiselevel = {
       console.log("leq_day:" + noise_data.day + ", " + noise_data.daydose);
       noiselevel.processNoiseData(noise_data);
       //for testing
-
-      noiselevel.checkUploadData();
+      if (!noiselevel.is_uploading) {
+        noiselevel.checkUploadData();
+      }
     },
     unuploadedDataCallback: function(rows) {
         if (rows.length != 0) {
@@ -56,7 +59,7 @@ var noiselevel = {
                     min: rows.item(0).min,
                     hour: rows.item(0).hour,
                     hours8: rows.item(0).hours8,
-                    day: rows.item(0).hours8,
+                    day: rows.item(0).day,
                     hours8dose: rows.item(0).hours8dose,
                     daydose: rows.item(0).daydose,
                     id: rows.item(0).id,
@@ -66,14 +69,44 @@ var noiselevel = {
             };
             noiselevel.uploadNoiseData(json);
         } else {
-            console.log("unuploadedDataCallback no rows");
+          noiselevel.is_uploading = false;
+          console.log("unuploadedDataCallback no rows");
         }
     },
     processNoiseData: function(noise_data) {
       noiselevel.sound_data = noise_data;
       storage.addUploadEntry(noise_data.ts, 0, noise_data.min, noise_data.hour, noise_data.hours8, noise_data.day, noise_data.hours8dose, noise_data.daydose, noise_data.id, noise_data.length);
+    
+      noiselevel.addSoundToChart(noise_data.ts, noise_data.min, noise_data.hour, noise_data.hours8, noise_data.day, noise_data.hours8dose, noise_data.daydose);
+      sound_chart.redraw();
+    },
+    addSoundToChart: function(ts, min, hour, hours8, day, hours8dose, daydose) {  
+      var shift = sound_chart.series[0].data.length > noiselevel.chart_data_points;
+      sound_chart.series[0].addPoint([ts, min], false, shift);
+      sound_chart.series[1].addPoint([ts, hour], false, shift);
+      sound_chart.series[2].addPoint([ts, hours8], false, shift);
+      sound_chart.series[3].addPoint([ts, day], false, shift);
+      sound_chart.series[4].addPoint([ts, hours8dose], false, shift);
+      sound_chart.series[5].addPoint([ts, daydose], false, shift);
+    },
+    soundDataCallback: function(rows) {
+      if (rows.length != 0) {
+        console.log("soundDataCallback nr of rows " + rows.length);
+        var i;
+        for (i = 0; i < rows.length; i++) {  
+          console.log("soundDataCallback row " + i + ": "+ rows.item(i).timestamp);
+          noiselevel.addSoundToChart(rows.item(i).timestamp, rows.item(i).min, rows.item(i).hour, rows.item(i).hours8, rows.item(i).day, rows.item(i).hours8dose, rows.item(i).daydose);
+        } 
+        sound_chart.redraw();
+      } else {
+        console.log("unuploadedDataCallback no rows");
+      }
+    },
+    fillChart: function() {
+      storage.getProcessedDataEntries(noiselevel.soundDataCallback, new Date() - (24 * 360000), new Date());
     },
     checkUploadData: function() {
+        noiselevel.is_uploading = true;
         storage.getUnploadedEntries(noiselevel.unuploadedDataCallback);
     },
     uploadNoiseData: function(json) {
@@ -97,11 +130,14 @@ var noiselevel = {
             if (options.data.values.upload > 1) 
             {
                 noiselevel.checkUploadData();
+            } else {
+              noiselevel.is_uploading = false;
             }
             }, function(response) {
             // prints 403
             debug.log("POST RESPONSE: " + response.status  + " " + response.error, "error");
             noiselevel.upload_status = false;
+            noiselevel.is_uploading = false;
         });
 
         //noiselevel.showNoiseLevel();
@@ -125,6 +161,7 @@ var noiselevel = {
             noiselevel.ts = parseInt(res[1])*1000;
             if (noiselevel.ts < 26265600)
             {
+              noiselevel.prev_update_date = new Date('1/1/2019');
                 if (length_of_data_entries == 1)
                 {
                     noiselevel.ts = (new Date()).getTime();
@@ -189,7 +226,8 @@ var noiselevel = {
         var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
 
-        $('#soundlevelinfo').html('Timestamp: ' + formattedTime + '<br />' +
+        $('#soundlevelinfo').html('Device ID: ' + device.uuid  + '<br />' +
+            'Timestamp: ' + formattedTime + '<br />' +
             'Last ID: ' + noiselevel.sound_data.id + '<br />' +
             'Last leq: ' + noiselevel.sound_level + ' dBA <br />' +
             'Last minute: ' + noiselevel.sound_data.min + ' dBA <br />' +
@@ -198,7 +236,6 @@ var noiselevel = {
             'Last Day: ' + noiselevel.sound_data.day + ' dBA <br />'+
             'Noise Dose 8 Hours: ' + noiselevel.sound_data.hours8dose + '%<br />'+
             'Noise dose Last Day: ' + noiselevel.sound_data.daydose + '% <br />'+
-            'Corrected: ' + noiselevel.sound_data.corrected_leq + ' dBA <br />'+
             'Upload status: ' + noiselevel.upload_status + '<br />');
     }
 }

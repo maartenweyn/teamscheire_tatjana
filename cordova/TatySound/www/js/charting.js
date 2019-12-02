@@ -19,11 +19,11 @@ var sound_chart = Highcharts.chart('plot_container', {
   },
   xAxis: {
       type: 'datetime',
-      tickPixelInterval: 150
+      tickPixelInterval: 50
   },
   yAxis: {
       title: {
-          text: 'Acc (mg)'
+          text: 'Sound (dbA)  / Sound Dose (%)'
       },
       plotLines: [{
           value: 0,
@@ -53,13 +53,22 @@ var sound_chart = Highcharts.chart('plot_container', {
   },
 
   series: [{
-      name: 'X',
+      name: 'Avg Minute',
       data: []
   }, {
-      name: 'Y',
+      name: 'Avg Hour',
       data: []
   }, {
-      name: 'Z',
+      name: 'Avg 8 Hours',
       data: []
-  }],
+  }, {
+    name: 'Avg Day',
+    data: []
+}, {
+  name: '8 Hour Dose (%)',
+  data: []
+}, {
+  name: 'Day dose (%)',
+  data: []
+}],
 });

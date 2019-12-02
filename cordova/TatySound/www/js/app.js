@@ -37,16 +37,26 @@ var app = {
             hidden: true,
             bigText: false
         });
+
+        noiselevel.fillChart();
     },
 
     bindEvents: function () {
-        // setTimeout(function () {
-        //     mqttclient.addMessage('app,1');
-        // }, 3000);
-
-        document.addEventListener("pause", app.onDevicePause, false);
-        document.addEventListener("resume", app.onDeviceResume, false);
-        document.addEventListener("menubutton", app.onMenuKeyDown, false);
+      // setTimeout(function () {
+      //     mqttclient.addMessage('app,1');
+      // }, 3000);
+      $(document).on('click', '#refreshDeviceList', function (e) {
+        bluetooth.refreshDeviceList(false);
+      });
+      $('#ble-found-devices').on('click', 'li', function (e) {
+        bluetooth.connectDevice($(this).attr("data-device-id"), $(this).attr("data-device-name"));
+      });
+      $(document).on('click', '#disconnectDevice', function (e) {
+        bluetooth.disconnectDevice(e);
+      });
+      document.addEventListener("pause", app.onDevicePause, false);
+      document.addEventListener("resume", app.onDeviceResume, false);
+      document.addEventListener("menubutton", app.onMenuKeyDown, false);
     },
 
     onDevicePause: function () {
@@ -57,7 +67,9 @@ var app = {
         debug.log('out of pause');
         bluetooth.refreshDeviceList();
         noiselevel.showNoiseLevel();
-        noiselevel.checkUploadData();
+        if (!noiselevel.is_uploading) {
+          noiselevel.checkUploadData();
+        }
         // mqttclient.addMessage('app,3');
     },
     onMenuKeyDown: function () {

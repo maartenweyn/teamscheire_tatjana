@@ -68,6 +68,17 @@ var storage = {
             console.log('setUploadStatus changed ' + timestamp + ", " + id + ", " + status);
           });
     },
+    getProcessedDataEntries(callback, from, to) {
+      console.log('SELECT * FROM Upload WHERE timestamp >= ' + from + ' and timestamp <= ' + to);
+      storage.db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM Upload WHERE timestamp >= ? and timestamp <= ?', [from, to], function(tx, rs) {
+            callback(rs.rows);
+        }, function(tx, error) {
+          console.log('SELECT error: ' + error.message);
+          callback(0);
+        });
+      });
+    },
     getUnploadedEntries(callback) {
         storage.db.transaction(function(tx) {
             tx.executeSql('SELECT *  FROM Upload WHERE status == 0', [], function(tx, rs) {
