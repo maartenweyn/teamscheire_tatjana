@@ -66,3 +66,4 @@ cordova/TatySound/.gradle
 .vscode
 bluemic/Project/BlueNRG1_PER_BlueVoice/build/
 firmware/tatysound/octa/s132/ses/Output/
+firmware/sdk
