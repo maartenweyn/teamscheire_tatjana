@@ -1,0 +1,5 @@
+{
+    "Security.framework": 1,
+    "SystemConfiguration.framework": 1,
+    "CoreBluetooth.framework": 1
+}
