@@ -21,10 +21,12 @@ var noiselevel = {
     is_uploading: false,
     ref_date: new Date('1/1/2019'),
     prev_update_date: new Date('1/1/2019'),
+    token: "",
     initialize: function () {
-        noiselevel.posturl = "http://teamscheire.wesdec.be:8080/api/v1/" + device.uuid + "/telemetry";
-        debug.log("UUID " + device.uuid, "success");
-        debug.log("posturl " + noiselevel.posturl , "success");
+      noiselevel.token = device.uuid.substr(0, 20);
+      noiselevel.posturl = "http://teamscheire.wesdec.be:8080/api/v1/" + noiselevel.token + "/telemetry";
+      debug.log("UUID " + device.uuid, "success");
+      debug.log("posturl " + noiselevel.posturl , "success");
     },
     avgHourCallback: function(noise_data, value, valuedb) {
       noise_data.hour = valuedb;
@@ -225,8 +227,7 @@ var noiselevel = {
         var seconds = "0" + date.getSeconds();
         var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
-
-        $('#soundlevelinfo').html('Device ID: ' + device.uuid  + '<br />' +
+        $('#soundlevelinfo').html('Device ID: ' + noiselevel.token  + '<br />' +
             'Timestamp: ' + formattedTime + '<br />' +
             'Last ID: ' + noiselevel.sound_data.id + '<br />' +
             'Last leq: ' + noiselevel.sound_level + ' dBA <br />' +

@@ -27,5 +27,21 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <edit-config file="TatySound/TatySound-Info.plist" target="NSAppTransportSecurity" mode="merge">
+            <dict>
+            <key>NSExceptionDomains</key>
+            <dict>
+                <key>wesdec.be</key>
+                <dict>
+                    <!--Include to allow subdomains-->
+                    <key>NSIncludesSubdomains</key>
+                    <true/>
+                    <!--Include to allow HTTP requests-->
+                    <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+                    <true/>
+                </dict>
+            </dict>
+        </dict>
+        </edit-config>
     </platform>
 </widget>

@@ -48,12 +48,14 @@ var bluetooth = {
             debug.log('no previousConnectedDevice ', 'error');
 
         //if (device.name.toLowerCase().replace(/[\W_]+/g, "").indexOf('cme') > -1) {
-        var html = '<ons-list-item modifier="chevron" data-device-id="' + device.id + '" data-device-name="' + device.name + '" tappable>' +
+        var html = '<ons-list-item modifier="tappable" data-device-id="' + device.id + '" data-device-name="' + device.name +
             '<span class="list-item__title">' + device.name + '</span>' +
             '<span class="list-item__subtitle">' + device.id + '</span>' +
             '</ons-list-item>';
 
         $('#ble-found-devices').append(html);
+
+        $('#ble-found-devices').show();
         //}
 
         if (previousConnectedDevice) {
@@ -229,17 +231,19 @@ var bluetooth = {
 
         if (connected) {
             var html = '<ons-list-item>' +
-                '<span class="list-item__title">' + bluetooth.connectedDevice.name + '</span>' +
+                '<span class="list-item__title">' + bluetooth.connectedDevice.name + '</span><br>' +
                 '<span class="list-item__subtitle">' + bluetooth.connectedDevice.id + '</span>' +
                 '</ons-list-item>';
             $('#ble-connected-device').html(html);
 
-            $('.ble-not-connected').hide();
-            $('.ble-connected').show();
+            $('#disconnectDevice').show();
+            $('#refreshDeviceList').hide();
+            $('#ble-found-devices').hide();
         } else {
             $('#ble-connected-device').html('no device connected');
-            $('.ble-not-connected').show();
-            $('.ble-connected').hide();
+            $('#disconnectDevice').hide();
+            $('#refreshDeviceList').show();
+            $('#ble-found-devices').show();
         }
     },
     refreshSentMessageList: function () {

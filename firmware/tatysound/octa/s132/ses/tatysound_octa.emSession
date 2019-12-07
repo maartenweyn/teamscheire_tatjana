@@ -3,12 +3,11 @@
  <Bookmarks/>
  <Breakpoints groups="Breakpoints" active_group="Breakpoints">
   <BreakpointListItem trigger="" line="285" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../../lib/ble_app.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="331" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="../../../../lib/ble_app.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="440" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../../lib/ble_app.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="195" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="../../../main.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="289" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="../../../main.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="86" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="709" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="2" filename="../../../../../sdkv150/modules/nrfx/drivers/src/nrfx_gpiote.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="337" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../../lib/ble_app.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="446" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../../lib/ble_app.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="602" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="753" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="84" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="2" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../sdk_config.h" useHWbreakpoint="false"/>
   <Exceptions set="MemManage;UsageFault_Coprocessor;UsageFault_CheckingError;UsageFault_StateError;BusFault;ExceptionEntryReturnFault;HardFault"/>
  </Breakpoints>
@@ -38,13 +37,11 @@
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;Application"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;Board Definition"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;Board Support"/>
-  <ProjectSessionItem path="tatysound_octa;tatysound_octa;None"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_BLE"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_BLE_Services"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_Drivers"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_Libraries"/>
   <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_Log"/>
-  <ProjectSessionItem path="tatysound_octa;tatysound_octa;nRF_SoftDevice"/>
  </Project>
  <Register1>
   <RegisterWindow visibleNodes="CPU - Current Context/r0;CPU - Current Context/r1;CPU - Current Context/r2;CPU - Current Context/r3;CPU - Current Context/r4;CPU - Current Context/r5;CPU - Current Context/r6;CPU - Current Context/r7;CPU - Current Context/r8;CPU - Current Context/r9;CPU - Current Context/r10;CPU - Current Context/r11;CPU - Current Context/r12;CPU - Current Context/sp(r13);CPU - Current Context/lr(r14);CPU - Current Context/pc(r15);CPU - Current Context/apsr;CPU/r0;CPU/r1;CPU/r2;CPU/r3;CPU/r4;CPU/r5;CPU/r6;CPU/r7;CPU/r8;CPU/r9;CPU/r10;CPU/r11;CPU/r12;CPU/sp(r13);CPU/lr(r14);CPU/pc(r15);CPU/xpsr;CPU/msp;CPU/psp;CPU/cfbp" binaryNodes="" asciiNodes="" openNodes="CPU - Current Context" name="ben_octa" decimalNodes="" octalNodes="" unsignedNodes=""/>
@@ -70,8 +67,8 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint numelements="0" expression="p_evt" evalMode="1" name="p_evt" radix="16" linenumber="740" filename="../../../main.c" list=""/>
-   <Watchpoint numelements="0" expression="p_ble_evt" evalMode="1" name="p_ble_evt" radix="-1" linenumber="59" filename="../../../../lib/ble_app.c" list=""/>
+   <Watchpoint expression="p_evt" name="p_evt" radix="16" linenumber="822" filename="../../../main.c"/>
+   <Watchpoint expression="p_ble_evt" name="p_ble_evt" radix="-1" linenumber="59" filename="../../../../lib/ble_app.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -84,35 +81,13 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="772" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="759" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="784" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="770" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="118" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../drv_audio.c" selected="0" top="101" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="109" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/drivers/include/nrfx_pdm.h" selected="0" top="84" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="2336" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../sdk_config.h" selected="0" top="2310" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="424" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/hal/nrf_pdm.h" selected="0" top="406" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="16" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../config.h" selected="0" top="5" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="100" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/util/app_error_weak.c" selected="0" top="84" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="48" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/util/app_error_handler_gcc.c" selected="0" top="32" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="178" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/drivers/src/nrfx_pdm.c" selected="0" top="175" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="151" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/integration/nrfx/nrfx_glue.h" selected="0" top="135" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="349" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/integration/nrfx/legacy/apply_old_config.h" selected="0" top="333" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="6666" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/mdk/nrf52_bitfields.h" selected="0" top="6650" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="18" y="449" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/ble_app.c" selected="0" top="442" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="32" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../config.h" selected="0" top="5" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="450" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/ble_app.c" selected="0" top="434" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="22" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/ble_app.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="648" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/ble/ble_advertising/ble_advertising.c" selected="0" top="616" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1845" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/softdevice/s132/headers/ble_gap.h" selected="0" top="1829" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="61" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/external/fprintf/nrf_fprintf.c" selected="0" top="48" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="202" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/softdevice/s132/headers/ble_types.h" selected="0" top="187" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="326" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/ble/ble_services/ble_nus/ble_nus.c" selected="0" top="305" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="69" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/softdevice/s132/headers/nrf_error.h" selected="0" top="51" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="339" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/pwr_mgmt/nrf_pwr_mgmt.c" selected="0" top="325" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="50" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/util/nrf_assert.c" selected="0" top="36" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="715" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/drivers/src/nrfx_gpiote.c" selected="0" top="691" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="618" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/hal/nrf_gpio.h" selected="0" top="606" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="74" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/mdk/nrf52832_peripherals.h" selected="0" top="62" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="213" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/softdevice/common/nrf_sdh.c" selected="0" top="200" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="321" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/softdevice/s132/headers/nrf_sdm.h" selected="0" top="308" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="111" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/mdk/ses_startup_nrf52.s" selected="0" top="98" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="189" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/memobj/nrf_memobj.c" selected="0" top="186" codecName=""/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="662" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../sdk/components/ble/ble_advertising/ble_advertising.c" selected="0" top="642" codecName=""/>
  </Files>
- <ARMCrossStudioWindow activeProject="tatysound_octa" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" debugSearchFileMap="" fileDialogInitialDirectory="/Users/maartenweyn/git/verkeersveiligheid/code/sdkv150/modules/nrfx/drivers/src" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="tatysound_octa" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/maartenweyn/git/verkeersveiligheid/code/sdkv150/modules/nrfx/drivers/src" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

@@ -16,7 +16,7 @@ var app = {
     onDeviceReady: function () {
         debug.log('device ready', 'success');
         app.bindEvents();
-        app.checkIfUserLoggedIn();
+        //app.checkIfUserLoggedIn();
         //mqttclient.initialize();
         //gps.initialize();
         //gps.getLocation();
@@ -46,9 +46,11 @@ var app = {
       //     mqttclient.addMessage('app,1');
       // }, 3000);
       $(document).on('click', '#refreshDeviceList', function (e) {
+        console.log("refreshDeviceList click");
         bluetooth.refreshDeviceList(false);
       });
-      $('#ble-found-devices').on('click', 'li', function (e) {
+      $('#ble-found-devices').on('tap', 'ons-list-item', function (e) {
+          console.log("ble-found-devices click");
         bluetooth.connectDevice($(this).attr("data-device-id"), $(this).attr("data-device-name"));
       });
       $(document).on('click', '#disconnectDevice', function (e) {
@@ -57,6 +59,11 @@ var app = {
       document.addEventListener("pause", app.onDevicePause, false);
       document.addEventListener("resume", app.onDeviceResume, false);
       document.addEventListener("menubutton", app.onMenuKeyDown, false);
+
+
+        $(document.body).on('tap', 'ons-list-item', function(){
+            console.log("Test 2");
+        });
     },
 
     onDevicePause: function () {
@@ -80,29 +87,30 @@ var app = {
         debug.log(JSON.stringify(error), 'error');
     },
 
-    loadUser: function () {
-        app.user = storage.getItem('user');
-        console.log('logged in as: ' + JSON.stringify(app.user));
-    },
-    validateUser: function (newUser) {
-        newUser.userId = newUser.userName.toLowerCase().replace(/ /g,'');
-        return newUser;
-    },
-    saveUser: function (newUser) {
-        storage.setItem('user', newUser);
-    },
-    checkIfUserLoggedIn() {
-        app.loadUser();
+    // loadUser: function () {
+    //     app.user = storage.getItem('user');
+    //     console.log('logged in as: ' + JSON.stringify(app.user));
+    // },
+    // validateUser: function (newUser) {
+    //     newUser.userId = newUser.userName.toLowerCase().replace(/ /g,'');
+    //     return newUser;
+    // },
+    // saveUser: function (newUser) {
+    //     storage.setItem('user', newUser);
+    // }
+    // },
+    // checkIfUserLoggedIn() {
+    //     app.loadUser();
 
-        if (app.user) {
-            $('.logged-in').show();
-            $('.logged-out').hide();
-            $('.username').html(app.user.userName);
-        } else {
-            $('.logged-out').show();
-            $('.logged-in').hide();
-        }
-    }
+    //     if (app.user) {
+    //         $('.logged-in').show();
+    //         $('.logged-out').hide();
+    //         $('.username').html(app.user.userName);
+    //     } else {
+    //         $('.logged-out').show();
+    //         $('.logged-in').hide();
+    //     }
+    // }
 };
 
 app.initialize();

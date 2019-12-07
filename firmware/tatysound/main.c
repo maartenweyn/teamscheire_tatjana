@@ -56,6 +56,7 @@ APP_TIMER_DEF(m_sound_tmr);
 
 #define on(led)     nrf_gpio_pin_set(led)
 #define off(led)    nrf_gpio_pin_clear(led)
+#define toggle(led)    nrf_gpio_pin_toggle(led)
 
 typedef struct {
   uint8_t type;
@@ -344,6 +345,8 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
 
   case BSP_INDICATE_SCANNING:
   case BSP_INDICATE_ADVERTISING:
+    toggle(LED_BLUE);
+    next_delay = ADVERTISING_SLOW_LED_OFF_INTERVAL;
     // in advertising blink LED_0
 //    if (led_status[LED_INDICATE_ADVERTISING][LED_INDICATE_ADVERTISING_COLOR_ID]) {
 //      set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_ADVERTISING_COLOR, 0);
@@ -603,10 +606,11 @@ void transmit_ble_data () {
   uint8_t txt_data[200];
   uint32_t error = 0;
   int i = 0;
-  for (int i = 0; i<ble_data_size; i++) {
+  int length = ble_data_size > 10 ? 10 : ble_data_size;
+  for (int i = 0; i<length; i++) {
     sprintf(txt_data, "%d,%d,%d,%d;", ble_data[i].type, ble_data[i].time, ble_data[i].cdBSPL, ble_data_size - i);
     error = send_data_to_ble(txt_data,strlen(txt_data));
-    NRF_LOG_DEBUG("BLE TX: %d of %d '%s' error %d", i, ble_data_size, txt_data, error);
+    NRF_LOG_DEBUG("BLE TX: %d of %d/%d '%s' error %d", i, length, ble_data_size, txt_data, error);
 
 
     if (error != NRF_SUCCESS) {
@@ -623,8 +627,16 @@ void transmit_ble_data () {
   }
 
   if (error == NRF_SUCCESS)
-    ble_data_size = 0;
-
+  {
+    if (ble_data_size == length) {
+      ble_data_size = 0;
+    } else {
+      for (int j = length; j < ble_data_size; j++) {
+        memcpy((uint8_t*) &ble_data[j-length], (uint8_t*) &ble_data[j], sizeof(sound_data_element_t));
+      }
+      ble_data_size -= length;
+    }
+  }
   
   NRF_LOG_DEBUG("transmit_ble_data clear  %d", ble_data_size);
   app_indication_set(BSP_INDICATE_SENT_OK);
