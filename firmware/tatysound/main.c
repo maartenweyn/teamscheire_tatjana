@@ -51,7 +51,7 @@ static bsp_indication_t m_stable_state = BSP_INDICATE_IDLE;
 static bool m_leds_clear = false;
 static bool m_alert_on = false;
 APP_TIMER_DEF(m_app_leds_tmr);
-APP_TIMER_DEF(m_app_alert_tmr);
+APP_TIMER_DEF(m_app_tx_tmr);
 APP_TIMER_DEF(m_sound_tmr);
 
 #define on(led)     nrf_gpio_pin_set(led)
@@ -81,7 +81,7 @@ static uint8_t button_pushed = 0;
 
 uint32_t app_indication_set(bsp_indication_t indicate);
 static void app_leds_timer_handler(void *p_context);
-static void app_alert_timer_handler(void *p_context);
+static void app_tx_timer_handler(void *p_context);
 static void sound_timer_handler(void *p_context);
 void set_led(uint8_t led_nr, uint8_t color, uint8_t brightness);
 void set_front_light(uint8_t status);
@@ -115,7 +115,7 @@ uint32_t start_sound_measurement() {
 
   NRF_LOG_DEBUG("Starting pdm");
   
-  app_indication_set(BSP_INDICATE_USER_STATE_2);
+  //app_indication_set(BSP_INDICATE_USER_STATE_2);
 
   //buffer_index = 0;
   int32_t err_code = 0;
@@ -253,6 +253,9 @@ static void timers_init(void) {
   err_code = app_timer_create(&m_app_leds_tmr, APP_TIMER_MODE_SINGLE_SHOT, app_leds_timer_handler);
   APP_ERROR_CHECK(err_code);
 
+  err_code = app_timer_create(&m_app_tx_tmr, APP_TIMER_MODE_SINGLE_SHOT, app_tx_timer_handler);
+  APP_ERROR_CHECK(err_code);
+
   err_code = app_timer_create(&m_sound_tmr, APP_TIMER_MODE_REPEATED, sound_timer_handler);
   APP_ERROR_CHECK(err_code);
 }
@@ -364,6 +367,7 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
 
     m_stable_state = indicate;
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(next_delay), NULL);
+
     break;
     //
     //        case BSP_INDICATE_ADVERTISING_WHITELIST:
@@ -458,8 +462,14 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
 //                       : CONNECTED_LED_ON_INTERVAL;
 //    }
 
-    m_stable_state = indicate;
-    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(next_delay), NULL);
+//    m_stable_state = indicate;
+//    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(next_delay), NULL);
+
+    on(LED_BLUE);
+
+    m_stable_state = BSP_INDICATE_IDLE;
+    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
+    err_code = app_timer_start(m_app_tx_tmr, APP_TIMER_TICKS(500), NULL);
     break;
 
   case BSP_INDICATE_SENT_OK:  
@@ -600,6 +610,12 @@ int32_t a_filter(double input) {
   return (int32_t) output;
 }
 
+void app_tx_timer_handler(void *p_context) {
+  NRF_LOG_DEBUG("app_tx_timer_handler waking up");
+  transmit_ble_data();
+}
+
+
 void transmit_ble_data () {
   transmitting = true;
   NRF_LOG_DEBUG("transmit_ble_data %d", ble_data_size);
@@ -635,6 +651,7 @@ void transmit_ble_data () {
         memcpy((uint8_t*) &ble_data[j-length], (uint8_t*) &ble_data[j], sizeof(sound_data_element_t));
       }
       ble_data_size -= length;
+      error = app_timer_start(m_app_tx_tmr, APP_TIMER_TICKS(500), NULL);
     }
   }
   
