@@ -13,16 +13,24 @@ var app = {
         }*/
     },
 
+    databaseInitializedCallback: function() {
+        console.log('databaseInitializedCallback');
+        noiselevel.fillChart();
+    },
+
     onDeviceReady: function () {
         debug.log('device ready', 'success');
+
+        // $('#ble_config').hide();
+        // $('#log_info').hide();
         app.bindEvents();
         //app.checkIfUserLoggedIn();
         //mqttclient.initialize();
         //gps.initialize();
         //gps.getLocation();
-        bluetooth.initialize();
+        storage.openDatabase(app.databaseInitializedCallback);
         noiselevel.initialize();
-        storage.openDatabase();
+        bluetooth.initialize();
 
         cordova.plugins.backgroundMode.enable();
         cordova.plugins.backgroundMode.overrideBackButton();
@@ -38,13 +46,17 @@ var app = {
             bigText: false
         });
 
-        noiselevel.fillChart();
+        
     },
 
     bindEvents: function () {
       // setTimeout(function () {
       //     mqttclient.addMessage('app,1');
       // }, 3000);
+      $(document).on('click', '#ble_button', function (e) {
+        console.log("ble_button click");
+        $('#ble_config').toggle();
+      });
       $(document).on('click', '#refreshDeviceList', function (e) {
         console.log("refreshDeviceList click");
         bluetooth.refreshDeviceList(false);
@@ -56,14 +68,23 @@ var app = {
       $(document).on('click', '#disconnectDevice', function (e) {
         bluetooth.disconnectDevice(e);
       });
+
+      $(document).on('click', '#log_button', function (e) {
+        $('#log_info').toggle();
+      });
+
+      $(document).on('click', '#settings_button', function (e) {
+        $('#settingscard').toggle();
+      });
+
+      $('#home').on('click', '.savebutton', function (e) {
+        var token = $('#settings-token').val();
+        noiselevel.settoken(token);
+        });
+
       document.addEventListener("pause", app.onDevicePause, false);
       document.addEventListener("resume", app.onDeviceResume, false);
-      document.addEventListener("menubutton", app.onMenuKeyDown, false);
-
-
-        $(document.body).on('tap', 'ons-list-item', function(){
-            console.log("Test 2");
-        });
+    //   document.addEventListener("menubutton", app.onMenuKeyDown, false);
     },
 
     onDevicePause: function () {

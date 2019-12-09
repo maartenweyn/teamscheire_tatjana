@@ -15,7 +15,7 @@ var sound_chart = Highcharts.chart('plot_container', {
     enabled: false
   },
   title: {
-      text: 'Sound Dose'
+      text: ''
   },
   xAxis: {
       type: 'datetime',
@@ -54,21 +54,79 @@ var sound_chart = Highcharts.chart('plot_container', {
 
   series: [{
       name: 'Avg Minute',
+      color: '#666666',
       data: []
   }, {
       name: 'Avg Hour',
+      color: '#229988',
       data: []
   }, {
       name: 'Avg 8 Hours',
+      color: '#9c27b0',
       data: []
   }, {
     name: 'Avg Day',
+    color: '#F9BE1F',
     data: []
 }, {
   name: '8 Hour Dose (%)',
+  color: '#ffc107',
   data: []
 }, {
   name: 'Day dose (%)',
+  color: '#ff5722',
   data: []
 }],
+});
+
+var sound_bar = Highcharts.chart('bar_container', {
+    chart: {
+        height: 100,
+        type: 'bar',
+        credits: false
+    },
+    exporting: {
+        enabled: false
+    }, 
+    legend: {
+        enabled: false
+    },
+    title: {
+        text: ''
+    },
+    xAxis: {
+        categories: ['8 Hour', 'Day']
+    },
+    yAxis: {
+        min: 0,
+        minRange: 90,
+        title: {
+            text: 'Noise Dose (%)'
+        }
+    },
+    legend: {
+        reversed: true
+    },
+    plotOptions: {
+        series: {
+            stacking: 'normal'
+        }
+    },
+    series: [{
+        name: 'noise',
+        showInLegend: false,
+        dataLabels: [{
+            inside: false,
+                enabled: true,
+            style: {
+            fontSize: 10,
+            color: "#4C3D3D",
+            },
+            format: '{y} %'
+        }],
+        data: [
+            { y: 0.5, color: '#ffc107'},  
+            { y: 0.5, color: '#ff5722'}, 
+          ]         
+    }]
 });

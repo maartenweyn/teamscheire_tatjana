@@ -27,10 +27,10 @@ var bluetooth = {
 
         //autoconnect
 
-        // var previousConnectedDevice = storage.getItem('connectedDevice');
-        // if (previousConnectedDevice != undefined) {
-        //     ble.autoConnect(previousConnectedDevice.id, bluetooth.onConnect, bluetooth.onDisconnectDevice);
-        // }
+        var previousConnectedDevice = storage.getItem('connectedDevice');
+        if (previousConnectedDevice != undefined) {
+            ble.autoConnect(previousConnectedDevice.id, bluetooth.onConnect, bluetooth.onDisconnectDevice);
+        }
     },
     refreshDeviceList: function () {
         var onlyUART = true;
@@ -195,6 +195,7 @@ var bluetooth = {
         //debug.log("end character found");
     },
     timer_callback: function() {
+        console.log("timer_callback");
         ble.isConnected(bluetooth.connectedDevice.id, function () {
             window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
         }, function () {
@@ -236,14 +237,14 @@ var bluetooth = {
                 '</ons-list-item>';
             $('#ble-connected-device').html(html);
 
-            $('#disconnectDevice').show();
-            $('#refreshDeviceList').hide();
+            $('#disconnectDevice').prop('disabled', false);
             $('#ble-found-devices').hide();
+            $('#ble_button').css('color', 'green');
         } else {
             $('#ble-connected-device').html('no device connected');
-            $('#disconnectDevice').hide();
-            $('#refreshDeviceList').show();
+            $('#disconnectDevice').prop('disabled', true);
             $('#ble-found-devices').show();
+            $('#ble_button').css('color', 'red');
         }
     },
     refreshSentMessageList: function () {

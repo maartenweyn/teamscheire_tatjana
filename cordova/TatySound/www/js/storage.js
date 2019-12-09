@@ -1,7 +1,7 @@
 var storage = {
     db: null,
     average: 0.0,
-    openDatabase: function() {
+    openDatabase: function(callback) {
         storage.db = window.sqlitePlugin.openDatabase({
             name: 'tatysound.db',
             location: 'default',
@@ -10,78 +10,100 @@ var storage = {
         //storage.dropTable();
 
         storage.db.transaction(function(tx) {
-            tx.executeSql('CREATE TABLE IF NOT EXISTS Sound (timestamp, dbA, leq, minutes)');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS Sound (timestamp, dbA, leq, minutes, processed, queuelength)');
             tx.executeSql('CREATE TABLE IF NOT EXISTS Status (timestamp, action)');
-            tx.executeSql('CREATE TABLE IF NOT EXISTS Upload (timestamp, status, min, hour, hours8, day, hours8dose, daydose, id, length)');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS Upload (timestamp, status, min, hour, hours8, day, hours8dose, daydose, length)');
         }, function(error) {
             console.log('Transaction ERROR: ' + error.message);
         }, function() {
             console.log('Created database OK');
+            callback();
         });
     },
     dropTable: function() {
         storage.db.transaction(function(tx) {
             tx.executeSql('DROP TABLE IF EXISTS Sound');
+            tx.executeSql('DROP TABLE IF EXISTS Status');
+            tx.executeSql('DROP TABLE IF EXISTS Upload');
         }, function(error) {
             console.log('Transaction ERROR: ' + error.message);
         }, function() {
             console.log('Table removed');
         });
     },
-    addSoundEntry(timestamp, dbValue, nrofMinutes) {
-        leqValue = Math.pow(10, dbValue/10);
+    addSoundEntry(timestamp, dbValue, leqValue, nrofMinutes, queuelength) {
         storage.db.transaction(function(tx) {
-            tx.executeSql('INSERT INTO Sound VALUES (?,?,?,?)', [timestamp, dbValue, leqValue, nrofMinutes]);
+            tx.executeSql('INSERT INTO Sound VALUES (?,?,?,?,0,?)', [timestamp, dbValue, leqValue, nrofMinutes, queuelength]);
           }, function(error) {
             console.log('Transaction ERROR: ' + error.message);
           }, function() {
-            console.log('Inserted values: ' + timestamp + ", " + dbValue + ", " + leqValue + ", " + nrofMinutes);
+            console.log('Inserted values: ' + timestamp + ", " + dbValue + ", " + leqValue + ", " + nrofMinutes + ",0," + queuelength);
           });
     },
-    getAverage(noise_data, from, to, callback) {
+    getUnprocessedSoundEntry(callback) {
         storage.db.transaction(function(tx) {
-            tx.executeSql('SELECT SUM(leq * minutes) / SUM(minutes) as average  FROM Sound WHERE timestamp >= ? and timestamp <= ?', [from, to], function(tx, rs) {
-                average = Math.round(1000 * Math.log10(rs.rows.item(0).average)) / 100;
-                console.log('Average leq is : ' + average);
-                callback(noise_data, rs.rows.item(0).average, average);
+            tx.executeSql('SELECT * FROM Sound WHERE processed == 0 ORDER BY timestamp ASC LIMIT 1', [], function(tx, rs) {
+              console.log('SELECT getUnprocessedSoundEntry: ' + rs.rows.length);
+              callback(rs.rows.item(0), rs.rows.length);
             }, function(tx, error) {
               console.log('SELECT error: ' + error.message);
-              callback(0);
+              callback(0, 0);
             });
           });
     },
-    addUploadEntry(timestamp, status, min, hour, hours8, day, hours8dose, daydose, id, length) {
+    setProcessed(timestamp) {
         storage.db.transaction(function(tx) {
-            tx.executeSql('INSERT INTO Upload VALUES (?,?,?,?,?,?,?,?,?,?)', [timestamp, status, min, hour, hours8, day, hours8dose, daydose, id, length]);
+            tx.executeSql('UPDATE Sound SET processed=1 WHERE timestamp==?', [timestamp]);
           }, function(error) {
-            console.log('Transaction ERROR: ' + error.message);
+            console.log('setProcessed Transaction ERROR: ' + error.message);
           }, function() {
-            console.log('Inserted values: ' + timestamp + ", " + status + ", " + min + ", " + hour +  ", " + hours8 + ", " + day + ", " + hours8dose + ", " + daydose + ", " + id + ", " + length);
+            console.log('setProcessed set ' + timestamp);
           });
     },
-    setUploadStatus(timestamp, id, status) {
-        storage.db.transaction(function(tx) {
-            tx.executeSql('UPDATE Upload SET status==? WHERE timestamp==? and id==?', [status, timestamp, id]);
-          }, function(error) {
-            console.log('setUploadStatus Transaction ERROR: ' + error.message);
-          }, function() {
-            console.log('setUploadStatus changed ' + timestamp + ", " + id + ", " + status);
-          });
-    },
-    getProcessedDataEntries(callback, from, to) {
-      console.log('SELECT * FROM Upload WHERE timestamp >= ' + from + ' and timestamp <= ' + to);
+    getAverage(noise_data, from, to, callback) {
       storage.db.transaction(function(tx) {
-        tx.executeSql('SELECT * FROM Upload WHERE timestamp >= ? and timestamp <= ?', [from, to], function(tx, rs) {
-            callback(rs.rows);
+        tx.executeSql('SELECT SUM(leq * minutes) / SUM(minutes) as average, COUNT(*) as nrofitems  FROM Sound WHERE timestamp >= ? and timestamp <= ?', [from, to], function(tx, rs) {
+            average = Math.round(1000 * Math.log10(rs.rows.item(0).average)) / 100;
+            console.log('Average leq is : ' + average + ' from ' + from + ' to ' + to + ' of ' + rs.rows.item(0).nrofitems + ' items');
+            callback(noise_data, rs.rows.item(0).average, average);
         }, function(tx, error) {
           console.log('SELECT error: ' + error.message);
           callback(0);
         });
       });
     },
+    addUploadEntry(timestamp, status, min, hour, hours8, day, hours8dose, daydose, length) {
+        storage.db.transaction(function(tx) {
+            tx.executeSql('INSERT INTO Upload VALUES (?,?,?,?,?,?,?,?,?)', [timestamp, status, min, hour, hours8, day, hours8dose, daydose, length]);
+          }, function(error) {
+            console.log('Transaction ERROR: ' + error.message);
+          }, function() {
+            console.log('Inserted values: ' + timestamp + ", " + status + ", " + min + ", " + hour +  ", " + hours8 + ", " + day + ", " + hours8dose + ", " + daydose + ", " + length);
+          });
+    },
+    setUploadStatus(timestamp, status) {
+        storage.db.transaction(function(tx) {
+            tx.executeSql('UPDATE Upload SET status==? WHERE timestamp==?', [status, timestamp]);
+          }, function(error) {
+            console.log('setUploadStatus Transaction ERROR: ' + error.message);
+          }, function() {
+            console.log('setUploadStatus changed ' + timestamp + ", "  + status);
+          });
+    },
+    getProcessedDataEntries(callback) {
+      console.log("getProcessedDataEntries");
+      storage.db.transaction(function(tx) {
+        tx.executeSql('SELECT * FROM Upload ORDER BY timestamp DESC LIMIT 300', [], function(tx, rs) {
+            callback(rs.rows.length, rs.rows);
+        }, function(tx, error) {
+          console.log('SELECT error: ' + error + ' / ' + error.message);
+          callback(0, 0);
+        });
+      });
+    },
     getUnploadedEntries(callback) {
         storage.db.transaction(function(tx) {
-            tx.executeSql('SELECT *  FROM Upload WHERE status == 0', [], function(tx, rs) {
+            tx.executeSql('SELECT * FROM Upload WHERE status == 0', [], function(tx, rs) {
                 callback(rs.rows);
             }, function(tx, error) {
               console.log('SELECT error: ' + error.message);
