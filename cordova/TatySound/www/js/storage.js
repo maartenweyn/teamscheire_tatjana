@@ -42,9 +42,9 @@ var storage = {
     },
     getUnprocessedSoundEntry(callback) {
         storage.db.transaction(function(tx) {
-            tx.executeSql('SELECT * FROM Sound WHERE processed == 0 ORDER BY timestamp ASC LIMIT 1', [], function(tx, rs) {
+            tx.executeSql('SELECT * FROM Sound WHERE processed == 0 ORDER BY timestamp ASC', [], function(tx, rs) {
               console.log('SELECT getUnprocessedSoundEntry: ' + rs.rows.length);
-              callback(rs.rows.item(0), rs.rows.length);
+              callback(rs.rows, rs.rows.length);
             }, function(tx, error) {
               console.log('SELECT error: ' + error.message);
               callback(0, 0);

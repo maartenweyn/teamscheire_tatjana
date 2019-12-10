@@ -53,6 +53,21 @@
             </ons-list>
         </ons-card>
 
+        <ons-card id="progresscard"style="display: none;">
+            <div style="margin: 20px auto;">
+                <p>Loading from device...</p>
+                <ons-progress-bar value="0" secondary-value="100" id="progressbar_loading"></ons-progress-bar>
+            </div>
+            <div style="margin: 20px auto;">
+                <p>Calculating Noise dose...</p>
+                <ons-progress-bar value="0" secondary-value="100" id="progressbar_calculating"></ons-progress-bar>
+            </div>
+            <div style="margin: 20px auto;">
+                <p>Uploading...</p>
+                <ons-progress-bar value="0" secondary-value="100" id="progressbar_uploading"></ons-progress-bar>
+            </div>
+        </ons-card>
+
         <div class="card">
             <div id="bar_container" class="card__content"></div>
             <div id="plot_container" class="card__content"></div>
@@ -79,8 +94,8 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/OnsenUI/js/onsenui.min.js"></script>
     <script type="text/javascript" src="lib/jquery/jquery-3.4.1.min.js"></script>
-    <script src="lib/highcharts.js"></script> 
-    <!-- <script src="https://code.highcharts.com/highcharts.js"></script> -->
+    <!-- <script src="lib/highcharts.js"></script>  -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
     <!-- <script src="https://code.highcharts.com/modules/exporting.js"></script> -->
     <!-- <script src="https://code.highcharts.com/modules/export-data.js"></script> -->
     <script type="text/javascript" src="lib/moment.min.js"></script>

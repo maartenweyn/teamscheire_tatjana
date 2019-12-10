@@ -15,8 +15,12 @@ var noiselevel = {
     upload_status: false,
     data_length:0,
     callbackcount : 0,
+    process_totalnumber : 0,
     sound_data: [],
+    unprocessedData: [],
     posturl : "",
+    progress_visible: false,
+    progress_totalnumber: 0,
     chart_data_points: 8 * 60,
     is_uploading: false,
     ref_date: new Date('1/1/2019'),
@@ -53,8 +57,8 @@ var noiselevel = {
     avg8HourCallback: function(noise_data, value, valuedb) {
       noise_data.hours8 = valuedb;
       noise_data.hours8dose = Math.round(100*value/100000000);
-      if (noise_data.hours8dose < 0.5)
-        noise_data.hours8dose = 0.5;
+      // if (noise_data.hours8dose < 0.5)
+      //   noise_data.hours8dose = 0.5;
       if ((noise_data.hour < 80.0) && (noise_data.hours8dose < 100)) {
         noise_data.remaining8hours = 8;
       } else {
@@ -67,46 +71,66 @@ var noiselevel = {
     avgDayCallback: function(noise_data, value, valuedb) {
       noise_data.day = valuedb;
       noise_data.daydose = Math.round(100*value/31622777);
-      if (noise_data.daydose < 0.5)
-        noise_data.daydose = 0.5;
+      // if (noise_data.daydose < 0.5)
+      //   noise_data.daydose = 0.5;
       if ((noise_data.hour < 75.0) && (noise_data.daydose < 100)) {
         noise_data.remainingday = 24;
       } else {
         noise_data.remainingday = 0;
       }
       console.log("leq_day:" + noise_data.day + ", " + noise_data.daydose);
+
+
+      storage.setProcessed(noise_data.ts);
+
+      noiselevel.callbackcount += 1;
+
+
+      var progress = Math.round(100 * noiselevel.callbackcount / noiselevel.process_totalnumber);
+      $('#progressbar_calculating').attr('value', progress);
+
+      console.log("processing " + noiselevel.callbackcount + " of " + noiselevel.process_totalnumber + ": " + progress);
+
       noiselevel.processNoiseData(noise_data);
       
-      noiselevel.calculateAverages();
-      
-      //for testing
-      if (!noiselevel.is_uploading) {
+      if (noiselevel.callbackcount >= noiselevel.process_totalnumber) {
         noiselevel.checkUploadData();
+      } else {
+        noiselevel.processData();
       }
     },
     unuploadedDataCallback: function(rows) {
-        if (rows.length != 0) {
-            console.log("unuploadedDataCallback nr of rows " + rows.length + " " + rows.item(0).timestamp);
-            var json = {
-                //ts: ts,
-                ts: rows.item(0).timestamp,
-                values: {
-                    min: rows.item(0).min,
-                    hour: rows.item(0).hour,
-                    hours8: rows.item(0).hours8,
-                    day: rows.item(0).day,
-                    hours8dose: rows.item(0).hours8dose,
-                    daydose: rows.item(0).daydose,
-                    id: rows.item(0).id,
-                    length: rows.item(0).length,
-                    upload: rows.length
-                }
-            };
-            noiselevel.uploadNoiseData(json);
-        } else {
-          noiselevel.is_uploading = false;
-          console.log("unuploadedDataCallback no rows");
+      if (rows.length != 0) {
+        console.log("unuploadedDataCallback nr of rows " + rows.length);
+        var i;
+
+        for (i=0;i<rows.length;i++) {
+          var json = {
+              //ts: ts,
+              ts: rows.item(0).timestamp,
+              values: {
+                  min: rows.item(0).min,
+                  hour: rows.item(0).hour,
+                  hours8: rows.item(0).hours8,
+                  day: rows.item(0).day,
+                  hours8dose: rows.item(0).hours8dose,
+                  daydose: rows.item(0).daydose,
+                  id: rows.item(0).id,
+                  length: rows.item(0).length,
+                  upload: rows.length
+              }
+          };
+          noiselevel.uploadNoiseData(json);
+          var progress = Math.round(100 * i / rows.length);
+          $('#progressbar_uploading').attr('value', progress);
         }
+      } else {
+        noiselevel.is_uploading = false;
+        console.log("unuploadedDataCallback no rows");
+      }
+
+      $('#progresscard').hide();
+      noiselevel.progress_visible = false;
     },
     processNoiseData: function(noise_data) {
       noiselevel.sound_data = noise_data;
@@ -158,30 +182,41 @@ var noiselevel = {
         noiselevel.is_uploading = true;
         storage.getUnploadedEntries(noiselevel.unuploadedDataCallback);
     },
-    unprocessedDataCallback: function(data, valid) {
-      if (valid == 1) {
-        var noise_data = {
-          ts: data.timestamp,
-          min: data.dbA,
-          hour: 0,
-          hours8: 0,
-          day: 0,
-          hours8dose: 0,
-          daydose: 0,
-          length: data.queuelength
-        };
+    processData: function() {
+      var noise_data = {
+        ts: noiselevel.unprocessedData.item(noiselevel.callbackcount).timestamp,
+        min: noiselevel.unprocessedData.item(noiselevel.callbackcount).dbA,
+        hour: 0,
+        hours8: 0,
+        day: 0,
+        hours8dose: 0,
+        daydose: 0,
+        length: noiselevel.unprocessedData.item(noiselevel.callbackcount).queuelength
+      };
 
-        storage.callbackcount = 0;
-        storage.getAverage(noise_data, noise_data.ts - 3600000, noise_data.ts, noiselevel.avgHourCallback);
-        storage.setProcessed(noise_data.ts);
+      console.log("calc hour average of " + noise_data.ts);
+      storage.getAverage(noise_data, noise_data.ts - 3600000, noise_data.ts, noiselevel.avgHourCallback);
+
+    },
+    unprocessedDataCallback: function(data, rows) {
+      if (rows > 0) {
+        var i;
+        noiselevel.callbackcount = 0;
+        noiselevel.process_totalnumber = rows;
+        noiselevel.unprocessedData = data;
+        console.log("starting to process : "+ noiselevel.process_totalnumber + " entries ");
+        noiselevel.processData();
       } 
     },
     calculateAverages: function() {
       console.log("calculateAverages");
-      storage.getUnprocessedSoundEntry(noiselevel.unprocessedDataCallback);
+      if (noiselevel.callbackcount >= noiselevel.process_totalnumber) {
+        storage.getUnprocessedSoundEntry(noiselevel.unprocessedDataCallback);
+      } else {
+        console.log("still processing data - skip");
+      }
     },
     uploadNoiseData: function(json) {
-        storage.callbackcount = 0;
         console.log(JSON.stringify(json));
 
         //curl  -X POST -H "Content-Type: application/json" -d '{"ts":1569580418000,"values":{"sound_level":"21.6","min":"31.4","hour":"36.4","hours8":"36.6","day":"36.6","id":390,"length":0,"resp":0}}' http://teamscheire.wesdec.be:8080/api/v1/9MoLAEg7QEqU5TDjCH2k/telemetry -v
@@ -200,7 +235,7 @@ var noiselevel = {
             storage.setUploadStatus(options.data.ts, 1);
             if (options.data.values.upload > 1) 
             {
-                noiselevel.checkUploadData();
+                //noiselevel.checkUploadData();
             } else {
               noiselevel.is_uploading = false;
             }
@@ -228,6 +263,17 @@ var noiselevel = {
 
             length_of_data_entries      = parseInt(res[3]);
             noiselevel.data_length = length_of_data_entries;
+
+            if (length_of_data_entries > 10 && noiselevel.progress_visible == false) {
+              $('#progresscard').show();
+              noiselevel.progress_totalnumber = length_of_data_entries;
+              noiselevel.progress_visible = true;
+            }
+
+            if (noiselevel.progress_visible == true) {
+              var progress = Math.round(100 * (noiselevel.progress_totalnumber - length_of_data_entries) / noiselevel.progress_totalnumber);
+              $('#progressbar_loading').attr('value', progress);
+            }
 
 
             ts = parseInt(res[1])*1000;
