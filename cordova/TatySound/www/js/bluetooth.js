@@ -48,7 +48,7 @@ var bluetooth = {
             debug.log('no previousConnectedDevice ', 'error');
 
         //if (device.name.toLowerCase().replace(/[\W_]+/g, "").indexOf('cme') > -1) {
-        var html = '<ons-list-item modifier="tappable" data-device-id="' + device.id + '" data-device-name="' + device.name +
+        var html = '<ons-list-item modifier="tappable" data-device-id="' + device.id + '" data-device-name="' + device.name + '">' +
             '<span class="list-item__title">' + device.name + '</span>' +
             '<span class="list-item__subtitle">' + device.id + '</span>' +
             '</ons-list-item>';

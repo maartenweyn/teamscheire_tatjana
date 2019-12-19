@@ -10,6 +10,11 @@
     <link rel="stylesheet" type="text/css" href="lib/OnsenUI/css/onsen-css-components.min.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <title>TatySound</title>
+    <script type="text/javascript">
+        window.onerror = function(message, url, lineNumber) {
+            console.log("Error: "+message+" in "+url+" at line "+lineNumber);
+        }
+    </script>
 </head>
 
 <body>
@@ -17,6 +22,7 @@
     <ons-toolbar>
         <div class="left">
             <ons-toolbar-button icon="bluetooth" id="ble_button"></ons-toolbar-button>
+            <ons-toolbar-button icon="headphones" id="ble_headphone"></ons-toolbar-button>
         </div>
     
         <div class="center">TatySound</div>
@@ -28,6 +34,12 @@
     </ons-toolbar>
 
     <div id="main-page">
+
+        <ons-card id="protection" style="display: none;"></ons-card>
+        <ons-card id="loading">Loading database ... this can take a while.
+            <ons-progress-bar value="0" secondary-value="100" id="progressbar_db_loading"></ons-progress-bar>
+
+        </ons-card>
         
         <div class="card" id="ble_config" style="display: none;">
             <div class="center">
@@ -41,15 +53,20 @@
         <ons-card id="settingscard" style="display: none;">
             <ons-list>
                 <ons-list-item class="input-items">
-                    <div class="left">
-                        Token:
-                    </div>
-                    <label>
+                    <div>Token:</div>
                         <ons-input id="settings-token"></ons-input>
-                    </label>
-                    <ons-button class="savebutton" modifier="outline">Save</ons-button>
                 </ons-list-item>
 
+                <ons-list-item class="input-items">
+                    <div>Protection (dB):</div>
+                        <ons-input id="settings-attenuation"></ons-input>
+                </ons-list-item>
+                <ons-list-item class="input-items">
+                    <ons-button id="savebutton" modifier="outline">Save</ons-button>
+                </ons-list-item>
+                <ons-list-item class="input-items">
+                    <ons-button id="dropdatabase" modifier="outline">Clear Database</ons-button>
+                </ons-list-item>
             </ons-list>
         </ons-card>
 
@@ -62,10 +79,10 @@
                 <p>Calculating Noise dose...</p>
                 <ons-progress-bar value="0" secondary-value="100" id="progressbar_calculating"></ons-progress-bar>
             </div>
-            <div style="margin: 20px auto;">
+            <!-- <div style="margin: 20px auto;">
                 <p>Uploading...</p>
                 <ons-progress-bar value="0" secondary-value="100" id="progressbar_uploading"></ons-progress-bar>
-            </div>
+            </div> -->
         </ons-card>
 
         <div class="card">
@@ -94,8 +111,8 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/OnsenUI/js/onsenui.min.js"></script>
     <script type="text/javascript" src="lib/jquery/jquery-3.4.1.min.js"></script>
-    <!-- <script src="lib/highcharts.js"></script>  -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="lib/highcharts.js"></script> 
+    <!-- <script src="https://code.highcharts.com/highcharts.js"></script> -->
     <!-- <script src="https://code.highcharts.com/modules/exporting.js"></script> -->
     <!-- <script src="https://code.highcharts.com/modules/export-data.js"></script> -->
     <script type="text/javascript" src="lib/moment.min.js"></script>

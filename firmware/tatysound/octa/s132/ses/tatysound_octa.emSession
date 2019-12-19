@@ -89,5 +89,5 @@
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="662" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../sdk/components/ble/ble_advertising/ble_advertising.c" selected="0" top="642" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="99" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../sdk/components/libraries/util/app_error_weak.c" selected="0" top="85" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="tatysound_octa" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/maartenweyn/git/verkeersveiligheid/code/sdkv150/modules/nrfx/drivers/src" debugSearchPath="" autoConnectCapabilities="3199"/>
+ <ARMCrossStudioWindow activeProject="tatysound_octa" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/maartenweyn/git/verkeersveiligheid/code/sdkv150/modules/nrfx/drivers/src" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

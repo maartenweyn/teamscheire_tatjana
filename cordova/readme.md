@@ -17,3 +17,10 @@ For iOS 10, apps will crash unless they include usage description keys for the t
 This can be done when the plugin is installed using the BLUETOOTH_USAGE_DESCRIPTION variable.
 
     $ cordova plugin add cordova-plugin-ble-central --variable BLUETOOTH_USAGE_DESCRIPTION="Your description here"
+
+
+### Android
+
+logcat: 
+
+    $ adb logcat -e "CONSOLE"

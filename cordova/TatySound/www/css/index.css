@@ -156,3 +156,18 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+#protection {
+    background-color: green;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+#loading {
+    background-color: red;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+

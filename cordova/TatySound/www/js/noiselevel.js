@@ -18,6 +18,7 @@ var noiselevel = {
     process_totalnumber : 0,
     sound_data: [],
     unprocessedData: [],
+    unprocessedMeasurements: [],
     posturl : "",
     progress_visible: false,
     progress_totalnumber: 0,
@@ -26,15 +27,36 @@ var noiselevel = {
     ref_date: new Date('1/1/2019'),
     prev_update_date: new Date('1/1/2019'),
     token: "",
+    attenuation: 0,
+    protection_on : false,
     initialize: function () {
       noiselevel.token = storage.getItem('uploadtoken', '');
       if (noiselevel.token == '') {
-        noiselevel.token = device.uuid.substr(0, 20);
-        storage.setItem('uploadtoken', noiselevel.token);
+        if (device.uuid) {
+          noiselevel.token = device.uuid.substr(0, 20);
+        } else {
+          noiselevel.token = "noid";
+        }
+          storage.setItem('uploadtoken', noiselevel.token);
       }
+
       document.getElementById('settings-token').value = noiselevel.token;
       noiselevel.posturl = "http://teamscheire.wesdec.be:8080/api/v1/" + noiselevel.token + "/telemetry";
       debug.log("posturl " + noiselevel.posturl , "success");
+
+      noiselevel.attenuation = storage.getItem('attenuation', 20);
+      document.getElementById('settings-attenuation').value = noiselevel.attenuation;
+      $('#protection').html("Ear protection on -" + noiselevel.attenuation + "dB");
+
+      noiselevel.protection_on = storage.getItem('protection_on', false);
+
+      if (noiselevel.protection_on) {
+        $('#ble_headphone').css('color', 'green');
+        $('#protection').show();
+      } else {
+        $('#ble_headphone').css('color', 'gray');
+        $('#protection').hide();
+      }
     },
     settoken: function(token) {
       noiselevel.token = token;
@@ -47,6 +69,31 @@ var noiselevel = {
           message: 'New settings saved.',
           title: 'Settings'
       });
+    },    
+    setattenuation: function(attenuation) {
+      noiselevel.attenuation = attenuation;
+      storage.setItem('attenuation', attenuation);
+
+      $('#protection').html("Ear protection on  -" + noiselevel.attenuation + "dB");
+
+      ons.notification.alert({
+          message: 'New settings saved.',
+          title: 'Settings'
+      });
+    },
+    toggleProtection: function() {
+      var ts = (new Date()).getTime();
+      noiselevel.protection_on = !noiselevel.protection_on;
+      storage.addStatusEntry(ts, "protection", noiselevel.protection_on)
+      storage.setItem('protection_on', noiselevel.protection_on);
+
+      if (noiselevel.protection_on) {
+        $('#ble_headphone').css('color', 'green');
+        $('#protection').show();
+      } else {
+        $('#ble_headphone').css('color', 'gray');
+        $('#protection').hide();
+      }
     },
     avgHourCallback: function(noise_data, value, valuedb) {
       noise_data.hour = valuedb;
@@ -94,7 +141,12 @@ var noiselevel = {
       noiselevel.processNoiseData(noise_data);
       
       if (noiselevel.callbackcount >= noiselevel.process_totalnumber) {
+        sound_chart.redraw();
+        sound_bar.redraw();
+        noiselevel.showNoiseLevel();
         noiselevel.checkUploadData();
+        $('#progresscard').hide();
+        noiselevel.progress_visible = false;
       } else {
         noiselevel.processData();
       }
@@ -103,43 +155,42 @@ var noiselevel = {
       if (rows.length != 0) {
         console.log("unuploadedDataCallback nr of rows " + rows.length);
         var i;
+        var json_array = [];
 
-        for (i=0;i<rows.length;i++) {
+        for (i=0;i<rows.length; i++) {
           var json = {
               //ts: ts,
-              ts: rows.item(0).timestamp,
+              ts: rows.item(i).timestamp,
               values: {
-                  min: rows.item(0).min,
-                  hour: rows.item(0).hour,
-                  hours8: rows.item(0).hours8,
-                  day: rows.item(0).day,
-                  hours8dose: rows.item(0).hours8dose,
-                  daydose: rows.item(0).daydose,
-                  id: rows.item(0).id,
-                  length: rows.item(0).length,
-                  upload: rows.length
+                  min: rows.item(i).min,
+                  hour: rows.item(i).hour,
+                  hours8: rows.item(i).hours8,
+                  day: rows.item(i).day,
+                  hours8dose: rows.item(i).hours8dose,
+                  daydose: rows.item(i).daydose,
+                  id: rows.item(i).id,
+                  length: rows.item(i).length,
+                  protection: rows.item(i).protection
               }
           };
-          noiselevel.uploadNoiseData(json);
-          var progress = Math.round(100 * i / rows.length);
-          $('#progressbar_uploading').attr('value', progress);
+          json_array.push(json);
         }
+        noiselevel.uploadNoiseData(json_array);  
+            
+
+          // var progress = Math.round(100 * i / rows.length);
+          // $('#progressbar_uploading').attr('value', progress);
+
       } else {
         noiselevel.is_uploading = false;
         console.log("unuploadedDataCallback no rows");
       }
-
-      $('#progresscard').hide();
-      noiselevel.progress_visible = false;
     },
     processNoiseData: function(noise_data) {
       noiselevel.sound_data = noise_data;
-      storage.addUploadEntry(noise_data.ts, 0, noise_data.min, noise_data.hour, noise_data.hours8, noise_data.day, noise_data.hours8dose, noise_data.daydose, noise_data.length);
+      storage.addUploadEntry(noise_data.ts, 0, noise_data.min, noise_data.hour, noise_data.hours8, noise_data.day, noise_data.hours8dose, noise_data.daydose, noise_data.length, noise_data.protection);
     
       noiselevel.addSoundToChart(noise_data.ts, noise_data.min, noise_data.hour, noise_data.hours8, noise_data.day, noise_data.hours8dose, noise_data.daydose);
-      sound_chart.redraw();
-      sound_bar.redraw();
-      noiselevel.showNoiseLevel();
     },
     addSoundToChart: function(ts, min, hour, hours8, day, hours8dose, daydose) {  
       var shift = sound_chart.series[0].data.length > noiselevel.chart_data_points;
@@ -153,12 +204,17 @@ var noiselevel = {
       sound_bar.series[0].points[0].update(hours8dose);
       sound_bar.series[0].points[1].update(daydose);
     },
-    soundDataCallback: function(nrrows, rows) {
-      console.log("soundDataCallback nr of rows " + nrrows);
+    soundDataCallback: function(nrrows, rows, ts) {
+      var start_ts = (new Date()).getTime() - (8 * 3600000);
+      var progress = Math.round(100 * (ts - start_ts) / (8 * 3600000));
+
+      console.log("soundDataCallback nr of rows " + nrrows + " progress " + progress);
+      $('#progressbar_db_loading').attr('value', progress);
+
       if (nrrows != 0) {
         var i;
         for (i = rows.length - 1; i > 0; i--) {  
-          console.log("soundDataCallback row " + i + ": "+ rows.item(i).timestamp);
+          //console.log("soundDataCallback row " + i + ": "+ rows.item(i).timestamp);
           noiselevel.addSoundToChart(rows.item(i).timestamp, rows.item(i).min, rows.item(i).hour, rows.item(i).hours8, rows.item(i).day, rows.item(i).hours8dose, rows.item(i).daydose);
         } 
         sound_chart.redraw();
@@ -172,15 +228,27 @@ var noiselevel = {
         noiselevel.sound_data.hours8dose = rows.item(0).hours8dose;
         noiselevel.sound_data.daydose  = rows.item(0).daydose;
 
-        noiselevel.showNoiseLevel();        
-      } 
+        noiselevel.showNoiseLevel();  
+        setTimeout(() => { noiselevel.fillChartPart(ts);}, 10);      
+      } else {
+        if (ts < (new Date()).getTime()) {
+          setTimeout(() => { noiselevel.fillChartPart(ts);}, 10);  
+        } else {
+          $('#loading').hide();
+        }
+      }
+    },
+    fillChartPart: function(ts) {
+      storage.getProcessedDataEntries(ts, noiselevel.soundDataCallback);
     },
     fillChart: function() {
-      storage.getProcessedDataEntries(noiselevel.soundDataCallback);
+      var ts = (new Date()).getTime() - (8 * 3600000);
+      $('#progressbar_db_loading').attr('value', 0);
+      noiselevel.fillChartPart(ts);
     },
     checkUploadData: function() {
         noiselevel.is_uploading = true;
-        storage.getUnploadedEntries(noiselevel.unuploadedDataCallback);
+        storage.getUnploadedEntries(50, noiselevel.unuploadedDataCallback);
     },
     processData: function() {
       var noise_data = {
@@ -191,7 +259,8 @@ var noiselevel = {
         day: 0,
         hours8dose: 0,
         daydose: 0,
-        length: noiselevel.unprocessedData.item(noiselevel.callbackcount).queuelength
+        length: noiselevel.unprocessedData.item(noiselevel.callbackcount).queuelength,
+        protection: noiselevel.unprocessedData.item(noiselevel.callbackcount).protection,
       };
 
       console.log("calc hour average of " + noise_data.ts);
@@ -207,6 +276,71 @@ var noiselevel = {
         console.log("starting to process : "+ noiselevel.process_totalnumber + " entries ");
         noiselevel.processData();
       } 
+    },
+    protectionCallback: function(nrofrows, value, noise_data) {
+
+      console.log("protectionCallback " + nrofrows + " entries ");
+
+      var atten = 0;
+      if (nrofrows > 0) {
+        if (value == "true") {
+          console.log("protectionCallback action_value true " + value);
+          noise_data.dbA -= noiselevel.attenuation;
+          atten = noiselevel.attenuation;
+        } else {
+          console.log("protectionCallback action_value false " + value);
+          atten = 0;
+        }
+      }
+
+      console.log("protectionCallback attenation " + atten);
+      noise_data.leq = Math.pow(10, noise_data.dbA/10);
+
+      storage.addSoundEntry(noise_data.timestamp, noise_data.dbA, noise_data.leq, noise_data.minutes, noise_data.queuelength, atten);
+
+      storage.setProcessedMeasurement(noise_data.timestamp);
+      noiselevel.callbackcount++;
+
+      var progress = Math.round(100 * noiselevel.callbackcount / noiselevel.process_totalnumber);
+      $('#progressbar_calculating').attr('value', progress);
+
+      if (noiselevel.callbackcount >= noiselevel.process_totalnumber) {
+        noiselevel.calculateAverages();
+      } else {
+        noiselevel.processMeasurements();
+      }
+    },
+    processMeasurements: function() {
+      var noise_data = {
+        timestamp: noiselevel.unprocessedMeasurements.item(noiselevel.callbackcount).timestamp,
+        dbA: noiselevel.unprocessedMeasurements.item(noiselevel.callbackcount).dbA,
+        minutes: noiselevel.unprocessedMeasurements.item(noiselevel.callbackcount).minutes,
+        queuelength: noiselevel.unprocessedMeasurements.item(noiselevel.callbackcount).queuelength
+      };
+
+      console.log("Correcting data of " + noise_data.timestamp);
+      storage.getStatus(noise_data.timestamp, "protection", noiselevel.protectionCallback, noise_data);
+
+    },
+    unprocessedMeasurementCallback: function(data, rows) {
+      if (rows > 0) {
+        var i;
+        noiselevel.callbackcount = 0;
+        noiselevel.process_totalnumber = rows;
+        noiselevel.unprocessedMeasurements = data;
+        console.log("starting to process : "+ noiselevel.process_totalnumber + " entries ");
+        noiselevel.processMeasurements();
+      } else {
+        noiselevel.calculateAverages();
+      }
+    },
+    correctSoundMeasurements: function() {
+      console.log("correctSoundMeasurements");
+      if (noiselevel.callbackcount >= noiselevel.process_totalnumber) {
+        storage.getUnprocessedMeasurementEntry(noiselevel.unprocessedMeasurementCallback);
+      } else {
+        console.log("still processing data - skip");
+      }
     },
     calculateAverages: function() {
       console.log("calculateAverages");
@@ -226,20 +360,26 @@ var noiselevel = {
           data: json,
           headers: {}
           };
+
         cordova.plugin.http.setDataSerializer('json');
-        console.log("sendRequest: "+ noiselevel.posturl + " with " + options);
+        console.log("sendRequest: "+ noiselevel.posturl + " with " + json.length + " items");
         cordova.plugin.http.sendRequest(noiselevel.posturl, options, function(response) {
             // prints 200
-            debug.log("POST RESPONSE: " + response.status + " on ts " + options.data.ts, "succes");
+            debug.log("POST RESPONSE: " + response.status + " on ts " + json[0].ts, "succes");
             noiselevel.upload_status = true;
-            storage.setUploadStatus(options.data.ts, 1);
-            if (options.data.values.upload > 1) 
+            var i;
+            for (i=0; i<json.length; i++)
+            {
+              storage.setUploadStatus(json[i].ts, 1);
+            }
+
+            if (options.data[0].values.upload > 1) 
             {
                 //noiselevel.checkUploadData();
             } else {
               noiselevel.is_uploading = false;
             }
-            }, function(response) {
+          }, function(response) {
             // prints 403
             debug.log("POST RESPONSE: " + response.status  + " " + response.error, "error");
             noiselevel.upload_status = false;
@@ -248,6 +388,9 @@ var noiselevel = {
 
         //noiselevel.showNoiseLevel();
         console.log("uploadNoiseData done");
+
+        setTimeout(() => { noiselevel.checkUploadData();}, 15000); 
+
     },
     parseData: function (datastring) {
         var res = datastring.split(',');
@@ -268,13 +411,14 @@ var noiselevel = {
               $('#progresscard').show();
               noiselevel.progress_totalnumber = length_of_data_entries;
               noiselevel.progress_visible = true;
+              $('#progressbar_calculating').attr('value', 0);
+              $('#progressbar_uploading').attr('value', 0);
             }
 
             if (noiselevel.progress_visible == true) {
               var progress = Math.round(100 * (noiselevel.progress_totalnumber - length_of_data_entries) / noiselevel.progress_totalnumber);
               $('#progressbar_loading').attr('value', progress);
             }
-
 
             ts = parseInt(res[1])*1000;
             if (ts < 2900000000)
@@ -303,9 +447,8 @@ var noiselevel = {
             noiselevel.id          = parseInt(res[1]);
             noiselevel.leq_min = parseInt(res[2]) / 100.0;
             noiselevel.sound_level = noiselevel.leq_min;
-            leqValue = Math.pow(10, noiselevel.leq_min/10);
 
-            storage.addSoundEntry(ts, noiselevel.leq_min, leqValue, 1, length_of_data_entries);
+            storage.addSoundMeasurementEntry(ts, noiselevel.leq_min, 1, length_of_data_entries);
 
         } else if (res[0] == "0") {
             length_of_data_entries      = parseInt(res[3]);
@@ -324,7 +467,7 @@ var noiselevel = {
         console.log("length_of_data_entries " + length_of_data_entries);
 
         if (length_of_data_entries == 1) {
-          noiselevel.calculateAverages();
+          noiselevel.correctSoundMeasurements();
         }
         
     },

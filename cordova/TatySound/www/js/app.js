@@ -57,12 +57,16 @@ var app = {
         console.log("ble_button click");
         $('#ble_config').toggle();
       });
+      $(document).on('click', '#ble_headphone', function (e) {
+        console.log("ble_headphone click");
+        noiselevel.toggleProtection();
+      });
       $(document).on('click', '#refreshDeviceList', function (e) {
         console.log("refreshDeviceList click");
         bluetooth.refreshDeviceList(false);
       });
       $('#ble-found-devices').on('tap', 'ons-list-item', function (e) {
-          console.log("ble-found-devices click");
+        console.log("ble-found-devices click");
         bluetooth.connectDevice($(this).attr("data-device-id"), $(this).attr("data-device-name"));
       });
       $(document).on('click', '#disconnectDevice', function (e) {
@@ -77,10 +81,24 @@ var app = {
         $('#settingscard').toggle();
       });
 
-      $('#home').on('click', '.savebutton', function (e) {
+      $(document).on('click', '#savebutton', function (e) {
         var token = $('#settings-token').val();
         noiselevel.settoken(token);
+
+        var attenuation = Number($('#settings-attenuation').val());
+          noiselevel.setattenuation(attenuation);
         });
+
+        $(document).on('click', '#dropdatabase', function (e) {
+          // navigator.notification.confirm(
+          //   'Are you sure to delete all data?',  // message
+          //   storage.dropTable,              // callback to invoke with index of button pressed
+          //   'Clear Database',            // title
+          //   'Delete,Exit'          // buttonLabels
+          // );
+          storage.dropTable();
+        });
+      
 
       document.addEventListener("pause", app.onDevicePause, false);
       document.addEventListener("resume", app.onDeviceResume, false);

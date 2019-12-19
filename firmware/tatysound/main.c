@@ -615,7 +615,6 @@ void app_tx_timer_handler(void *p_context) {
   transmit_ble_data();
 }
 
-
 void transmit_ble_data () {
   transmitting = true;
   NRF_LOG_DEBUG("transmit_ble_data %d", ble_data_size);
@@ -638,6 +637,9 @@ void transmit_ble_data () {
       }
       
       app_indication_set(BSP_INDICATE_SEND_ERROR);
+      if (error == NRF_ERROR_RESOURCES) {
+        error = app_timer_start(m_app_tx_tmr, APP_TIMER_TICKS(500), NULL);
+      }
       return;
     }
   }
@@ -796,6 +798,20 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
   process_sound_data(p_evt->buffer_released);
 }
 
+void   add_test_data() {
+  uint32_t time_stamp = 30104905;
+  uint16_t leq = 3000;
+  while (ble_data_size < MAX_BLE_DATA) {
+      ble_data[ble_data_size].type = 1;
+      ble_data[ble_data_size].time = time_stamp;
+      ble_data[ble_data_size].cdBSPL = leq;
+      NRF_LOG_INFO("Add Data 1 %d, lea: %d",ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
+      ble_data_size++;
+      time_stamp += 10;
+      leq+= 1;
+  }
+}
+
 /**@brief Application main function.
  */
 
@@ -846,6 +862,8 @@ int main(void) {
   APP_ERROR_CHECK(err_code);
 
   app_timer_start(m_sound_tmr, APP_TIMER_TICKS(SOUND_TIMER_INTERVAL), NULL);
+
+  //add_test_data();
 
 
   // Enter main loop.

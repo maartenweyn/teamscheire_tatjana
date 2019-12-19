@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="be.wesdec.tatysound" version="1.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="be.wesdec.tatysound" version="1.0.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>TatySound</name>
     <description>
         An communication app for TatySound
@@ -22,6 +22,9 @@
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
             <!-- <application android:networkSecurityConfig="@xml/network_security_config" /> -->
         </config-file>
+        <edit-config xmlns:android="http://schemas.android.com/apk/res/android" file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:networkSecurityConfig="@xml/network_security_config" />
+        </edit-config>
         <resource-file src="res/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
     </platform>
     <platform name="ios">
@@ -46,6 +49,7 @@
 
         <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription"> <string>This app requires Bluetooth to connect to our hardware.</string> </config-file>
         <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothAlwaysUsageDescription"> <string>This app requires Bluetooth to connect to our hardware.</string> </config-file>
+        <config-file platform="ios" target="*-Info.plist" parent="ITSAppUsesNonExemptEncryption"> <false/> </config-file>
 
     </platform>
 </widget>
