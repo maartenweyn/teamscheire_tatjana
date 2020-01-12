@@ -28,6 +28,7 @@ var noiselevel = {
     prev_update_date: new Date('1/1/2019'),
     token: "",
     attenuation: 0,
+    checkUploadDataSheduled: false,
     protection_on : false,
     initialize: function () {
       noiselevel.token = storage.getItem('uploadtoken', '');
@@ -144,7 +145,14 @@ var noiselevel = {
         sound_chart.redraw();
         sound_bar.redraw();
         noiselevel.showNoiseLevel();
-        noiselevel.checkUploadData();
+
+        console.log("all done, checking to upload new data");
+        if (!noiselevel.checkUploadDataSheduled)
+        {
+          noiselevel.checkUploadDataSheduled = true;
+          setTimeout(() => { noiselevel.checkUploadData();}, 15000); 
+        }
+
         $('#progresscard').hide();
         noiselevel.progress_visible = false;
       } else {
@@ -248,6 +256,7 @@ var noiselevel = {
     },
     checkUploadData: function() {
         noiselevel.is_uploading = true;
+        noiselevel.checkUploadDataSheduled = false;
         storage.getUnploadedEntries(50, noiselevel.unuploadedDataCallback);
     },
     processData: function() {
@@ -378,18 +387,24 @@ var noiselevel = {
                 //noiselevel.checkUploadData();
             } else {
               noiselevel.is_uploading = false;
+              console.log("noiselevel.is_uploading = false");
             }
           }, function(response) {
             // prints 403
             debug.log("POST RESPONSE: " + response.status  + " " + response.error, "error");
             noiselevel.upload_status = false;
             noiselevel.is_uploading = false;
+            console.log("noiselevel.is_uploading = false");
         });
 
         //noiselevel.showNoiseLevel();
-        console.log("uploadNoiseData done");
+        console.log("uploadNoiseData done, sheduling new");
 
-        setTimeout(() => { noiselevel.checkUploadData();}, 15000); 
+        if (!noiselevel.checkUploadDataSheduled)
+        {
+          noiselevel.checkUploadDataSheduled = true;
+          setTimeout(() => { noiselevel.checkUploadData();}, 15000); 
+        }
 
     },
     parseData: function (datastring) {

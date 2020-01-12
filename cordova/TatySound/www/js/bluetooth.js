@@ -25,17 +25,21 @@ var bluetooth = {
         window.BackgroundTimer.onTimerEvent(bluetooth.timer_callback);
         window.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
 
+        console.log("platform " + window.cordova.platformId);
         //autoconnect
-
-        var previousConnectedDevice = storage.getItem('connectedDevice');
-        if (previousConnectedDevice != undefined) {
-            ble.autoConnect(previousConnectedDevice.id, bluetooth.onConnect, bluetooth.onDisconnectDevice);
+        if (window.cordova.platformId != "android") {
+            var previousConnectedDevice = storage.getItem('connectedDevice');
+            if (previousConnectedDevice != undefined) {
+                console.log("setting autoconnect to " + previousConnectedDevice);
+                ble.autoConnect(previousConnectedDevice.id, bluetooth.onConnect, bluetooth.onDisconnectDevice);
+            }
         }
     },
     refreshDeviceList: function () {
         var onlyUART = true;
         $('#ble-found-devices').empty();
         var characteristics = (onlyUART) ? [bluetooth.serviceUuids.serviceUUID] : [];
+        console.log("scanning for devices");
         ble.scan(characteristics, 5, bluetooth.onDiscoverDevice, app.onError);
     },
     onDiscoverDevice: function (device) {
