@@ -38,7 +38,6 @@
 #include "nrf_log_default_backends.h"
 
 #include "nrfx_pdm.h"
-#include "nrf_calendar.h"
 
 #include <nrf_drv_gpiote.h>
 #include <nrf_pwr_mgmt.h>
@@ -53,8 +52,6 @@ static bool m_alert_on = false;
 APP_TIMER_DEF(m_app_leds_tmr);
 APP_TIMER_DEF(m_app_alert_tmr);
 APP_TIMER_DEF(m_sound_tmr);
-
-
 
 typedef struct {
   uint8_t type;
