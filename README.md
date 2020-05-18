@@ -1,4 +1,4 @@
-# Team Scheire Tatjana - Geluidsdosismonitorring
+# Team Scheire Tatjana - Tinnitus
 
 Aflevering op VRTNu: [https://www.vrt.be/vrtnu/a-z/team-scheire/2/team-scheire-s2a2/
 ]()
@@ -83,3 +83,12 @@ Een **geluidsdosis** is het gemiddelde geluidsniveau over een bepaalde (langere 
 Qua energieverbruik en dataopslag kunnen we uiteraard niet 8 u geluid gaan opnemen maar nemen we elke 10 seconden een sample van 1 seconde. Daarop bereken we het geluidsniveau. Daarna middelen we dit uit over 8u en 24u.
 
 Je mag niet de gemiddeld van de dBA waarden nemen, dit zijn immers gemiddelde. Maar zetten de waardes eerst terug om naar de geluidsdruk en berekenen dan hoeveel % we reeds hebben ten opzichte van de herberekende waarde. Zo krijgen we 2 percentages die ook intuïtiever kunnen gebruikt worden door de gebruiker van het systeem.
+
+# Wat staat er in de repo
+
+* In **tizen** staat de oorspronkelijk ontwikkeling voor de Samsung Watch.
+* In **hardware** het schema en PCB van de ontwikkelde wearble mee ontwikkeld door Kwinten Schram.
+* In **3DModel** de stl van de gebruikte behuizing
+* In **Arduino** een aantal test applicaties
+* In **cordova** de cordova applicatie voor iOS
+* In **Firmware** de code voor de wearable
