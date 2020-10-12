@@ -1,25 +1,39 @@
-import _typeof from 'babel-runtime/helpers/typeof';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
 
-*/
+var _util = require('../util');
 
-import util from '../util';
-import internal from '../internal';
+var _util2 = _interopRequireDefault(_util);
+
+var _internal = require('../internal');
+
+var _internal2 = _interopRequireDefault(_internal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var AnimatorFactory = function () {
 
@@ -41,7 +55,7 @@ var AnimatorFactory = function () {
     this._animationOptions = opts.defaultAnimationOptions || {};
 
     if (!this._animators[this._animation]) {
-      util.throw('No such animation: ' + this._animation);
+      _util2.default.throw('No such animation: ' + this._animation);
     }
   }
 
@@ -94,7 +108,7 @@ var AnimatorFactory = function () {
       } else {
         Animator = Animator || this._animators[this._animation];
 
-        var animationOpts = util.extend({}, this._animationOptions, options.animationOptions || {}, internal.config.animationsDisabled ? { duration: 0, delay: 0 } : {});
+        var animationOpts = _util2.default.extend({}, this._animationOptions, options.animationOptions || {}, _internal2.default.config.animationsDisabled ? { duration: 0, delay: 0 } : {});
 
         animator = new Animator(animationOpts);
 
@@ -104,7 +118,7 @@ var AnimatorFactory = function () {
       }
 
       if (!(animator instanceof this._baseClass)) {
-        util.throw('"animator" is not an instance of ' + this._baseClassName);
+        _util2.default.throw('"animator" is not an instance of ' + this._baseClassName);
       }
 
       return animator;
@@ -114,7 +128,7 @@ var AnimatorFactory = function () {
     value: function parseAnimationOptionsString(jsonString) {
       try {
         if (typeof jsonString === 'string') {
-          var result = util.animationOptionsParse(jsonString);
+          var result = _util2.default.animationOptionsParse(jsonString);
           if ((typeof result === 'undefined' ? 'undefined' : _typeof(result)) === 'object' && result !== null) {
             return result;
           } else {
@@ -132,4 +146,4 @@ var AnimatorFactory = function () {
   return AnimatorFactory;
 }();
 
-export default AnimatorFactory;
+exports.default = AnimatorFactory;

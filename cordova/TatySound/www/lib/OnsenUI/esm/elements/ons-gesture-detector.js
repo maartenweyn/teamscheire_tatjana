@@ -1,27 +1,43 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _elements = require('../ons/elements');
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements2 = _interopRequireDefault(_elements);
 
-*/
+var _baseElement = require('./base/base-element');
 
-import onsElements from '../ons/elements';
-import BaseElement from './base/base-element';
-import GestureDetector from '../ons/gesture-detector';
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _gestureDetector = require('../ons/gesture-detector');
+
+var _gestureDetector2 = _interopRequireDefault(_gestureDetector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 /**
  * @element ons-gesture-detector
@@ -55,24 +71,23 @@ import GestureDetector from '../ons/gesture-detector';
  *   });
  * </script>
  */
-
 var GestureDetectorElement = function (_BaseElement) {
   _inherits(GestureDetectorElement, _BaseElement);
 
   function GestureDetectorElement() {
     _classCallCheck(this, GestureDetectorElement);
 
-    var _this = _possibleConstructorReturn(this, (GestureDetectorElement.__proto__ || _Object$getPrototypeOf(GestureDetectorElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (GestureDetectorElement.__proto__ || Object.getPrototypeOf(GestureDetectorElement)).call(this));
 
-    _this._gestureDetector = new GestureDetector(_this, { passive: true });
+    _this._gestureDetector = new _gestureDetector2.default(_this, { passive: true });
     return _this;
   }
 
   return GestureDetectorElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default GestureDetectorElement;
+exports.default = GestureDetectorElement;
 
 
-onsElements.GestureDetector = GestureDetectorElement;
+_elements2.default.GestureDetector = GestureDetectorElement;
 customElements.define('ons-gesture-detector', GestureDetectorElement);

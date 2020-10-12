@@ -13,16 +13,24 @@ var app = {
         }*/
     },
 
+    databaseInitializedCallback: function() {
+        console.log('databaseInitializedCallback');
+        noiselevel.fillChart();
+    },
+
     onDeviceReady: function () {
         debug.log('device ready', 'success');
+
+        // $('#ble_config').hide();
+        // $('#log_info').hide();
         app.bindEvents();
-        app.checkIfUserLoggedIn();
+        //app.checkIfUserLoggedIn();
         //mqttclient.initialize();
         //gps.initialize();
         //gps.getLocation();
-        bluetooth.initialize();
+        storage.openDatabase(app.databaseInitializedCallback);
         noiselevel.initialize();
-        storage.openDatabase();
+        bluetooth.initialize();
 
         cordova.plugins.backgroundMode.enable();
         cordova.plugins.backgroundMode.overrideBackButton();
@@ -37,16 +45,64 @@ var app = {
             hidden: true,
             bigText: false
         });
+
+        
     },
 
     bindEvents: function () {
-        // setTimeout(function () {
-        //     mqttclient.addMessage('app,1');
-        // }, 3000);
+      // setTimeout(function () {
+      //     mqttclient.addMessage('app,1');
+      // }, 3000);
+      $(document).on('click', '#ble_button', function (e) {
+        console.log("ble_button click");
+        $('#ble_config').toggle();
+      });
+      $(document).on('click', '#ble_headphone', function (e) {
+        console.log("ble_headphone click");
+        noiselevel.toggleProtection();
+      });
+      $(document).on('click', '#refreshDeviceList', function (e) {
+        console.log("refreshDeviceList click");
+        bluetooth.refreshDeviceList(false);
+      });
+      $('#ble-found-devices').on('tap', 'ons-list-item', function (e) {
+        console.log("ble-found-devices click");
+        bluetooth.connectDevice($(this).attr("data-device-id"), $(this).attr("data-device-name"));
+      });
+      $(document).on('click', '#disconnectDevice', function (e) {
+        bluetooth.disconnectDevice(e);
+      });
 
-        document.addEventListener("pause", app.onDevicePause, false);
-        document.addEventListener("resume", app.onDeviceResume, false);
-        document.addEventListener("menubutton", app.onMenuKeyDown, false);
+      $(document).on('click', '#log_button', function (e) {
+        $('#log_info').toggle();
+      });
+
+      $(document).on('click', '#settings_button', function (e) {
+        $('#settingscard').toggle();
+      });
+
+      $(document).on('click', '#savebutton', function (e) {
+        var token = $('#settings-token').val();
+        noiselevel.settoken(token);
+
+        var attenuation = Number($('#settings-attenuation').val());
+          noiselevel.setattenuation(attenuation);
+        });
+
+        $(document).on('click', '#dropdatabase', function (e) {
+          // navigator.notification.confirm(
+          //   'Are you sure to delete all data?',  // message
+          //   storage.dropTable,              // callback to invoke with index of button pressed
+          //   'Clear Database',            // title
+          //   'Delete,Exit'          // buttonLabels
+          // );
+          storage.dropTable();
+        });
+      
+
+      document.addEventListener("pause", app.onDevicePause, false);
+      document.addEventListener("resume", app.onDeviceResume, false);
+    //   document.addEventListener("menubutton", app.onMenuKeyDown, false);
     },
 
     onDevicePause: function () {
@@ -57,6 +113,9 @@ var app = {
         debug.log('out of pause');
         bluetooth.refreshDeviceList();
         noiselevel.showNoiseLevel();
+        if (!noiselevel.is_uploading) {
+          noiselevel.checkUploadData();
+        }
         // mqttclient.addMessage('app,3');
     },
     onMenuKeyDown: function () {
@@ -67,29 +126,30 @@ var app = {
         debug.log(JSON.stringify(error), 'error');
     },
 
-    loadUser: function () {
-        app.user = storage.getItem('user');
-        console.log('logged in as: ' + JSON.stringify(app.user));
-    },
-    validateUser: function (newUser) {
-        newUser.userId = newUser.userName.toLowerCase().replace(/ /g,'');
-        return newUser;
-    },
-    saveUser: function (newUser) {
-        storage.setItem('user', newUser);
-    },
-    checkIfUserLoggedIn() {
-        app.loadUser();
+    // loadUser: function () {
+    //     app.user = storage.getItem('user');
+    //     console.log('logged in as: ' + JSON.stringify(app.user));
+    // },
+    // validateUser: function (newUser) {
+    //     newUser.userId = newUser.userName.toLowerCase().replace(/ /g,'');
+    //     return newUser;
+    // },
+    // saveUser: function (newUser) {
+    //     storage.setItem('user', newUser);
+    // }
+    // },
+    // checkIfUserLoggedIn() {
+    //     app.loadUser();
 
-        if (app.user) {
-            $('.logged-in').show();
-            $('.logged-out').hide();
-            $('.username').html(app.user.userName);
-        } else {
-            $('.logged-out').show();
-            $('.logged-in').hide();
-        }
-    }
+    //     if (app.user) {
+    //         $('.logged-in').show();
+    //         $('.logged-out').hide();
+    //         $('.username').html(app.user.userName);
+    //     } else {
+    //         $('.logged-out').show();
+    //         $('.logged-in').hide();
+    //     }
+    // }
 };
 
 app.initialize();

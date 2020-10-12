@@ -50,8 +50,12 @@ static bsp_indication_t m_stable_state = BSP_INDICATE_IDLE;
 static bool m_leds_clear = false;
 static bool m_alert_on = false;
 APP_TIMER_DEF(m_app_leds_tmr);
-APP_TIMER_DEF(m_app_alert_tmr);
+APP_TIMER_DEF(m_app_tx_tmr);
 APP_TIMER_DEF(m_sound_tmr);
+
+#define on(led)     nrf_gpio_pin_set(led)
+#define off(led)    nrf_gpio_pin_clear(led)
+#define toggle(led)    nrf_gpio_pin_toggle(led)
 
 typedef struct {
   uint8_t type;
@@ -63,6 +67,7 @@ sound_data_element_t ble_data[MAX_BLE_DATA];
 uint16_t ble_data_size = 0;
 
 static volatile uint8_t led_status[8][3] = {0};
+static volatile bool transmitting = false;
 static uint8_t led_driver_status[3] = {0};
 static uint8_t light_brightness = 50;
 static uint8_t front_light_status = 0;
@@ -75,7 +80,7 @@ static uint8_t button_pushed = 0;
 
 uint32_t app_indication_set(bsp_indication_t indicate);
 static void app_leds_timer_handler(void *p_context);
-static void app_alert_timer_handler(void *p_context);
+static void app_tx_timer_handler(void *p_context);
 static void sound_timer_handler(void *p_context);
 void set_led(uint8_t led_nr, uint8_t color, uint8_t brightness);
 void set_front_light(uint8_t status);
@@ -101,18 +106,6 @@ static volatile int soundbuffer_position = -SKIP_BUFFERS;
 static double prev_avg = 0;
 static volatile bool parse_sound = false;
 
-static const uint8_t led_addresses[8][3][2] = {
-    {{LED1RED_ID, LED1RED_ADDR}, {LED1GREEN_ID, LED1GREEN_ADDR}, {LED1BLUE_ID, LED1BLUE_ADDR}},
-    {{LED2RED_ID, LED2RED_ADDR}, {LED2GREEN_ID, LED2GREEN_ADDR}, {LED2BLUE_ID, LED2BLUE_ADDR}},
-    {{LED3RED_ID, LED3RED_ADDR}, {LED3GREEN_ID, LED3GREEN_ADDR}, {LED3BLUE_ID, LED3BLUE_ADDR}},
-    {{LED4RED_ID, LED4RED_ADDR}, {LED4GREEN_ID, LED4GREEN_ADDR}, {LED4BLUE_ID, LED4BLUE_ADDR}},
-    {{LED5RED_ID, LED5RED_ADDR}, {LED5GREEN_ID, LED5GREEN_ADDR}, {LED5BLUE_ID, LED5BLUE_ADDR}},
-    {{LED6RED_ID, LED6RED_ADDR}, {LED6GREEN_ID, LED6GREEN_ADDR}, {LED6BLUE_ID, LED6BLUE_ADDR}},
-    {{LED7RED_ID, LED7RED_ADDR}, {LED7GREEN_ID, LED7GREEN_ADDR}, {LED7BLUE_ID, LED7BLUE_ADDR}},
-    {{LED8RED_ID, LED8RED_ADDR}, {LED8GREEN_ID, LED8GREEN_ADDR}, {LED8BLUE_ID, LED8BLUE_ADDR}}};
-
-static const uint8_t led_driver_addresses[3] = {ADDRESS0, ADDRESS1, ADDRESS2};
-
 static volatile uint8_t     pwm_ready = 0;                                                                       // A PWM ready status
 
 static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt);
@@ -120,6 +113,8 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt);
 uint32_t start_sound_measurement() {
 
   NRF_LOG_DEBUG("Starting pdm");
+  
+  //app_indication_set(BSP_INDICATE_USER_STATE_2);
 
   //buffer_index = 0;
   int32_t err_code = 0;
@@ -200,11 +195,11 @@ void in_pin_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action) {
   int32_t pin_state = nrf_gpio_pin_read(pin);
   NRF_LOG_INFO("in_pin_handler %d - %d / %d", pin, action, pin_state);
 
-   if (pin_state == 0) {
-      set_all_leds_color(GREEN, 50);
-    } else {
-      set_all_leds_color(GREEN, 0);
-    }
+//   if (pin_state == 0) {
+//      set_all_leds_color(GREEN, 50);
+//    } else {
+//      set_all_leds_color(GREEN, 0);
+//    }
 }
 
 ret_code_t init_buttons() {
@@ -216,7 +211,6 @@ ret_code_t init_buttons() {
   nrf_drv_gpiote_in_config_t in_config = GPIOTE_CONFIG_IN_SENSE_TOGGLE(true);
   in_config.pull = NRF_GPIO_PIN_PULLUP;
 
-  //define CONFIG_NFCT_PINS_AS_GPIOS in the preporcessor symbols of the app
   err_code = nrf_drv_gpiote_in_init(BUTTON1, &in_config, in_pin_handler);
   APP_ERROR_CHECK(err_code);
 
@@ -227,90 +221,6 @@ ret_code_t init_buttons() {
 
 /* LEDS */
 
-void check_led_driver(uint8_t id, uint8_t status) {
-  if (led_driver_status[id] == status)
-    return;
-
-  if (status) {
-    NRF_LOG_INFO("enabling driver %d", id);
-    lp55231_enable(led_driver_addresses[id]);
-    led_driver_status[id] = 1;
-  } else {
-    uint8_t l, c;
-    for (l = 0; l < 8; l++) {
-      for (c = 0; c < 3; c++) {
-        if (led_status[l][c] > 0) {
-          if (led_addresses[l][c][1] == id) {
-            //led driver still needs to be on so do not disable
-            return;
-          }
-        }
-      }
-    }
-
-    lp55231_disable(led_driver_addresses[id]);
-    led_driver_status[id] = 0;
-
-    NRF_LOG_INFO("dissabling driver %d", id);
-  }
-}
-
-void boot_LP55231(void) {
-
-  lp55231_enable(ADDRESS0);
-  lp55231_enable(ADDRESS1);
-  lp55231_enable(ADDRESS2);
-
-  leds_set_all(0);
-
-  lp55231_disable(ADDRESS0);
-  lp55231_disable(ADDRESS1);
-  lp55231_disable(ADDRESS2);
-}
-
-void set_led(uint8_t led_nr, uint8_t color, uint8_t brightness) {
-  //NRF_LOG_INFO("set_led %d %d to %d", led_nr, color, brightness);
-
-  if (color & RED) {
-    led_status[led_nr][0] = brightness;
-    check_led_driver(led_addresses[led_nr][0][1], brightness > 0);
-    lp55231_setBrightness(led_addresses[led_nr][0][0], brightness, led_driver_addresses[led_addresses[led_nr][0][1]]);
-  }
-  if (color & GREEN) {
-    led_status[led_nr][1] = brightness;
-    check_led_driver(led_addresses[led_nr][1][1], brightness > 0);
-    lp55231_setBrightness(led_addresses[led_nr][1][0], brightness, led_driver_addresses[led_addresses[led_nr][1][1]]);
-  }
-  if (color & BLUE) {
-    led_status[led_nr][2] = brightness;
-    check_led_driver(led_addresses[led_nr][2][1], brightness > 0);
-    lp55231_setBrightness(led_addresses[led_nr][2][0], brightness, led_driver_addresses[led_addresses[led_nr][2][1]]);
-  }
-}
-
-void set_front_light(uint8_t status) {
-  uint8_t brightness = status == 0 ? 0 : light_brightness;
-
-  set_led(1, WHITE, brightness);
-  set_led(2, WHITE, brightness);
-  set_led(3, WHITE, brightness);
-  set_led(4, WHITE, brightness);
-  set_led(5, WHITE, brightness);
-  set_led(6, WHITE, brightness);
-  set_led(7, WHITE, brightness);
-}
-
-void set_all_leds_color(uint8_t color, uint8_t brightness) {
-  leds_set_all(0);
-  set_led(0, color, brightness);
-  set_led(1, color, brightness);
-  set_led(2, color, brightness);
-  set_led(3, color, brightness);
-  set_led(4, color, brightness);
-  set_led(5, color, brightness);
-  set_led(6, color, brightness);
-  set_led(7, color, brightness);
-}
 
 static uint32_t send_data_to_ble(uint8_t *data, uint16_t length) {
   NRF_LOG_INFO("send_data_to_ble");
@@ -340,6 +250,9 @@ static void timers_init(void) {
 
   // Create timers.
   err_code = app_timer_create(&m_app_leds_tmr, APP_TIMER_MODE_SINGLE_SHOT, app_leds_timer_handler);
+  APP_ERROR_CHECK(err_code);
+
+  err_code = app_timer_create(&m_app_tx_tmr, APP_TIMER_MODE_SINGLE_SHOT, app_tx_timer_handler);
   APP_ERROR_CHECK(err_code);
 
   err_code = app_timer_create(&m_sound_tmr, APP_TIMER_MODE_REPEATED, sound_timer_handler);
@@ -426,30 +339,34 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
 
   switch (indicate) {
   case BSP_INDICATE_IDLE:
-    set_led(0, WHITE, 0);
-    set_led(LED_INDICATE_PEAK, WHITE, 0);
+    off(LED_RED);
+    off(LED_GREEN);
+    off(LED_BLUE);
     m_stable_state = indicate;
     break;
 
   case BSP_INDICATE_SCANNING:
   case BSP_INDICATE_ADVERTISING:
+    toggle(LED_BLUE);
+    next_delay = ADVERTISING_SLOW_LED_OFF_INTERVAL;
     // in advertising blink LED_0
-    if (led_status[LED_INDICATE_ADVERTISING][LED_INDICATE_ADVERTISING_COLOR_ID]) {
-      set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_ADVERTISING_COLOR, 0);
-      next_delay = indicate ==
-                           BSP_INDICATE_ADVERTISING
-                       ? ADVERTISING_LED_OFF_INTERVAL
-                       : ADVERTISING_SLOW_LED_OFF_INTERVAL;
-    } else {
-      set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_ADVERTISING_COLOR, LED_BRIGHTNESS);
-      next_delay = indicate ==
-                           BSP_INDICATE_ADVERTISING
-                       ? ADVERTISING_LED_ON_INTERVAL
-                       : ADVERTISING_SLOW_LED_ON_INTERVAL;
-    }
+//    if (led_status[LED_INDICATE_ADVERTISING][LED_INDICATE_ADVERTISING_COLOR_ID]) {
+//      set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_ADVERTISING_COLOR, 0);
+//      next_delay = indicate ==
+//                           BSP_INDICATE_ADVERTISING
+//                       ? ADVERTISING_LED_OFF_INTERVAL
+//                       : ADVERTISING_SLOW_LED_OFF_INTERVAL;
+//    } else {
+//      set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_ADVERTISING_COLOR, LED_BRIGHTNESS);
+//      next_delay = indicate ==
+//                           BSP_INDICATE_ADVERTISING
+//                       ? ADVERTISING_LED_ON_INTERVAL
+//                       : ADVERTISING_SLOW_LED_ON_INTERVAL;
+//    }
 
     m_stable_state = indicate;
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(next_delay), NULL);
+
     break;
     //
     //        case BSP_INDICATE_ADVERTISING_WHITELIST:
@@ -527,48 +444,63 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
     //
   case BSP_INDICATE_CONNECTED:
     NRF_LOG_INFO("BSP_INDICATE_CONNECTED");
-    if (led_status[LED_INDICATE_CONNECTED][LED_INDICATE_ADVERTISING_COLOR_ID])
-      set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_ADVERTISING_COLOR, 0);
+//    if (led_status[LED_INDICATE_CONNECTED][LED_INDICATE_ADVERTISING_COLOR_ID])
+//      set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_ADVERTISING_COLOR, 0);
 
-    if (led_status[LED_INDICATE_CONNECTED][LED_INDICATE_CONNECTED_COLOR_ID]) {
-      set_led(LED_INDICATE_CONNECTED, LED_INDICATE_CONNECTED_COLOR, 0);
-      next_delay = indicate ==
-                           BSP_INDICATE_CONNECTED
-                       ? CONNECTED_LED_OFF_INTERVAL
-                       : CONNECTED_LED_OFF_INTERVAL;
-    } else {
-      set_led(LED_INDICATE_CONNECTED, LED_INDICATE_CONNECTED_COLOR, LED_BRIGHTNESS);
-      next_delay = indicate ==
-                           BSP_INDICATE_CONNECTED
-                       ? CONNECTED_LED_ON_INTERVAL
-                       : CONNECTED_LED_ON_INTERVAL;
-    }
+//    if (led_status[LED_INDICATE_CONNECTED][LED_INDICATE_CONNECTED_COLOR_ID]) {
+//      set_led(LED_INDICATE_CONNECTED, LED_INDICATE_CONNECTED_COLOR, 0);
+//      next_delay = indicate ==
+//                           BSP_INDICATE_CONNECTED
+//                       ? CONNECTED_LED_OFF_INTERVAL
+//                       : CONNECTED_LED_OFF_INTERVAL;
+//    } else {
+//      set_led(LED_INDICATE_CONNECTED, LED_INDICATE_CONNECTED_COLOR, LED_BRIGHTNESS);
+//      next_delay = indicate ==
+//                           BSP_INDICATE_CONNECTED
+//                       ? CONNECTED_LED_ON_INTERVAL
+//                       : CONNECTED_LED_ON_INTERVAL;
+//    }
 
-    m_stable_state = indicate;
-    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(next_delay), NULL);
+//    m_stable_state = indicate;
+//    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(next_delay), NULL);
+
+    on(LED_BLUE);
+
+    m_stable_state = BSP_INDICATE_IDLE;
+    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
+    err_code = app_timer_start(m_app_tx_tmr, APP_TIMER_TICKS(500), NULL);
     break;
 
-  case BSP_INDICATE_SENT_OK:
-    if (led_status[LED_INDICATE_SENT_OK][LED_INDICATE_SENT_OK_COLOR_ID]) {
-      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_OK_COLOR, 0);
-      m_stable_state = BSP_INDICATE_IDLE;
-    } else {
-      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_OK_COLOR, LED_BRIGHTNESS);
-      m_stable_state = indicate;
-      err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(SENT_OK_INTERVAL), NULL);
-    }
+  case BSP_INDICATE_SENT_OK:  
+    on(LED_GREEN);
+
+    m_stable_state = BSP_INDICATE_IDLE;
+    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
+    break;
+//    if (led_status[LED_INDICATE_SENT_OK][LED_INDICATE_SENT_OK_COLOR_ID]) {
+//      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_OK_COLOR, 0);
+//      m_stable_state = BSP_INDICATE_IDLE;
+//    } else {
+//      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_OK_COLOR, LED_BRIGHTNESS);
+//      m_stable_state = indicate;
+//      err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(SENT_OK_INTERVAL), NULL);
+//    }
     break;
 
   case BSP_INDICATE_SEND_ERROR:
+    on(LED_RED);
 
-    if (led_status[LED_INDICATE_SENT_OK][LED_INDICATE_SENT_ERROR_COLOR_ID]) {
-      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_ERROR_COLOR, 0);
-      m_stable_state = BSP_INDICATE_IDLE;
-    } else {
-      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_ERROR_COLOR, LED_BRIGHTNESS);
-      m_stable_state = indicate;
-      err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(SEND_ERROR_INTERVAL), NULL);
-    }
+    m_stable_state = BSP_INDICATE_IDLE;
+    err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
+    break;
+//    if (led_status[LED_INDICATE_SENT_OK][LED_INDICATE_SENT_ERROR_COLOR_ID]) {
+//      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_ERROR_COLOR, 0);
+//      m_stable_state = BSP_INDICATE_IDLE;
+//    } else {
+//      set_led(LED_INDICATE_SENT_OK, LED_INDICATE_SENT_ERROR_COLOR, LED_BRIGHTNESS);
+//      m_stable_state = indicate;
+//      err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(SEND_ERROR_INTERVAL), NULL);
+//    }
 
     break;
     //
@@ -626,21 +558,23 @@ uint32_t app_indication_set(bsp_indication_t indicate) {
     //            break;
     //
   case BSP_INDICATE_USER_STATE_0: // BOOT
-#ifdef DEBUG_NRF
-    set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_BOOT_DEBUG, LED_BRIGHTNESS);
-#else
-    set_led(LED_INDICATE_ADVERTISING, LED_INDICATE_BOOT, LED_BRIGHTNESS);
-#endif
+    on(LED_RED);
+    on(LED_GREEN);
+    on(LED_BLUE);
+
     m_stable_state = BSP_INDICATE_IDLE;
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
     break;
   case BSP_INDICATE_USER_STATE_1: // TX
-    set_led(LED_INDICATE_TX, LED_INDICATE_TX_COLOR, LED_BRIGHTNESS);
+//    set_led(LED_INDICATE_TX, LED_INDICATE_TX_COLOR, LED_BRIGHTNESS);
+    
+    on(LED_BLUE);
     m_stable_state = BSP_INDICATE_IDLE;
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(100), NULL);
     break;
   case BSP_INDICATE_USER_STATE_2: // measure
-    set_led(LED_INDICATE_PEAK, LED_INDICATE_PEAK_COLOR, LED_BRIGHTNESS);
+//    set_led(LED_INDICATE_PEAK, LED_INDICATE_PEAK_COLOR, LED_BRIGHTNESS);
+    on(LED_GREEN);
     m_stable_state = BSP_INDICATE_IDLE;
     err_code = app_timer_start(m_app_leds_tmr, APP_TIMER_TICKS(50), NULL);
     break;
@@ -675,15 +609,23 @@ int32_t a_filter(double input) {
   return (int32_t) output;
 }
 
+void app_tx_timer_handler(void *p_context) {
+  NRF_LOG_DEBUG("app_tx_timer_handler waking up");
+  transmit_ble_data();
+}
+
 void transmit_ble_data () {
+  transmitting = true;
   NRF_LOG_DEBUG("transmit_ble_data %d", ble_data_size);
   uint8_t txt_data[200];
   uint32_t error = 0;
   int i = 0;
-  for (int i = 0; i<ble_data_size; i++) {
+  int length = ble_data_size > 10 ? 10 : ble_data_size;
+  for (int i = 0; i<length; i++) {
     sprintf(txt_data, "%d,%d,%d,%d;", ble_data[i].type, ble_data[i].time, ble_data[i].cdBSPL, ble_data_size - i);
     error = send_data_to_ble(txt_data,strlen(txt_data));
-    NRF_LOG_DEBUG("BLE TX: %d of %d '%s' error %d", i, ble_data_size, txt_data, error);
+    NRF_LOG_DEBUG("BLE TX: %d of %d/%d '%s' error %d", i, length, ble_data_size, txt_data, error);
+
 
     if (error != NRF_SUCCESS) {
       if (i > 0) {
@@ -692,15 +634,31 @@ void transmit_ble_data () {
         }
         ble_data_size -= i;
       }
+      
+      app_indication_set(BSP_INDICATE_SEND_ERROR);
+      if (error == NRF_ERROR_RESOURCES) {
+        error = app_timer_start(m_app_tx_tmr, APP_TIMER_TICKS(500), NULL);
+      }
       return;
     }
   }
 
   if (error == NRF_SUCCESS)
-    ble_data_size = 0;
-
+  {
+    if (ble_data_size == length) {
+      ble_data_size = 0;
+    } else {
+      for (int j = length; j < ble_data_size; j++) {
+        memcpy((uint8_t*) &ble_data[j-length], (uint8_t*) &ble_data[j], sizeof(sound_data_element_t));
+      }
+      ble_data_size -= length;
+      error = app_timer_start(m_app_tx_tmr, APP_TIMER_TICKS(500), NULL);
+    }
+  }
   
   NRF_LOG_DEBUG("transmit_ble_data clear  %d", ble_data_size);
+  app_indication_set(BSP_INDICATE_SENT_OK);
+  transmitting = false;
 }
 
 
@@ -736,7 +694,8 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
         ble_data[ble_data_size].time = time_stamp;
         ble_data[ble_data_size].cdBSPL = (uint16_t)(leq_min * 100);
         NRF_LOG_INFO("Add Data 1 %d, lea: %d", ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
-      ble_data_size++;
+        ble_data_size++;
+        transmitting = false;
       }
 
       acc_min = 0;
@@ -760,8 +719,8 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
     double filtered = a_filter(corrected);
     sumsquare += filtered * filtered;
 
-    //sprintf(txt_data, "%d,%d,%d,%d,%d,%d\n", i, data[i], (int) prev_avg, (int) corrected, (int) filtered, (int) sumsquare);
-    //NRF_LOG_RAW_INFO("%s", txt_data);
+//    sprintf(txt_data, "%d,%d,%d,%d,%d,%d\n", i, data[i], (int) prev_avg, (int) corrected, (int) filtered, (int) sumsquare);
+//    NRF_LOG_RAW_INFO("%s", txt_data);
   }
  
   total_samples +=  I2S_BUFFER_SIZE;
@@ -778,7 +737,7 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
 
     stop_sound_measurement();
 
-    app_indication_set(BSP_INDICATE_USER_STATE_2);
+    //app_indication_set(BSP_INDICATE_USER_STATE_2);
 
 //    sprintf(txt_data, "0,%d,%d,0;", (int) (new_ts), (uint16_t)(leq * 100));
 //    send_data_to_ble(txt_data,strlen(txt_data));
@@ -789,6 +748,7 @@ void process_sound_data(int16_t data[I2S_BUFFER_SIZE]) {
       ble_data[ble_data_size].cdBSPL = (uint16_t)(leq * 100);
       NRF_LOG_INFO("Add Data 0 %d, lea: %d",ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
       ble_data_size++;
+      transmitting = false;
     }
 
     sumsquare = 0.0;
@@ -837,10 +797,24 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
   process_sound_data(p_evt->buffer_released);
 }
 
+void   add_test_data() {
+  uint32_t time_stamp = 30104905;
+  uint16_t leq = 3000;
+  while (ble_data_size < MAX_BLE_DATA) {
+      ble_data[ble_data_size].type = 1;
+      ble_data[ble_data_size].time = time_stamp;
+      ble_data[ble_data_size].cdBSPL = leq;
+      NRF_LOG_INFO("Add Data 1 %d, lea: %d",ble_data[ble_data_size].time, ble_data[ble_data_size].cdBSPL);
+      ble_data_size++;
+      time_stamp += 10;
+      leq+= 1;
+  }
+}
+
 /**@brief Application main function.
  */
 
- int main(void) {
+int main(void) {
   uint32_t err_code;
   ble_state = 255;
   sleep_status = 1; // 0 can go to sleep,  1 keep awake
@@ -855,21 +829,11 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
   power_management_init();
   init_buttons();
 
-  NRF_LOG_INFO("init i2c\n");
-  i2c_init();
-
-  NRF_LOG_INFO("boot_LP55231\n");
-  boot_LP55231();
-
-  err_code = lsm303agr_init();
-  if (err_code != 0) {
-    NRF_LOG_INFO("cannot init accelerometer\n");
-  }  
-  NRF_LOG_FLUSH();
+  nrf_gpio_pin_dir_set(LED_GREEN,    NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(LED_BLUE,    NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(LED_RED,    NRF_GPIO_PIN_DIR_OUTPUT);
 
   app_indication_set(BSP_INDICATE_USER_STATE_0);
-
-
   
   NRF_LOG_INFO("\n Audio Init\n");	
   pdm_cfg.gain_l = NRF_PDM_GAIN_MINIMUM;
@@ -892,15 +856,13 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
   err_code =  start_sound_measurement(); 
   APP_ERROR_CHECK(err_code);
 
-  //init_battery_monitor();
-
   NRF_LOG_INFO("app start!\n");
-  //advertising_start();
   err_code =  slow_advertising_start(); 
   APP_ERROR_CHECK(err_code);
 
- // app_timer_start(m_acc_tmr, APP_TIMER_TICKS(ACC_TIMER_INTERVAL), NULL);
   app_timer_start(m_sound_tmr, APP_TIMER_TICKS(SOUND_TIMER_INTERVAL), NULL);
+
+  //add_test_data();
 
 
   // Enter main loop.
@@ -912,7 +874,7 @@ static void pdm_event_handler(nrfx_pdm_evt_t const * const p_evt) {
 //      process_sound_data();
 //    }
 
-    if (!sampling_running && ble_data_size > 0) {
+    if (!transmitting && !sampling_running && ble_data_size > 0) {
       transmit_ble_data();
     }
 

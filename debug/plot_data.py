@@ -12,9 +12,9 @@ fig = plt.figure()
 
 plt.plot(df['raw'], label='Sound')
 #plt.plot(df['id'], label='id')
-plt.plot(df['avg'], label='avg')
-plt.plot(df['corr'], label='corr')
-plt.plot(df['filtered'], label='filtered')
+# plt.plot(df['avg'], label='avg')
+# plt.plot(df['corr'], label='corr')
+# plt.plot(df['filtered'], label='filtered')
 
 plt.ylabel('y')
 plt.title('Sound')

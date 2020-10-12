@@ -5,8 +5,8 @@
   <BreakpointListItem trigger="" line="285" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../../lib/ble_app.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="337" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../../lib/ble_app.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="446" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../../lib/ble_app.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="744" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
-  <BreakpointListItem trigger="" line="84" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="617" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
+  <BreakpointListItem trigger="" line="769" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../main.c" useHWbreakpoint="false"/>
   <BreakpointListItem trigger="" line="2" counter="0" hardwareBreakpoint="" isFunctionBreakpoint="false" action="" expression="" group="Breakpoints" type="Breakpoint" state="4" filename="../../../sdk_config.h" useHWbreakpoint="false"/>
   <Exceptions set="MemManage;UsageFault_Coprocessor;UsageFault_CheckingError;UsageFault_StateError;BusFault;ExceptionEntryReturnFault;HardFault"/>
  </Breakpoints>
@@ -66,8 +66,8 @@
  </TraceWindow>
  <Watch1>
   <Watches active="1" update="Never">
-   <Watchpoint numelements="0" expression="p_evt" evalMode="1" name="p_evt" radix="16" linenumber="813" filename="../../../main.c" list=""/>
-   <Watchpoint numelements="0" expression="p_ble_evt" evalMode="1" name="p_ble_evt" radix="-1" linenumber="59" filename="../../../../lib/ble_app.c" list=""/>
+   <Watchpoint expression="p_evt" name="p_evt" radix="16" linenumber="839" filename="../../../main.c"/>
+   <Watchpoint expression="p_ble_evt" name="p_ble_evt" radix="-1" linenumber="59" filename="../../../../lib/ble_app.c"/>
   </Watches>
  </Watch1>
  <Watch2>
@@ -80,27 +80,14 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="402" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="416" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="801" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="787" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="118" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../drv_audio.c" selected="0" top="101" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="109" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/drivers/include/nrfx_pdm.h" selected="0" top="84" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="2336" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../sdk_config.h" selected="0" top="2310" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="424" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/hal/nrf_pdm.h" selected="0" top="406" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="63" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../config.h" selected="0" top="45" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="100" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/util/app_error_weak.c" selected="0" top="84" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="48" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/util/app_error_handler_gcc.c" selected="0" top="32" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="211" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/drivers/src/nrfx_pdm.c" selected="0" top="198" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="151" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/integration/nrfx/nrfx_glue.h" selected="0" top="135" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="349" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/integration/nrfx/legacy/apply_old_config.h" selected="0" top="333" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="6666" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/modules/nrfx/mdk/nrf52_bitfields.h" selected="0" top="6650" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="394" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/ble_app.c" selected="0" top="379" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="2" y="25" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../config.h" selected="1" top="17" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="66" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/ble_app.c" selected="0" top="53" codecName="Default"/>
   <SessionOpenFile windowGroup="DockEditLeft" x="0" y="22" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../lib/ble_app.h" selected="0" top="0" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="648" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/ble/ble_advertising/ble_advertising.c" selected="0" top="616" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="1845" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/softdevice/s132/headers/ble_gap.h" selected="0" top="1829" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="61" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/external/fprintf/nrf_fprintf.c" selected="0" top="48" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="202" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/softdevice/s132/headers/ble_types.h" selected="0" top="187" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="69" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/ble/ble_services/ble_nus/ble_nus.c" selected="0" top="54" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="69" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/softdevice/s132/headers/nrf_error.h" selected="0" top="51" codecName="Default"/>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="339" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../../sdkv150/components/libraries/pwr_mgmt/nrf_pwr_mgmt.c" selected="0" top="325" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="662" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../sdk/components/ble/ble_advertising/ble_advertising.c" selected="0" top="642" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="99" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../../sdk/components/libraries/util/app_error_weak.c" selected="0" top="85" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="tatysound_octa" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" debugSearchFileMap="" fileDialogInitialDirectory="/Users/maartenweyn/git/verkeersveiligheid/code/sdkv150/modules/nrfx/drivers/src" debugSearchPath="" autoConnectCapabilities="3711"/>
+ <ARMCrossStudioWindow activeProject="tatysound_octa" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="/Users/maartenweyn/git/verkeersveiligheid/code/sdkv150/modules/nrfx/drivers/src" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>

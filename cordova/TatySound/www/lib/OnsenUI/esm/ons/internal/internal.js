@@ -1,26 +1,39 @@
-import _Promise from 'babel-runtime/core-js/promise';
-import _typeof from 'babel-runtime/helpers/typeof';
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; /*
+                                                                                                                                                                                                                                                                              Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                              Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                              you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                              You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                                 http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                              Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                              distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                              WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                              See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                              limitations under the License.
+                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                              */
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _util = require('../util');
 
-*/
+var _util2 = _interopRequireDefault(_util);
 
-import util from '../util';
-import platform from '../platform';
-import pageAttributeExpression from '../page-attribute-expression';
+var _platform = require('../platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _pageAttributeExpression = require('../page-attribute-expression');
+
+var _pageAttributeExpression2 = _interopRequireDefault(_pageAttributeExpression);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var internal = {};
 
@@ -55,7 +68,7 @@ internal.waitDOMContentLoaded = function (callback) {
     };
     window.document.addEventListener('DOMContentLoaded', wrappedCallback);
   } else {
-    _setImmediate(callback);
+    setImmediate(callback);
   }
 };
 
@@ -77,7 +90,7 @@ internal.autoStatusBarFill = function (action) {
 };
 
 internal.shouldFillStatusBar = function () {
-  return internal.isEnabledAutoStatusBarFill() && (platform.isWebView() && platform.isIOS7above() && !platform.isIPhoneX() || document.body.querySelector('.ons-status-bar-mock.ios'));
+  return internal.isEnabledAutoStatusBarFill() && (_platform2.default.isWebView() && (_platform2.default.isIOS7above() || _platform2.default.isIPadOS()) && !_platform2.default.isIPhoneX() || document.body.querySelector('.ons-status-bar-mock.ios'));
 };
 
 internal.templateStore = {
@@ -126,7 +139,7 @@ internal.waitDOMContentLoaded(function () {
  * @return {Promise}
  */
 internal.getTemplateHTMLAsync = function (page) {
-  return new _Promise(function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     internal.waitDOMContentLoaded(function () {
       var cache = internal.templateStore.get(page);
       if (cache) {
@@ -152,8 +165,8 @@ internal.getTemplateHTMLAsync = function (page) {
           reject(html);
         } else {
           // Refresh script tags
-          var fragment = util.createFragment(html);
-          util.arrayFrom(fragment.querySelectorAll('script')).forEach(function (el) {
+          var fragment = _util2.default.createFragment(html);
+          _util2.default.arrayFrom(fragment.querySelectorAll('script')).forEach(function (el) {
             var script = document.createElement('script');
             script.type = el.type || 'text/javascript';
             script.appendChild(document.createTextNode(el.text || el.textContent || el.innerHTML));
@@ -165,7 +178,7 @@ internal.getTemplateHTMLAsync = function (page) {
         }
       };
       xhr.onerror = function () {
-        util.throw('Page template not found: ' + page);
+        _util2.default.throw('Page template not found: ' + page);
       };
       xhr.send(null);
     });
@@ -177,16 +190,16 @@ internal.getTemplateHTMLAsync = function (page) {
  * @return {Promise}
  */
 internal.getPageHTMLAsync = function (page) {
-  var pages = pageAttributeExpression.evaluate(page);
+  var pages = _pageAttributeExpression2.default.evaluate(page);
 
   var getPage = function getPage(page) {
     if (typeof page !== 'string') {
-      return _Promise.reject('Must specify a page.');
+      return Promise.reject('Must specify a page.');
     }
 
     return internal.getTemplateHTMLAsync(page).catch(function (error) {
       if (pages.length === 0) {
-        return _Promise.reject(error);
+        return Promise.reject(error);
       }
 
       return getPage(pages.shift());
@@ -196,4 +209,4 @@ internal.getPageHTMLAsync = function (page) {
   return getPage(pages.shift());
 };
 
-export default internal;
+exports.default = internal;

@@ -1,3 +1,8 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 /**
  * MicroEvent - to make any js object an event emitter (server or browser)
  *
@@ -70,4 +75,4 @@ MicroEvent.mixin = function (destObject) {
 };
 
 window.MicroEvent = MicroEvent;
-export default MicroEvent;
+exports.default = MicroEvent;

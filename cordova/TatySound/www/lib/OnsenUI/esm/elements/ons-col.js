@@ -1,28 +1,45 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../ons/elements';
-import styler from '../ons/styler';
-import BaseElement from './base/base-element';
+var _styler = require('../ons/styler');
+
+var _styler2 = _interopRequireDefault(_styler);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 /**
  * @element ons-col
@@ -60,14 +77,13 @@ import BaseElement from './base/base-element';
  *   [en]The width of the column. Valid values are css width values ("10%", "50px").[/en]
  *   [ja]カラムの横幅を指定する。パーセントもしくはピクセルで指定します（10%や50px）。[/ja]
  */
-
 var ColElement = function (_BaseElement) {
   _inherits(ColElement, _BaseElement);
 
   function ColElement() {
     _classCallCheck(this, ColElement);
 
-    var _this = _possibleConstructorReturn(this, (ColElement.__proto__ || _Object$getPrototypeOf(ColElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (ColElement.__proto__ || Object.getPrototypeOf(ColElement)).call(this));
 
     if (_this.getAttribute('width')) {
       _this._updateWidth();
@@ -87,11 +103,11 @@ var ColElement = function (_BaseElement) {
     value: function _updateWidth() {
       var width = this.getAttribute('width');
       if (!width) {
-        styler.clear(this, 'flex maxWidth');
+        _styler2.default.clear(this, 'flex maxWidth');
       } else {
         width = width.trim().match(/^\d+$/) ? width + '%' : width;
 
-        styler(this, {
+        (0, _styler2.default)(this, {
           flex: '0 0 ' + width,
           maxWidth: width
         });
@@ -105,10 +121,10 @@ var ColElement = function (_BaseElement) {
   }]);
 
   return ColElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default ColElement;
+exports.default = ColElement;
 
 
-onsElements.Col = ColElement;
+_elements2.default.Col = ColElement;
 customElements.define('ons-col', ColElement);

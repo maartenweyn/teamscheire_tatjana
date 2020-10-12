@@ -1,4 +1,4 @@
-/*! onsenui - v2.10.2 - 2018-07-03 */
+/*! onsenui - v2.11.1 - 2020-09-23 */
 ons-page, ons-navigator,
 ons-tabbar,
 ons-gesture-detector {
@@ -241,10 +241,8 @@ ons-carousel[fullscreen] {
   padding: 0 16px 0 6px;
   box-sizing: border-box;
   z-index: 30000;
-  display: -webkit-box;
   display: -webkit-flex;
   display: flex;
-  -webkit-box-pack: justify;
   -webkit-justify-content: space-between;
           justify-content: space-between;
   font-size: 12px;
@@ -471,6 +469,14 @@ limitations under the License.
   font-size: 5em;
 }
 
+/**
+ * ons-icon with Font Awesome backward compatibility
+ */
+.ons-icon.fa {
+  font-family: 'Font Awesome 5 Brands', 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
 ons-input, ons-radio, ons-checkbox, ons-search-input {
   display: inline-block;
   position: relative;
@@ -679,20 +685,15 @@ limitations under the License.
 }
 
 .ons-swiper-target {
-  display: -webkit-box;
   display: -webkit-flex;
   display: flex;
   height: 100%;
   z-index: 1;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
   -webkit-flex-direction: row;
           flex-direction: row;
 }
 
 .ons-swiper-target--vertical {
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
   -webkit-flex-direction: column;
           flex-direction: column;
 }

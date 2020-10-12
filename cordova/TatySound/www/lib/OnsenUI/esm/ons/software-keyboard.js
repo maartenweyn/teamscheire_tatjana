@@ -1,3 +1,19 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _util = require('./util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _microevent = require('./microevent');
+
+var _microevent2 = _interopRequireDefault(_microevent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 
@@ -15,10 +31,7 @@ limitations under the License.
 
 */
 
-import util from './util';
-import MicroEvent from './microevent';
-
-var softwareKeyboard = new MicroEvent();
+var softwareKeyboard = new _microevent2.default();
 softwareKeyboard._visible = false;
 
 var onShow = function onShow() {
@@ -52,7 +65,7 @@ var bindEvents = function bindEvents() {
 };
 
 var noPluginError = function noPluginError() {
-  util.warn('ons-keyboard: Cordova Keyboard plugin is not present.');
+  _util2.default.warn('ons-keyboard: Cordova Keyboard plugin is not present.');
 };
 
 document.addEventListener('deviceready', function () {
@@ -65,4 +78,4 @@ document.addEventListener('deviceready', function () {
   }
 });
 
-export default softwareKeyboard;
+exports.default = softwareKeyboard;

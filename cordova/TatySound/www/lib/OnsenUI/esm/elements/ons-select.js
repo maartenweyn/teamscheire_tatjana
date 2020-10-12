@@ -1,32 +1,57 @@
-import _Object$defineProperty from 'babel-runtime/core-js/object/define-property';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import autoStyle from '../ons/autostyle';
-import ModifierUtil from '../ons/internal/modifier-util';
-import BaseElement from './base/base-element';
-import contentReady from '../ons/content-ready';
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _autostyle = require('../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var scheme = {
   '': 'select-* select--*',
@@ -141,9 +166,9 @@ var SelectElement = function (_BaseElement) {
   function SelectElement() {
     _classCallCheck(this, SelectElement);
 
-    var _this = _possibleConstructorReturn(this, (SelectElement.__proto__ || _Object$getPrototypeOf(SelectElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (SelectElement.__proto__ || Object.getPrototypeOf(SelectElement)).call(this));
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
 
@@ -158,15 +183,15 @@ var SelectElement = function (_BaseElement) {
 
       switch (name) {
         case 'class':
-          util.restoreClass(this, defaultClassName, scheme);
+          _util2.default.restoreClass(this, defaultClassName, scheme);
           break;
         case 'modifier':
-          ModifierUtil.onModifierChanged(last, current, this, scheme);
+          _modifierUtil2.default.onModifierChanged(last, current, this, scheme);
           break;
       }
 
       if (INPUT_ATTRIBUTES.indexOf(name) >= 0) {
-        contentReady(this, function () {
+        (0, _contentReady2.default)(this, function () {
           return _this2._updateBoundAttributes();
         });
       }
@@ -216,7 +241,7 @@ var SelectElement = function (_BaseElement) {
   }, {
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
 
       this.classList.add(defaultClassName);
       var sel = this._select || document.createElement('select');
@@ -225,13 +250,13 @@ var SelectElement = function (_BaseElement) {
       }
       sel.classList.add('select-input');
       if (!this._select) {
-        util.arrayFrom(this.childNodes).forEach(function (element) {
+        _util2.default.arrayFrom(this.childNodes).forEach(function (element) {
           return sel.appendChild(element);
         });
         this.appendChild(sel);
       }
 
-      ModifierUtil.initModifier(this, scheme);
+      _modifierUtil2.default.initModifier(this, scheme);
     }
   }, {
     key: '_deriveGetters',
@@ -239,14 +264,14 @@ var SelectElement = function (_BaseElement) {
       var _this4 = this;
 
       ['disabled', 'length', 'multiple', 'name', 'options', 'selectedIndex', 'size', 'value', 'form', 'type'].forEach(function (key) {
-        _Object$defineProperty(_this4, key, {
+        Object.defineProperty(_this4, key, {
           configurable: true,
           enumerable: true,
           get: function get() {
             return _this4._select[key];
           },
           set: ['form', 'type'].indexOf(key) === -1 ? function (value) {
-            return contentReady(_this4, function () {
+            return (0, _contentReady2.default)(_this4, function () {
               return _this4._select[key] = value;
             });
           } : undefined
@@ -278,10 +303,10 @@ var SelectElement = function (_BaseElement) {
   }]);
 
   return SelectElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default SelectElement;
+exports.default = SelectElement;
 
 
-onsElements.Select = SelectElement;
+_elements2.default.Select = SelectElement;
 customElements.define('ons-select', SelectElement);

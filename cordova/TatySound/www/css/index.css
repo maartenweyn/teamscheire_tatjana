@@ -144,7 +144,11 @@ h1 {
 }
 
 .list-item__title {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 25px;
+}
+.list-item__subtitle {
+    font-size: 10px;
     line-height: 25px;
 }
 
@@ -152,3 +156,18 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+#protection {
+    background-color: green;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+#loading {
+    background-color: red;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+

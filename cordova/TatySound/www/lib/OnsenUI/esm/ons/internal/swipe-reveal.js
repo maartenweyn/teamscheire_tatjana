@@ -1,24 +1,37 @@
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _util = require('../../ons/util');
 
-*/
+var _util2 = _interopRequireDefault(_util);
 
-import util from '../../ons/util';
-import GestureDetector from '../../ons/gesture-detector';
+var _gestureDetector = require('../../ons/gesture-detector');
+
+var _gestureDetector2 = _interopRequireDefault(_gestureDetector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var widthToPx = function widthToPx(width) {
   var _ref = [parseInt(width, 10), /px/.test(width)],
@@ -48,7 +61,7 @@ var SwipeReveal = function () {
 
     this.handleGesture = this.handleGesture.bind(this);
 
-    this._shouldFixScroll = util.globals.actualMobileOS === 'ios';
+    this._shouldFixScroll = _util2.default.globals.actualMobileOS === 'ios';
   }
 
   _createClass(SwipeReveal, [{
@@ -57,7 +70,7 @@ var SwipeReveal = function () {
       var swipeable = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.element.hasAttribute('swipeable');
 
       if (!this.gestureDetector) {
-        this.gestureDetector = new GestureDetector(this.elementHandler, { dragMinDistance: 1, passive: !this._shouldFixScroll });
+        this.gestureDetector = new _gestureDetector2.default(this.elementHandler, { dragMinDistance: 1, passive: !this._shouldFixScroll });
       }
 
       var action = swipeable ? 'on' : 'off';
@@ -82,7 +95,7 @@ var SwipeReveal = function () {
       var getDistance = function getDistance() {
         return _this2.getSide() === 'left' ? event.gesture.center.clientX : window.innerWidth - event.gesture.center.clientX;
       };
-      this._ignoreDrag = event.consumed || !util.isValidGesture(event) || this.ignoreSwipe(event, getDistance());
+      this._ignoreDrag = event.consumed || !_util2.default.isValidGesture(event) || this.ignoreSwipe(event, getDistance());
 
       if (!this._ignoreDrag) {
         event.consume && event.consume();
@@ -91,7 +104,7 @@ var SwipeReveal = function () {
         this._width = widthToPx(this.element.style.width || '100%');
         this._startDistance = this._distance = !(this.isInitialState instanceof Function) || this.isInitialState() ? 0 : this._width;
 
-        util.iosPreventScroll(this.gestureDetector);
+        _util2.default.iosPreventScroll(this.gestureDetector);
       }
     }
   }, {
@@ -126,4 +139,4 @@ var SwipeReveal = function () {
   return SwipeReveal;
 }();
 
-export default SwipeReveal;
+exports.default = SwipeReveal;

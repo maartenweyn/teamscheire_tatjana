@@ -1,33 +1,61 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import autoStyle from '../ons/autostyle';
-import ModifierUtil from '../ons/internal/modifier-util';
-import BaseElement from './base/base-element';
-import contentReady from '../ons/content-ready';
-var iosBackButtonIcon = '<?xml version="1.0" encoding="UTF-8"?>\n<svg width="13px" height="21px" viewBox="0 0 13 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n    <title>ios-back-button-icon</title>\n    <desc>Created with Sketch.</desc>\n    <defs></defs>\n    <g id="toolbar-back-button" stroke="none" stroke-width="1" fill-rule="evenodd">\n        <g id="ios" transform="translate(-34.000000, -30.000000)">\n            <polygon id="ios-back-button-icon" points="34 40.5 44.5 30 46.5 32 38 40.5 46.5 49 44.5 51"></polygon>\n        </g>\n    </g>\n</svg>\n';
-var mdBackButtonIcon = '<?xml version="1.0" encoding="UTF-8"?>\n<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n    <title>md-back-button-icon</title>\n    <desc>Created with Sketch.</desc>\n    <defs></defs>\n    <g id="toolbar-back-button" stroke="none" stroke-width="1" fill-rule="evenodd">\n        <g id="android" transform="translate(-32.000000, -32.000000)" fill-rule="nonzero">\n            <polygon id="md-back-button-icon" points="48 39 35.83 39 41.42 33.41 40 32 32 40 40 48 41.41 46.59 35.83 41 48 41"></polygon>\n        </g>\n    </g>\n</svg>\n';
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _autostyle = require('../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+var iosBackButtonIcon = '<svg width="13" height="21" xmlns="http://www.w3.org/2000/svg"><g id="iosBackButtonIcon-toolbar-back-button" stroke="none" stroke-width="1" fill-rule="evenodd"><g id="ios" transform="translate(-34 -30)"><path id="ios-back-button-icon" d="M34 40.5L44.5 30l2 2-8.5 8.5 8.5 8.5-2 2z"/></g></g></svg>';
+var mdBackButtonIcon = '<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><g id="mdBackButtonIcon-toolbar-back-button" stroke="none" stroke-width="1" fill-rule="evenodd"><g id="android" transform="translate(-32 -32)" fill-rule="nonzero"><path id="md-back-button-icon" d="M48 39H35.83l5.59-5.59L40 32l-8 8 8 8 1.41-1.41L35.83 41H48z"/></g></g></svg>';
+
 
 var defaultClassName = 'back-button';
 
@@ -83,9 +111,9 @@ var BackButtonElement = function (_BaseElement) {
   function BackButtonElement() {
     _classCallCheck(this, BackButtonElement);
 
-    var _this = _possibleConstructorReturn(this, (BackButtonElement.__proto__ || _Object$getPrototypeOf(BackButtonElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (BackButtonElement.__proto__ || Object.getPrototypeOf(BackButtonElement)).call(this));
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       _this._compile();
     });
 
@@ -97,19 +125,19 @@ var BackButtonElement = function (_BaseElement) {
   _createClass(BackButtonElement, [{
     key: '_updateIcon',
     value: function _updateIcon() {
-      var icon = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : util.findChild(this, '.back-button__icon');
+      var icon = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _util2.default.findChild(this, '.back-button__icon');
 
-      icon.innerHTML = autoStyle.getPlatform(this) === 'android' || util.hasModifier(this, 'material') ? mdBackButtonIcon : iosBackButtonIcon;
+      icon.innerHTML = _autostyle2.default.getPlatform(this) === 'android' || _util2.default.hasModifier(this, 'material') ? mdBackButtonIcon : iosBackButtonIcon;
     }
   }, {
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
 
       this.classList.add(defaultClassName);
 
-      if (!util.findChild(this, '.back-button__label')) {
-        var label = util.create('span.back-button__label');
+      if (!_util2.default.findChild(this, '.back-button__label')) {
+        var label = _util2.default.create('span.back-button__label');
 
         while (this.childNodes[0]) {
           label.appendChild(this.childNodes[0]);
@@ -117,16 +145,16 @@ var BackButtonElement = function (_BaseElement) {
         this.appendChild(label);
       }
 
-      if (!util.findChild(this, '.back-button__icon')) {
-        var icon = util.create('span.back-button__icon');
+      if (!_util2.default.findChild(this, '.back-button__icon')) {
+        var icon = _util2.default.create('span.back-button__icon');
         this._updateIcon(icon);
 
         this.insertBefore(icon, this.children[0]);
       }
 
-      util.updateRipple(this, undefined, { center: '', 'size': 'contain', 'background': 'transparent' });
+      _util2.default.updateRipple(this, undefined, { center: '', 'size': 'contain', 'background': 'transparent' });
 
-      ModifierUtil.initModifier(this, scheme);
+      _modifierUtil2.default.initModifier(this, scheme);
     }
 
     /**
@@ -179,7 +207,7 @@ var BackButtonElement = function (_BaseElement) {
       if (this.onClick) {
         this.onClick.apply(this);
       } else {
-        var navigator = util.findParent(this, 'ons-navigator');
+        var navigator = _util2.default.findParent(this, 'ons-navigator');
         if (navigator) {
           navigator.popPage(this.options);
         }
@@ -195,12 +223,12 @@ var BackButtonElement = function (_BaseElement) {
     value: function attributeChangedCallback(name, last, current) {
       switch (name) {
         case 'class':
-          util.restoreClass(this, defaultClassName, scheme);
+          _util2.default.restoreClass(this, defaultClassName, scheme);
           break;
 
         case 'modifier':
           {
-            ModifierUtil.onModifierChanged(last, current, this, scheme) && this._updateIcon();
+            _modifierUtil2.default.onModifierChanged(last, current, this, scheme) && this._updateIcon();
             break;
           }
       }
@@ -236,10 +264,10 @@ var BackButtonElement = function (_BaseElement) {
   }]);
 
   return BackButtonElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default BackButtonElement;
+exports.default = BackButtonElement;
 
 
-onsElements.BackButton = BackButtonElement;
+_elements2.default.BackButton = BackButtonElement;
 customElements.define('ons-back-button', BackButtonElement);

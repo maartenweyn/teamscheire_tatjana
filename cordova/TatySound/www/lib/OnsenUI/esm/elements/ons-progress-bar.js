@@ -1,31 +1,57 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import autoStyle from '../ons/autostyle';
-import ModifierUtil from '../ons/internal/modifier-util';
-import BaseElement from './base/base-element';
-import contentReady from '../ons/content-ready';
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _autostyle = require('../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var scheme = {
   '.progress-bar': 'progress-bar--*',
@@ -33,7 +59,7 @@ var scheme = {
   '.progress-bar__secondary': 'progress-bar--*__secondary'
 };
 
-var template = util.createElement('\n  <div class="progress-bar">\n    <div class="progress-bar__secondary"></div>\n    <div class="progress-bar__primary"></div>\n  </div>\n');
+var template = _util2.default.createElement('\n  <div class="progress-bar">\n    <div class="progress-bar__secondary"></div>\n    <div class="progress-bar__primary"></div>\n  </div>\n');
 
 var INDET = 'indeterminate';
 
@@ -101,9 +127,9 @@ var ProgressBarElement = function (_BaseElement) {
   function ProgressBarElement() {
     _classCallCheck(this, ProgressBarElement);
 
-    var _this = _possibleConstructorReturn(this, (ProgressBarElement.__proto__ || _Object$getPrototypeOf(ProgressBarElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (ProgressBarElement.__proto__ || Object.getPrototypeOf(ProgressBarElement)).call(this));
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
     return _this;
@@ -115,34 +141,34 @@ var ProgressBarElement = function (_BaseElement) {
       if (!this._isCompiled()) {
         this._template = template.cloneNode(true);
       } else {
-        this._template = util.findChild(this, '.progress-bar');
+        this._template = _util2.default.findChild(this, '.progress-bar');
       }
 
-      this._primary = util.findChild(this._template, '.progress-bar__primary');
-      this._secondary = util.findChild(this._template, '.progress-bar__secondary');
+      this._primary = _util2.default.findChild(this._template, '.progress-bar__primary');
+      this._secondary = _util2.default.findChild(this._template, '.progress-bar__secondary');
 
       this._updateDeterminate();
       this._updateValue();
 
       this.appendChild(this._template);
 
-      autoStyle.prepare(this);
-      ModifierUtil.initModifier(this, scheme);
+      _autostyle2.default.prepare(this);
+      _modifierUtil2.default.initModifier(this, scheme);
     }
   }, {
     key: '_isCompiled',
     value: function _isCompiled() {
-      if (!util.findChild(this, '.progress-bar')) {
+      if (!_util2.default.findChild(this, '.progress-bar')) {
         return false;
       }
 
-      var barElement = util.findChild(this, '.progress-bar');
+      var barElement = _util2.default.findChild(this, '.progress-bar');
 
-      if (!util.findChild(barElement, '.progress-bar__secondary')) {
+      if (!_util2.default.findChild(barElement, '.progress-bar__secondary')) {
         return false;
       }
 
-      if (!util.findChild(barElement, '.progress-bar__primary')) {
+      if (!_util2.default.findChild(barElement, '.progress-bar__primary')) {
         return false;
       }
 
@@ -152,7 +178,7 @@ var ProgressBarElement = function (_BaseElement) {
     key: 'attributeChangedCallback',
     value: function attributeChangedCallback(name, last, current) {
       if (name === 'modifier') {
-        ModifierUtil.onModifierChanged(last, current, this, scheme);
+        _modifierUtil2.default.onModifierChanged(last, current, this, scheme);
         this.hasAttribute(INDET) && this._updateDeterminate();
       } else if (name === 'value' || name === 'secondary-value') {
         this._updateValue();
@@ -165,8 +191,8 @@ var ProgressBarElement = function (_BaseElement) {
     value: function _updateDeterminate() {
       var _this2 = this;
 
-      contentReady(this, function () {
-        return util.toggleModifier(_this2, INDET, { force: _this2.hasAttribute(INDET) });
+      (0, _contentReady2.default)(this, function () {
+        return _util2.default.toggleModifier(_this2, INDET, { force: _this2.hasAttribute(INDET) });
       });
     }
   }, {
@@ -174,7 +200,7 @@ var ProgressBarElement = function (_BaseElement) {
     value: function _updateValue() {
       var _this3 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this3._primary.style.width = _this3.hasAttribute('value') ? _this3.getAttribute('value') + '%' : '0%';
         _this3._secondary.style.width = _this3.hasAttribute('secondary-value') ? _this3.getAttribute('secondary-value') + '%' : '0%';
       });
@@ -192,7 +218,7 @@ var ProgressBarElement = function (_BaseElement) {
     key: 'value',
     set: function set(value) {
       if (typeof value !== 'number' || value < 0 || value > 100) {
-        util.throw('Invalid value');
+        _util2.default.throw('Invalid value');
       }
 
       this.setAttribute('value', Math.floor(value));
@@ -213,7 +239,7 @@ var ProgressBarElement = function (_BaseElement) {
     key: 'secondaryValue',
     set: function set(value) {
       if (typeof value !== 'number' || value < 0 || value > 100) {
-        util.throw('Invalid value');
+        _util2.default.throw('Invalid value');
       }
 
       this.setAttribute('secondary-value', Math.floor(value));
@@ -250,10 +276,10 @@ var ProgressBarElement = function (_BaseElement) {
   }]);
 
   return ProgressBarElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default ProgressBarElement;
+exports.default = ProgressBarElement;
 
 
-onsElements.ProgressBar = ProgressBarElement;
+_elements2.default.ProgressBar = ProgressBarElement;
 customElements.define('ons-progress-bar', ProgressBarElement);

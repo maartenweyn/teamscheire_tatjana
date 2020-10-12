@@ -1,28 +1,51 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-   http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+'use strict';
 
-import util from '../../ons/util';
-import BaseElement from './base-element';
-import autoStyle from '../../ons/autostyle';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import contentReady from '../../ons/content-ready';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-var INPUT_ATTRIBUTES = ['autocapitalize', 'autocomplete', 'autocorrect', 'autofocus', 'disabled', 'inputmode', 'max', 'maxlength', 'min', 'minlength', 'name', 'pattern', 'placeholder', 'readonly', 'required', 'size', 'step', 'validator', 'value'];
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _baseElement = require('./base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _autostyle = require('../../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+var INPUT_ATTRIBUTES = ['autocapitalize', 'autocomplete', 'autocorrect', 'autofocus', 'disabled', 'inputmode', 'max', 'maxlength', 'min', 'minlength', 'name', 'pattern', 'placeholder', 'readonly', 'required', 'size', 'spellcheck', 'step', 'validator', 'value'];
 
 var BaseInputElement = function (_BaseElement) {
   _inherits(BaseInputElement, _BaseElement);
@@ -34,30 +57,30 @@ var BaseInputElement = function (_BaseElement) {
   }, {
     key: '_scheme',
     get: function get() {
-      util.throwMember();
+      _util2.default.throwMember();
     }
   }, {
     key: '_template',
     get: function get() {
-      util.throwMember();
+      _util2.default.throwMember();
     }
   }, {
     key: 'type',
     get: function get() {
-      util.throwMember();
+      _util2.default.throwMember();
     }
   }]);
 
   function BaseInputElement() {
     _classCallCheck(this, BaseInputElement);
 
-    var _this = _possibleConstructorReturn(this, (BaseInputElement.__proto__ || _Object$getPrototypeOf(BaseInputElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (BaseInputElement.__proto__ || Object.getPrototypeOf(BaseInputElement)).call(this));
 
     if (_this.constructor === BaseInputElement) {
-      util.throwAbstract();
+      _util2.default.throwAbstract();
     }
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
     _this._boundDelegateEvent = _this._delegateEvent.bind(_this);
@@ -67,20 +90,20 @@ var BaseInputElement = function (_BaseElement) {
   _createClass(BaseInputElement, [{
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
       this._defaultClassName && this.classList.add(this._defaultClassName);
 
       if (this.children.length !== 0) {
         return;
       }
 
-      this.appendChild(util.createFragment(this._template));
+      this.appendChild(_util2.default.createFragment(this._template));
 
       this._setInputId();
 
       this._updateBoundAttributes();
 
-      ModifierUtil.initModifier(this, this._scheme);
+      _modifierUtil2.default.initModifier(this, this._scheme);
     }
   }, {
     key: '_updateBoundAttributes',
@@ -119,7 +142,7 @@ var BaseInputElement = function (_BaseElement) {
     value: function connectedCallback() {
       var _this3 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this3._input.addEventListener('focus', _this3._boundDelegateEvent);
         _this3._input.addEventListener('blur', _this3._boundDelegateEvent);
       });
@@ -129,7 +152,7 @@ var BaseInputElement = function (_BaseElement) {
     value: function disconnectedCallback() {
       var _this4 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this4._input.removeEventListener('focus', _this4._boundDelegateEvent);
         _this4._input.removeEventListener('blur', _this4._boundDelegateEvent);
       });
@@ -141,22 +164,22 @@ var BaseInputElement = function (_BaseElement) {
 
       switch (name) {
         case 'modifier':
-          contentReady(this, function () {
-            return ModifierUtil.onModifierChanged(last, current, _this5, _this5._scheme);
+          (0, _contentReady2.default)(this, function () {
+            return _modifierUtil2.default.onModifierChanged(last, current, _this5, _this5._scheme);
           });
           break;
         case 'input-id':
-          contentReady(this, function () {
+          (0, _contentReady2.default)(this, function () {
             return _this5._setInputId();
           });
           break;
         case 'class':
-          util.restoreClass(this, this._defaultClassName, this._scheme);
+          _util2.default.restoreClass(this, this._defaultClassName, this._scheme);
           break;
       }
 
       if (INPUT_ATTRIBUTES.indexOf(name) >= 0) {
-        contentReady(this, function () {
+        (0, _contentReady2.default)(this, function () {
           return _this5._updateBoundAttributes();
         });
       }
@@ -179,7 +202,7 @@ var BaseInputElement = function (_BaseElement) {
     set: function set(val) {
       var _this6 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         if (val instanceof Date) {
           val = val.toISOString().substring(0, 10);
         }
@@ -190,7 +213,7 @@ var BaseInputElement = function (_BaseElement) {
   }, {
     key: 'disabled',
     set: function set(value) {
-      return util.toggleAttribute(this, 'disabled', value);
+      return _util2.default.toggleAttribute(this, 'disabled', value);
     },
     get: function get() {
       return this.hasAttribute('disabled');
@@ -203,6 +226,6 @@ var BaseInputElement = function (_BaseElement) {
   }]);
 
   return BaseInputElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default BaseInputElement;
+exports.default = BaseInputElement;

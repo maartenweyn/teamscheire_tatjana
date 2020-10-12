@@ -1,30 +1,57 @@
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _Promise from 'babel-runtime/core-js/promise';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-   http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+'use strict';
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import autoStyle from '../ons/autostyle';
-import ModifierUtil from '../ons/internal/modifier-util';
-import BaseElement from './base/base-element';
-import contentReady from '../ons/content-ready';
-import styler from '../ons/styler';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _elements = require('../ons/elements');
+
+var _elements2 = _interopRequireDefault(_elements);
+
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _autostyle = require('../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+var _styler = require('../ons/styler');
+
+var _styler2 = _interopRequireDefault(_styler);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var defaultClassName = 'speed-dial';
 var scheme = {
@@ -128,9 +155,9 @@ var SpeedDialElement = function (_BaseElement) {
   function SpeedDialElement() {
     _classCallCheck(this, SpeedDialElement);
 
-    var _this = _possibleConstructorReturn(this, (SpeedDialElement.__proto__ || _Object$getPrototypeOf(SpeedDialElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (SpeedDialElement.__proto__ || Object.getPrototypeOf(SpeedDialElement)).call(this));
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       _this._compile();
     });
 
@@ -143,9 +170,9 @@ var SpeedDialElement = function (_BaseElement) {
     key: '_compile',
     value: function _compile() {
       this.classList.add(defaultClassName);
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
       this._updateRipple();
-      ModifierUtil.initModifier(this, scheme);
+      _modifierUtil2.default.initModifier(this, scheme);
 
       if (this.hasAttribute('direction')) {
         this._updateDirection(this.getAttribute('direction'));
@@ -162,23 +189,23 @@ var SpeedDialElement = function (_BaseElement) {
 
       switch (name) {
         case 'class':
-          util.restoreClass(this, defaultClassName, scheme);
+          _util2.default.restoreClass(this, defaultClassName, scheme);
           break;
         case 'modifier':
-          ModifierUtil.onModifierChanged(last, current, this, scheme);
+          _modifierUtil2.default.onModifierChanged(last, current, this, scheme);
           break;
         case 'ripple':
-          contentReady(this, function () {
+          (0, _contentReady2.default)(this, function () {
             return _this2._updateRipple();
           });
           break;
         case 'direction':
-          contentReady(this, function () {
+          (0, _contentReady2.default)(this, function () {
             return _this2._updateDirection(current);
           });
           break;
         case 'position':
-          contentReady(this, function () {
+          (0, _contentReady2.default)(this, function () {
             return _this2._updatePosition();
           });
           break;
@@ -199,7 +226,7 @@ var SpeedDialElement = function (_BaseElement) {
     value: function _onClick(e) {
       if (this.onClick) {
         this.onClick.apply(this);
-        return _Promise.resolve();
+        return Promise.resolve();
       } else if (!this.disabled && this.visible) {
         return this.toggleItems();
       }
@@ -210,16 +237,16 @@ var SpeedDialElement = function (_BaseElement) {
       if (!this.inline) {
         return this.show();
       }
-      return _Promise.resolve();
+      return Promise.resolve();
     }
   }, {
     key: '_hide',
     value: function _hide() {
       var _this3 = this;
 
-      return new _Promise(function (resolve) {
+      return new Promise(function (resolve) {
         if (!_this3.inline) {
-          _setImmediate(function () {
+          setImmediate(function () {
             return _this3.hide().then(resolve);
           });
         } else {
@@ -239,7 +266,7 @@ var SpeedDialElement = function (_BaseElement) {
     value: function _updateDirection(direction) {
       var children = this.items;
       for (var i = 0; i < children.length; i++) {
-        styler(children[i], {
+        (0, _styler2.default)(children[i], {
           transitionDelay: 25 * i + 'ms',
           bottom: 'auto',
           right: 'auto',
@@ -273,7 +300,7 @@ var SpeedDialElement = function (_BaseElement) {
           }
           break;
         default:
-          util.throw('Argument must be one of up, down, left or right.');
+          _util2.default.throw('Argument must be one of up, down, left or right.');
       }
     }
   }, {
@@ -314,7 +341,7 @@ var SpeedDialElement = function (_BaseElement) {
     key: '_getTranslate',
     value: function _getTranslate() {
       var isBottom = (this.getAttribute('position') || '').indexOf('bottom') >= 0;
-      var translate = isBottom ? 'translate3d(0px, -' + (util.globals.fabOffset || 0) + 'px, 0px) ' : '';
+      var translate = isBottom ? 'translate3d(0px, -' + (_util2.default.globals.fabOffset || 0) + 'px, 0px) ' : '';
       return translate;
     }
 
@@ -330,8 +357,8 @@ var SpeedDialElement = function (_BaseElement) {
     key: 'show',
     value: function show() {
       this._fab.show();
-      styler(this, { transform: this._getTranslate });
-      return _Promise.resolve();
+      (0, _styler2.default)(this, { transform: this._getTranslate });
+      return Promise.resolve();
     }
 
     /**
@@ -375,7 +402,7 @@ var SpeedDialElement = function (_BaseElement) {
         for (var i = 0; i < children.length; i++) {
           var delay = 25 * i;
           totalDelay += delay;
-          styler(children[i], {
+          (0, _styler2.default)(children[i], {
             transform: 'scale(1)',
             transitionDelay: delay + 'ms'
           });
@@ -383,10 +410,10 @@ var SpeedDialElement = function (_BaseElement) {
         totalDelay += 50;
 
         this._itemShown = true;
-        util.triggerElementEvent(this, 'open');
+        _util2.default.triggerElementEvent(this, 'open');
       }
 
-      var deferred = util.defer();
+      var deferred = _util2.default.defer();
       setTimeout(deferred.resolve, totalDelay);
       return deferred.promise;
     }
@@ -408,7 +435,7 @@ var SpeedDialElement = function (_BaseElement) {
         for (var i = 0; i < children.length; i++) {
           var delay = 25 * (children.length - i);
           totalDelay += delay;
-          styler(children[i], {
+          (0, _styler2.default)(children[i], {
             transform: 'scale(0)',
             transitionDelay: delay + 'ms'
           });
@@ -416,10 +443,10 @@ var SpeedDialElement = function (_BaseElement) {
         totalDelay += 50;
 
         this._itemShown = false;
-        util.triggerElementEvent(this, 'close');
+        _util2.default.triggerElementEvent(this, 'close');
       }
 
-      var deferred = util.defer();
+      var deferred = _util2.default.defer();
       setTimeout(deferred.resolve, totalDelay);
       return deferred.promise;
     }
@@ -477,12 +504,12 @@ var SpeedDialElement = function (_BaseElement) {
   }, {
     key: 'items',
     get: function get() {
-      return util.arrayFrom(this.querySelectorAll('ons-speed-dial-item'));
+      return _util2.default.arrayFrom(this.querySelectorAll('ons-speed-dial-item'));
     }
   }, {
     key: '_fab',
     get: function get() {
-      return util.findChild(this, 'ons-fab');
+      return _util2.default.findChild(this, 'ons-fab');
     }
   }, {
     key: 'disabled',
@@ -490,11 +517,11 @@ var SpeedDialElement = function (_BaseElement) {
       if (value) {
         this.hideItems();
       }
-      util.arrayFrom(this.children).forEach(function (e) {
-        util.match(e, '.fab') && util.toggleAttribute(e, 'disabled', value);
+      _util2.default.arrayFrom(this.children).forEach(function (e) {
+        _util2.default.match(e, '.fab') && _util2.default.toggleAttribute(e, 'disabled', value);
       });
 
-      return util.toggleAttribute(this, 'disabled', value);
+      return _util2.default.toggleAttribute(this, 'disabled', value);
     },
     get: function get() {
       return this.hasAttribute('disabled');
@@ -542,10 +569,10 @@ var SpeedDialElement = function (_BaseElement) {
   }]);
 
   return SpeedDialElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default SpeedDialElement;
+exports.default = SpeedDialElement;
 
 
-onsElements.SpeedDial = SpeedDialElement;
+_elements2.default.SpeedDial = SpeedDialElement;
 customElements.define('ons-speed-dial', SpeedDialElement);

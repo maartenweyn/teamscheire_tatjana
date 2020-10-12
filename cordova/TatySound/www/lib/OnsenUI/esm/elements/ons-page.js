@@ -1,37 +1,69 @@
-import _Object$defineProperty from 'babel-runtime/core-js/object/define-property';
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import internal from '../ons/internal';
-import autoStyle from '../ons/autostyle';
-import ModifierUtil from '../ons/internal/modifier-util';
-import BaseElement from './base/base-element';
-import deviceBackButtonDispatcher from '../ons/internal/device-back-button-dispatcher';
-import contentReady from '../ons/content-ready';
+var _util = require('../ons/util');
 
-import './ons-toolbar'; // ensures that 'ons-toolbar' element is registered
+var _util2 = _interopRequireDefault(_util);
+
+var _internal = require('../ons/internal');
+
+var _internal2 = _interopRequireDefault(_internal);
+
+var _autostyle = require('../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _deviceBackButtonDispatcher = require('../ons/internal/device-back-button-dispatcher');
+
+var _deviceBackButtonDispatcher2 = _interopRequireDefault(_deviceBackButtonDispatcher);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+require('./ons-toolbar');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+// ensures that 'ons-toolbar' element is registered
 
 var defaultClassName = 'page';
 var scheme = {
@@ -156,7 +188,7 @@ var PageElement = function (_BaseElement) {
   function PageElement() {
     _classCallCheck(this, PageElement);
 
-    var _this = _possibleConstructorReturn(this, (PageElement.__proto__ || _Object$getPrototypeOf(PageElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (PageElement.__proto__ || Object.getPrototypeOf(PageElement)).call(this));
 
     _this._deriveHooks();
 
@@ -165,7 +197,7 @@ var PageElement = function (_BaseElement) {
 
     _this._initialized = false;
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       _this._compile();
 
       _this._isShown = false;
@@ -180,18 +212,18 @@ var PageElement = function (_BaseElement) {
     value: function _compile() {
       var _this2 = this;
 
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
 
-      var toolbar = util.findChild(this, 'ons-toolbar');
+      var toolbar = _util2.default.findChild(this, 'ons-toolbar');
 
-      var background = util.findChild(this, '.page__background') || util.findChild(this, '.background') || document.createElement('div');
+      var background = _util2.default.findChild(this, '.page__background') || _util2.default.findChild(this, '.background') || document.createElement('div');
       background.classList.add('page__background');
       this.insertBefore(background, !toolbar && this.firstChild || toolbar && toolbar.nextSibling);
 
-      var content = util.findChild(this, '.page__content') || util.findChild(this, '.content') || document.createElement('div');
+      var content = _util2.default.findChild(this, '.page__content') || _util2.default.findChild(this, '.content') || document.createElement('div');
       content.classList.add('page__content');
       if (!content.parentElement) {
-        util.arrayFrom(this.childNodes).forEach(function (node) {
+        _util2.default.arrayFrom(this.childNodes).forEach(function (node) {
           if (node.nodeType !== 1 || _this2._elementShouldBeMoved(node)) {
             content.appendChild(node); // Can trigger detached connectedCallbacks
           }
@@ -201,18 +233,18 @@ var PageElement = function (_BaseElement) {
       this._tryToFillStatusBar(content); // Must run before child pages try to fill status bar.
       this.insertBefore(content, background.nextSibling); // Can trigger attached connectedCallbacks
 
-      if ((!toolbar || !util.hasModifier(toolbar, 'transparent')) && content.children.length === 1 && util.isPageControl(content.children[0])) {
+      if ((!toolbar || !_util2.default.hasModifier(toolbar, 'transparent')) && content.children.length === 1 && _util2.default.isPageControl(content.children[0])) {
         this._defaultClassName += ' page--wrapper';
         this.attributeChangedCallback('class');
       }
 
-      var bottomToolbar = util.findChild(this, 'ons-bottom-toolbar');
+      var bottomToolbar = _util2.default.findChild(this, 'ons-bottom-toolbar');
       if (bottomToolbar) {
         this._defaultClassName += ' page-with-bottom-toolbar';
         this.attributeChangedCallback('class');
       }
 
-      ModifierUtil.initModifier(this, scheme);
+      _modifierUtil2.default.initModifier(this, scheme);
     }
   }, {
     key: '_elementShouldBeMoved',
@@ -234,11 +266,11 @@ var PageElement = function (_BaseElement) {
 
       var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._contentElement;
 
-      internal.autoStatusBarFill(function () {
-        util.toggleAttribute(_this3, 'status-bar-fill', !util.findParent(_this3, function (e) {
+      _internal2.default.autoStatusBarFill(function () {
+        _util2.default.toggleAttribute(_this3, 'status-bar-fill', !_util2.default.findParent(_this3, function (e) {
           return e.hasAttribute('status-bar-fill');
         }) // Not already filled
-        && (_this3._canAnimateToolbar(content) || !util.findChild(content, util.isPageControl)) // Has toolbar or cannot delegate
+        && (_this3._canAnimateToolbar(content) || !_util2.default.findChild(content, _util2.default.isPageControl)) // Has toolbar or cannot delegate
         );
       });
     }
@@ -247,12 +279,12 @@ var PageElement = function (_BaseElement) {
     value: function _canAnimateToolbar() {
       var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._contentElement;
 
-      if (util.findChild(this, 'ons-toolbar')) {
+      if (_util2.default.findChild(this, 'ons-toolbar')) {
         return true;
       }
 
-      return !!util.findChild(content, function (el) {
-        return util.match(el, 'ons-toolbar') && !el.hasAttribute('inline');
+      return !!_util2.default.findChild(content, function (el) {
+        return _util2.default.match(el, 'ons-toolbar') && !el.hasAttribute('inline');
       });
     }
   }, {
@@ -260,12 +292,12 @@ var PageElement = function (_BaseElement) {
     value: function connectedCallback() {
       var _this4 = this;
 
-      if (!util.isAttached(this)) {
+      if (!_util2.default.isAttached(this)) {
         // Avoid detached calls
         return;
       }
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this4._tryToFillStatusBar(); // Ensure status bar when the element was compiled before connected
 
         if (_this4.hasAttribute('on-infinite-scroll')) {
@@ -275,13 +307,13 @@ var PageElement = function (_BaseElement) {
         if (!_this4._initialized) {
           _this4._initialized = true;
 
-          _setImmediate(function () {
+          setImmediate(function () {
             _this4.onInit && _this4.onInit();
-            util.triggerElementEvent(_this4, 'init');
+            _util2.default.triggerElementEvent(_this4, 'init');
           });
 
-          if (!util.hasAnyComponentAsParent(_this4)) {
-            _setImmediate(function () {
+          if (!_util2.default.hasAnyComponentAsParent(_this4)) {
+            setImmediate(function () {
               return _this4._show();
             });
           }
@@ -322,30 +354,30 @@ var PageElement = function (_BaseElement) {
   }, {
     key: '_getContentElement',
     value: function _getContentElement() {
-      var result = util.findChild(this, '.page__content');
+      var result = _util2.default.findChild(this, '.page__content');
       if (result) {
         return result;
       }
-      util.throw('Fail to get ".page__content" element');
+      _util2.default.throw('Fail to get ".page__content" element');
     }
   }, {
     key: '_getBackgroundElement',
     value: function _getBackgroundElement() {
-      var result = util.findChild(this, '.page__background');
+      var result = _util2.default.findChild(this, '.page__background');
       if (result) {
         return result;
       }
-      util.throw('Fail to get ".page__background" element');
+      _util2.default.throw('Fail to get ".page__background" element');
     }
   }, {
     key: '_getBottomToolbarElement',
     value: function _getBottomToolbarElement() {
-      return util.findChild(this, 'ons-bottom-toolbar') || internal.nullElement;
+      return _util2.default.findChild(this, 'ons-bottom-toolbar') || _internal2.default.nullElement;
     }
   }, {
     key: '_getToolbarElement',
     value: function _getToolbarElement() {
-      return util.findChild(this, 'ons-toolbar') || document.createElement('ons-toolbar');
+      return _util2.default.findChild(this, 'ons-toolbar') || document.createElement('ons-toolbar');
     }
   }, {
     key: 'attributeChangedCallback',
@@ -354,17 +386,17 @@ var PageElement = function (_BaseElement) {
 
       switch (name) {
         case 'class':
-          util.restoreClass(this, this._defaultClassName, scheme);
+          _util2.default.restoreClass(this, this._defaultClassName, scheme);
           break;
         case 'modifier':
-          ModifierUtil.onModifierChanged(last, current, this, scheme);
+          _modifierUtil2.default.onModifierChanged(last, current, this, scheme);
           break;
         case 'on-infinite-scroll':
           if (current === null) {
             this.onInfiniteScroll = null;
           } else {
             this.onInfiniteScroll = function (done) {
-              var f = util.findFromPath(current);
+              var f = _util2.default.findFromPath(current);
               _this6.onInfiniteScroll = f;
               f(done);
             };
@@ -375,12 +407,12 @@ var PageElement = function (_BaseElement) {
   }, {
     key: '_show',
     value: function _show() {
-      if (!this._isShown && util.isAttached(this)) {
+      if (!this._isShown && _util2.default.isAttached(this)) {
         this._isShown = true;
         this.setAttribute('shown', '');
         this.onShow && this.onShow();
-        util.triggerElementEvent(this, 'show');
-        util.propagateAction(this, '_show');
+        _util2.default.triggerElementEvent(this, 'show');
+        _util2.default.propagateAction(this, '_show');
       }
     }
   }, {
@@ -390,8 +422,8 @@ var PageElement = function (_BaseElement) {
         this._isShown = false;
         this.removeAttribute('shown');
         this.onHide && this.onHide();
-        util.triggerElementEvent(this, 'hide');
-        util.propagateAction(this, '_hide');
+        _util2.default.triggerElementEvent(this, 'hide');
+        _util2.default.propagateAction(this, '_hide');
       }
     }
   }, {
@@ -400,13 +432,13 @@ var PageElement = function (_BaseElement) {
       this._hide();
 
       this.onDestroy && this.onDestroy();
-      util.triggerElementEvent(this, 'destroy');
+      _util2.default.triggerElementEvent(this, 'destroy');
 
       if (this.onDeviceBackButton) {
         this.onDeviceBackButton.destroy();
       }
 
-      util.propagateAction(this, '_destroy');
+      _util2.default.propagateAction(this, '_destroy');
 
       this.remove();
     }
@@ -417,7 +449,7 @@ var PageElement = function (_BaseElement) {
 
       this.constructor.events.forEach(function (event) {
         var key = 'on' + event.charAt(0).toUpperCase() + event.slice(1);
-        _Object$defineProperty(_this7, key, {
+        Object.defineProperty(_this7, key, {
           configurable: true,
           enumerable: true,
           get: function get() {
@@ -425,7 +457,7 @@ var PageElement = function (_BaseElement) {
           },
           set: function set(value) {
             if (!(value instanceof Function)) {
-              util.throw('"' + key + '" hook must be a function');
+              _util2.default.throw('"' + key + '" hook must be a function');
             }
             _this7['_' + key] = value.bind(_this7);
           }
@@ -459,16 +491,16 @@ var PageElement = function (_BaseElement) {
       var _this8 = this;
 
       if (value && !(value instanceof Function)) {
-        util.throw('"onInfiniteScroll" must be function or null');
+        _util2.default.throw('"onInfiniteScroll" must be function or null');
       }
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         if (!value) {
           _this8._contentElement.removeEventListener('scroll', _this8._boundOnScroll);
         } else if (!_this8._onInfiniteScroll) {
           _this8._infiniteScrollLimit = 0.9;
           _this8._boundOnScroll = _this8._onScroll.bind(_this8);
-          _setImmediate(function () {
+          setImmediate(function () {
             return _this8._contentElement.addEventListener('scroll', _this8._boundOnScroll);
           });
         }
@@ -488,7 +520,7 @@ var PageElement = function (_BaseElement) {
         this._backButtonHandler.destroy();
       }
 
-      this._backButtonHandler = deviceBackButtonDispatcher.createHandler(this, callback);
+      this._backButtonHandler = _deviceBackButtonDispatcher2.default.createHandler(this, callback);
     }
   }, {
     key: 'scrollTop',
@@ -520,10 +552,10 @@ var PageElement = function (_BaseElement) {
   }]);
 
   return PageElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default PageElement;
+exports.default = PageElement;
 
 
-onsElements.Page = PageElement;
+_elements2.default.Page = PageElement;
 customElements.define('ons-page', PageElement);

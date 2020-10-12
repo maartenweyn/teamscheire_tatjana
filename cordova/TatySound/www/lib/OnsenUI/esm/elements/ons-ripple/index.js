@@ -1,32 +1,61 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../../ons/elements';
-import util from '../../ons/util';
-import internal from '../../ons/internal';
-import BaseElement from '../base/base-element';
-import Animator from './animator-css';
-import contentReady from '../../ons/content-ready';
-import ModifierUtil from '../../ons/internal/modifier-util';
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _internal = require('../../ons/internal');
+
+var _internal2 = _interopRequireDefault(_internal);
+
+var _baseElement = require('../base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _animatorCss = require('./animator-css');
+
+var _animatorCss2 = _interopRequireDefault(_animatorCss);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var defaultClassName = 'ripple';
 var scheme = {
@@ -115,18 +144,18 @@ var RippleElement = function (_BaseElement) {
   function RippleElement() {
     _classCallCheck(this, RippleElement);
 
-    var _this = _possibleConstructorReturn(this, (RippleElement.__proto__ || _Object$getPrototypeOf(RippleElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (RippleElement.__proto__ || Object.getPrototypeOf(RippleElement)).call(this));
 
     _this._onTap = _this._onTap.bind(_this);
     _this._onHold = _this._onHold.bind(_this);
     _this._onDragStart = _this._onDragStart.bind(_this);
     _this._onRelease = _this._onRelease.bind(_this);
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
 
-    _this._animator = new Animator();
+    _this._animator = new _animatorCss2.default();
 
     ['color', 'center', 'start-radius', 'background', 'modifier'].forEach(function (e) {
       _this.attributeChangedCallback(e, null, _this.getAttribute(e));
@@ -143,14 +172,14 @@ var RippleElement = function (_BaseElement) {
       this._background = this.getElementsByClassName('ripple__background')[0];
 
       if (!(this._background && this._wave)) {
-        this._wave = util.create('.ripple__wave');
-        this._background = util.create('.ripple__background');
+        this._wave = _util2.default.create('.ripple__wave');
+        this._background = _util2.default.create('.ripple__background');
 
         this.appendChild(this._wave);
         this.appendChild(this._background);
       }
 
-      ModifierUtil.initModifier(this, scheme);
+      _modifierUtil2.default.initModifier(this, scheme);
     }
   }, {
     key: '_getEffectSize',
@@ -176,7 +205,7 @@ var RippleElement = function (_BaseElement) {
       var b = this.getBoundingClientRect();
       var size = this._getEffectSize();
       var error = function error() {
-        return util.throw('Ripple invalid state');
+        return _util2.default.throw('Ripple invalid state');
       };
 
       if (this._center) {
@@ -224,7 +253,7 @@ var RippleElement = function (_BaseElement) {
       _animator.stopAll({ stopNext: 1 });
       _animator.animate(_background, { opacity: 1 }, duration);
 
-      util.extend(_wave.style, {
+      _util2.default.extend(_wave.style, {
         opacity: 1,
         top: y - _minR + 'px',
         left: x - _minR + 'px',
@@ -307,7 +336,7 @@ var RippleElement = function (_BaseElement) {
     value: function connectedCallback() {
       this._parentNode = this.parentNode;
 
-      if (internal.config.animationsDisabled) {
+      if (_internal2.default.config.animationsDisabled) {
         this.disabled = true;
       } else {
         this._parentNode.addEventListener('tap', this._onTap);
@@ -331,11 +360,11 @@ var RippleElement = function (_BaseElement) {
       switch (name) {
 
         case 'class':
-          util.restoreClass(this, defaultClassName, scheme);
+          _util2.default.restoreClass(this, defaultClassName, scheme);
           break;
 
         case 'modifier':
-          ModifierUtil.onModifierChanged(last, current, this, scheme);
+          _modifierUtil2.default.onModifierChanged(last, current, this, scheme);
           break;
 
         case 'start-radius':
@@ -344,7 +373,7 @@ var RippleElement = function (_BaseElement) {
 
         case 'color':
           if (current) {
-            contentReady(this, function () {
+            (0, _contentReady2.default)(this, function () {
               _this4._wave.style.background = current;
               if (!_this4.hasAttribute('background')) {
                 _this4._background.style.background = current;
@@ -356,12 +385,12 @@ var RippleElement = function (_BaseElement) {
         case 'background':
           if (current || last) {
             if (current === 'none') {
-              contentReady(this, function () {
+              (0, _contentReady2.default)(this, function () {
                 _this4._background.setAttribute('disabled', 'disabled');
                 _this4._background.style.background = 'transparent';
               });
             } else {
-              contentReady(this, function () {
+              (0, _contentReady2.default)(this, function () {
                 if (_this4._background.hasAttribute('disabled')) {
                   _this4._background.removeAttribute('disabled');
                 }
@@ -391,7 +420,7 @@ var RippleElement = function (_BaseElement) {
   }, {
     key: 'disabled',
     set: function set(value) {
-      return util.toggleAttribute(this, 'disabled', value);
+      return _util2.default.toggleAttribute(this, 'disabled', value);
     },
     get: function get() {
       return this.hasAttribute('disabled');
@@ -404,10 +433,10 @@ var RippleElement = function (_BaseElement) {
   }]);
 
   return RippleElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default RippleElement;
+exports.default = RippleElement;
 
 
-onsElements.Ripple = RippleElement;
+_elements2.default.Ripple = RippleElement;
 customElements.define('ons-ripple', RippleElement);

@@ -4,8 +4,15 @@
 
 'use strict';
 
-import _Object$keys from 'babel-runtime/core-js/object/keys';
-import util from './util';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _util = require('./util');
+
+var _util2 = _interopRequireDefault(_util);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Event, Utils, Detection, PointerEvent;
 
@@ -231,7 +238,7 @@ Utils = GestureDetector.utils = {
    * @param {Function} handler
    */
   on: function on(element, type, handler, opt) {
-    util.addEventListener(element, type, handler, opt, true);
+    _util2.default.addEventListener(element, type, handler, opt, true);
   },
 
   /**
@@ -241,7 +248,7 @@ Utils = GestureDetector.utils = {
    * @param {Function} handler
    */
   off: function off(element, type, handler, opt) {
-    util.removeEventListener(element, type, handler, opt, true);
+    _util2.default.removeEventListener(element, type, handler, opt, true);
   },
 
   /**
@@ -296,7 +303,7 @@ Utils = GestureDetector.utils = {
     if (deep) {
       for (var i = 0, len = src.length; i < len; i++) {
         // Array.findIndex
-        if (_Object$keys(find).every(function (key) {
+        if (Object.keys(find).every(function (key) {
           return src[i][key] === find[key];
         })) {
           return i;
@@ -1243,7 +1250,7 @@ GestureDetector.Instance.prototype = {
   on: function onEvent(gestures, handler, opt) {
     var self = this;
 
-    Event.on(self.element, gestures, handler, util.extend({}, self.options.listenerOptions, opt), function (type) {
+    Event.on(self.element, gestures, handler, _util2.default.extend({}, self.options.listenerOptions, opt), function (type) {
       self.eventHandlers.push({ gesture: type, handler: handler });
     });
     return self;
@@ -1265,7 +1272,7 @@ GestureDetector.Instance.prototype = {
   off: function offEvent(gestures, handler, opt) {
     var self = this;
 
-    Event.off(self.element, gestures, handler, util.extend({}, self.options.listenerOptions, opt), function (type) {
+    Event.off(self.element, gestures, handler, _util2.default.extend({}, self.options.listenerOptions, opt), function (type) {
       var index = Utils.inArray(self.eventHandlers, { gesture: type, handler: handler }, true);
       if (index >= 0) {
         self.eventHandlers.splice(index, 1);
@@ -2047,4 +2054,4 @@ GestureDetector.gestures.Touch = {
   };
 })('transform');
 
-export default GestureDetector;
+exports.default = GestureDetector;

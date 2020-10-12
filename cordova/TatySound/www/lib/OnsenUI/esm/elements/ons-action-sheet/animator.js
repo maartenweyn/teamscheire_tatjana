@@ -1,30 +1,48 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.IOSActionSheetAnimator = exports.MDActionSheetAnimator = exports.ActionSheetAnimator = undefined;
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _animit = require('../../ons/animit');
 
-*/
+var _animit2 = _interopRequireDefault(_animit);
 
-import animit from '../../ons/animit';
-import BaseAnimator from '../../ons/base-animator';
-import iPhoneXPatch from '../../ons/iphonex-patch';
+var _baseAnimator = require('../../ons/base-animator');
 
-export var ActionSheetAnimator = function (_BaseAnimator) {
+var _baseAnimator2 = _interopRequireDefault(_baseAnimator);
+
+var _iphonexPatch = require('../../ons/iphonex-patch');
+
+var _iphonexPatch2 = _interopRequireDefault(_iphonexPatch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+var ActionSheetAnimator = exports.ActionSheetAnimator = function (_BaseAnimator) {
   _inherits(ActionSheetAnimator, _BaseAnimator);
 
   function ActionSheetAnimator() {
@@ -38,7 +56,7 @@ export var ActionSheetAnimator = function (_BaseAnimator) {
 
     _classCallCheck(this, ActionSheetAnimator);
 
-    return _possibleConstructorReturn(this, (ActionSheetAnimator.__proto__ || _Object$getPrototypeOf(ActionSheetAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    return _possibleConstructorReturn(this, (ActionSheetAnimator.__proto__ || Object.getPrototypeOf(ActionSheetAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
   }
 
   /**
@@ -66,12 +84,14 @@ export var ActionSheetAnimator = function (_BaseAnimator) {
   }]);
 
   return ActionSheetAnimator;
-}(BaseAnimator);
+}(_baseAnimator2.default);
 
 /**
  * Android style animator for Action Sheet.
  */
-export var MDActionSheetAnimator = function (_ActionSheetAnimator) {
+
+
+var MDActionSheetAnimator = exports.MDActionSheetAnimator = function (_ActionSheetAnimator) {
   _inherits(MDActionSheetAnimator, _ActionSheetAnimator);
 
   function MDActionSheetAnimator() {
@@ -85,7 +105,7 @@ export var MDActionSheetAnimator = function (_ActionSheetAnimator) {
 
     _classCallCheck(this, MDActionSheetAnimator);
 
-    var _this2 = _possibleConstructorReturn(this, (MDActionSheetAnimator.__proto__ || _Object$getPrototypeOf(MDActionSheetAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    var _this2 = _possibleConstructorReturn(this, (MDActionSheetAnimator.__proto__ || Object.getPrototypeOf(MDActionSheetAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
 
     _this2.maskTiming = 'linear';
     _this2.maskDuration = 0.2;
@@ -102,10 +122,10 @@ export var MDActionSheetAnimator = function (_ActionSheetAnimator) {
     key: 'show',
     value: function show(dialog, callback) {
 
-      animit.runAll(animit(dialog._mask).queue({ opacity: 0 }).wait(this.delay).queue({ opacity: 1.0 }, {
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask).queue({ opacity: 0 }).wait(this.delay).queue({ opacity: 1.0 }, {
         duration: this.maskDuration,
         timing: this.maskTiming
-      }), animit(dialog._sheet, this.def).default({ transform: 'translate3d(0, 80%, 0)', opacity: 0 }, { transform: 'translate3d(0, 0, 0)', opacity: 1 }).queue(function (done) {
+      }), (0, _animit2.default)(dialog._sheet, this.def).default({ transform: 'translate3d(0, 80%, 0)', opacity: 0 }, { transform: 'translate3d(0, 0, 0)', opacity: 1 }).queue(function (done) {
         callback && callback();
         done();
       }));
@@ -119,10 +139,10 @@ export var MDActionSheetAnimator = function (_ActionSheetAnimator) {
   }, {
     key: 'hide',
     value: function hide(dialog, callback) {
-      animit.runAll(animit(dialog._mask).queue({ opacity: 1 }).wait(this.delay).queue({ opacity: 0 }, {
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask).queue({ opacity: 1 }).wait(this.delay).queue({ opacity: 0 }, {
         duration: this.maskDuration,
         timing: this.maskTiming
-      }), animit(dialog._sheet, this.def).default({ transform: 'translate3d(0, 0, 0)', opacity: 1 }, { transform: 'translate3d(0, 80%, 0)', opacity: 0 }).queue(function (done) {
+      }), (0, _animit2.default)(dialog._sheet, this.def).default({ transform: 'translate3d(0, 0, 0)', opacity: 1 }, { transform: 'translate3d(0, 80%, 0)', opacity: 0 }).queue(function (done) {
         callback && callback();
         done();
       }));
@@ -135,7 +155,9 @@ export var MDActionSheetAnimator = function (_ActionSheetAnimator) {
 /**
  * iOS style animator for dialog.
  */
-export var IOSActionSheetAnimator = function (_ActionSheetAnimator2) {
+
+
+var IOSActionSheetAnimator = exports.IOSActionSheetAnimator = function (_ActionSheetAnimator2) {
   _inherits(IOSActionSheetAnimator, _ActionSheetAnimator2);
 
   function IOSActionSheetAnimator() {
@@ -149,13 +171,13 @@ export var IOSActionSheetAnimator = function (_ActionSheetAnimator2) {
 
     _classCallCheck(this, IOSActionSheetAnimator);
 
-    var _this3 = _possibleConstructorReturn(this, (IOSActionSheetAnimator.__proto__ || _Object$getPrototypeOf(IOSActionSheetAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    var _this3 = _possibleConstructorReturn(this, (IOSActionSheetAnimator.__proto__ || Object.getPrototypeOf(IOSActionSheetAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
 
     _this3.maskTiming = 'linear';
     _this3.maskDuration = 0.2;
-    if (iPhoneXPatch.isIPhoneXPortraitPatchActive()) {
+    if (_iphonexPatch2.default.isIPhoneXPortraitPatchActive()) {
       _this3.liftAmount = 'calc(100% + 48px)';
-    } else if (iPhoneXPatch.isIPhoneXLandscapePatchActive()) {
+    } else if (_iphonexPatch2.default.isIPhoneXLandscapePatchActive()) {
       _this3.liftAmount = 'calc(100% + 33px)';
     } else {
       _this3.liftAmount = document.body.clientHeight / 2.0 - 1 + 'px'; // avoid Forced Synchronous Layout
@@ -172,10 +194,10 @@ export var IOSActionSheetAnimator = function (_ActionSheetAnimator2) {
   _createClass(IOSActionSheetAnimator, [{
     key: 'show',
     value: function show(dialog, callback) {
-      animit.runAll(animit(dialog._mask).queue({ opacity: 0 }).wait(this.delay).queue({ opacity: 1 }, {
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask).queue({ opacity: 0 }).wait(this.delay).queue({ opacity: 1 }, {
         duration: this.maskDuration,
         timing: this.maskTiming
-      }), animit(dialog._sheet, this.def).default({ transform: 'translate3d(0, ' + this.liftAmount + ', 0)' }, { transform: 'translate3d(0, 0, 0)' }).queue(function (done) {
+      }), (0, _animit2.default)(dialog._sheet, this.def).default({ transform: 'translate3d(0, ' + this.liftAmount + ', 0)' }, { transform: 'translate3d(0, 0, 0)' }).queue(function (done) {
         callback && callback();
         done();
       }));
@@ -189,10 +211,10 @@ export var IOSActionSheetAnimator = function (_ActionSheetAnimator2) {
   }, {
     key: 'hide',
     value: function hide(dialog, callback) {
-      animit.runAll(animit(dialog._mask).queue({ opacity: 1 }).wait(this.delay).queue({ opacity: 0 }, {
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask).queue({ opacity: 1 }).wait(this.delay).queue({ opacity: 0 }, {
         duration: this.maskDuration,
         timing: this.maskTiming
-      }), animit(dialog._sheet, this.def).default({ transform: 'translate3d(0, 0, 0)' }, { transform: 'translate3d(0, ' + this.liftAmount + ', 0)' }).queue(function (done) {
+      }), (0, _animit2.default)(dialog._sheet, this.def).default({ transform: 'translate3d(0, 0, 0)' }, { transform: 'translate3d(0, ' + this.liftAmount + ', 0)' }).queue(function (done) {
         callback && callback();
         done();
       }));

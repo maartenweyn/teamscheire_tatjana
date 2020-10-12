@@ -1,35 +1,65 @@
-import _Promise from 'babel-runtime/core-js/promise';
-import _defineProperty from 'babel-runtime/helpers/defineProperty';
-import _extends from 'babel-runtime/helpers/extends';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-*/
+var _util = require('../../ons/util');
 
-import util from '../../ons/util';
-import BaseElement from './base-element';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import AnimatorFactory from '../../ons/internal/animator-factory';
-import DoorLock from '../../ons/doorlock';
-import deviceBackButtonDispatcher from '../../ons/internal/device-back-button-dispatcher';
-import contentReady from '../../ons/content-ready';
+var _util2 = _interopRequireDefault(_util);
+
+var _baseElement = require('./base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _animatorFactory = require('../../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _doorlock = require('../../ons/doorlock');
+
+var _doorlock2 = _interopRequireDefault(_doorlock);
+
+var _deviceBackButtonDispatcher = require('../../ons/internal/device-back-button-dispatcher');
+
+var _deviceBackButtonDispatcher2 = _interopRequireDefault(_deviceBackButtonDispatcher);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var BaseDialogElement = function (_BaseElement) {
   _inherits(BaseDialogElement, _BaseElement);
@@ -37,7 +67,7 @@ var BaseDialogElement = function (_BaseElement) {
   _createClass(BaseDialogElement, [{
     key: '_updateAnimatorFactory',
     value: function _updateAnimatorFactory() {
-      util.throwMember();
+      _util2.default.throwMember();
     }
   }, {
     key: '_toggleStyle',
@@ -47,23 +77,23 @@ var BaseDialogElement = function (_BaseElement) {
   }, {
     key: '_scheme',
     get: function get() {
-      util.throwMember();
+      _util2.default.throwMember();
     }
   }]);
 
   function BaseDialogElement() {
     _classCallCheck(this, BaseDialogElement);
 
-    var _this = _possibleConstructorReturn(this, (BaseDialogElement.__proto__ || _Object$getPrototypeOf(BaseDialogElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (BaseDialogElement.__proto__ || Object.getPrototypeOf(BaseDialogElement)).call(this));
 
     if (_this.constructor === BaseDialogElement) {
-      util.throwAbstract();
+      _util2.default.throwAbstract();
     }
 
     _this._visible = false;
-    _this._doorLock = new DoorLock();
+    _this._doorLock = new _doorlock2.default();
     _this._cancel = _this._cancel.bind(_this);
-    _this._selfCamelName = util.camelize(_this.tagName.slice(4));
+    _this._selfCamelName = _util2.default.camelize(_this.tagName.slice(4));
     _this._defaultDBB = function (e) {
       return _this.cancelable ? _this._cancel() : e.callParentHandler();
     };
@@ -80,7 +110,7 @@ var BaseDialogElement = function (_BaseElement) {
         this._running = true;
         this.hide().then(function () {
           _this2._running = false;
-          util.triggerElementEvent(_this2, 'dialog-cancel');
+          _util2.default.triggerElementEvent(_this2, 'dialog-cancel');
         }, function () {
           return _this2._running = false;
         });
@@ -124,34 +154,34 @@ var BaseDialogElement = function (_BaseElement) {
       var action = shouldShow ? 'show' : 'hide';
 
       options = _extends({}, options);
-      options.animationOptions = util.extend(options.animationOptions || {}, AnimatorFactory.parseAnimationOptionsString(this.getAttribute('animation-options')));
+      options.animationOptions = _util2.default.extend(options.animationOptions || {}, _animatorFactory2.default.parseAnimationOptionsString(this.getAttribute('animation-options')));
 
       var canceled = false;
-      util.triggerElementEvent(this, 'pre' + action, (_util$triggerElementE = {}, _defineProperty(_util$triggerElementE, this._selfCamelName, this), _defineProperty(_util$triggerElementE, 'cancel', function cancel() {
+      _util2.default.triggerElementEvent(this, 'pre' + action, (_util$triggerElementE = {}, _defineProperty(_util$triggerElementE, this._selfCamelName, this), _defineProperty(_util$triggerElementE, 'cancel', function cancel() {
         return canceled = true;
       }), _util$triggerElementE));
 
       if (canceled) {
-        return _Promise.reject('Canceled in pre' + action + ' event.');
+        return Promise.reject('Canceled in pre' + action + ' event.');
       }
 
-      return new _Promise(function (resolve) {
+      return new Promise(function (resolve) {
         _this3._doorLock.waitUnlock(function () {
           var unlock = _this3._doorLock.lock();
           var animator = _this3._animatorFactory.newAnimator(options);
 
           shouldShow && _this3._toggleStyle(true, options);
           _this3._visible = shouldShow;
-          util.iosPageScrollFix(shouldShow);
+          _util2.default.iosPageScrollFix(shouldShow);
 
-          contentReady(_this3, function () {
+          (0, _contentReady2.default)(_this3, function () {
             animator[action](_this3, function () {
               !shouldShow && _this3._toggleStyle(false, options);
 
               unlock();
 
-              util.propagateAction(_this3, '_' + action);
-              util.triggerElementEvent(_this3, 'post' + action, _defineProperty({}, _this3._selfCamelName, _this3)); // postshow posthide
+              _util2.default.propagateAction(_this3, '_' + action);
+              _util2.default.triggerElementEvent(_this3, 'post' + action, _defineProperty({}, _this3._selfCamelName, _this3)); // postshow posthide
 
               if (options.callback instanceof Function) {
                 options.callback(_this3);
@@ -168,7 +198,7 @@ var BaseDialogElement = function (_BaseElement) {
     value: function _updateMask() {
       var _this4 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         if (_this4._mask && _this4.getAttribute('mask-color')) {
           _this4._mask.style.backgroundColor = _this4.getAttribute('mask-color');
         }
@@ -179,24 +209,26 @@ var BaseDialogElement = function (_BaseElement) {
     value: function connectedCallback() {
       var _this5 = this;
 
-      this.onDeviceBackButton = this._defaultDBB.bind(this);
+      if (typeof this._defaultDBB === 'function') {
+        this.onDeviceBackButton = this._defaultDBB.bind(this);
+      }
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         if (_this5._mask) {
           _this5._mask.addEventListener('click', _this5._cancel, false);
-          util.iosMaskScrollFix(_this5._mask, true);
         }
       });
     }
   }, {
     key: 'disconnectedCallback',
     value: function disconnectedCallback() {
-      this._backButtonHandler.destroy();
-      this._backButtonHandler = null;
+      if (this._backButtonHandler) {
+        this._backButtonHandler.destroy();
+        this._backButtonHandler = null;
+      }
 
       if (this._mask) {
         this._mask.removeEventListener('click', this._cancel, false);
-        util.iosMaskScrollFix(this._mask, false);
       }
     }
   }, {
@@ -204,7 +236,7 @@ var BaseDialogElement = function (_BaseElement) {
     value: function attributeChangedCallback(name, last, current) {
       switch (name) {
         case 'modifier':
-          ModifierUtil.onModifierChanged(last, current, this, this._scheme);
+          _modifierUtil2.default.onModifierChanged(last, current, this, this._scheme);
           break;
         case 'animation':
           this._animatorFactory = this._updateAnimatorFactory();
@@ -224,7 +256,7 @@ var BaseDialogElement = function (_BaseElement) {
         this._backButtonHandler.destroy();
       }
 
-      this._backButtonHandler = deviceBackButtonDispatcher.createHandler(this, callback);
+      this._backButtonHandler = _deviceBackButtonDispatcher2.default.createHandler(this, callback);
     }
   }, {
     key: 'visible',
@@ -234,7 +266,7 @@ var BaseDialogElement = function (_BaseElement) {
   }, {
     key: 'disabled',
     set: function set(value) {
-      return util.toggleAttribute(this, 'disabled', value);
+      return _util2.default.toggleAttribute(this, 'disabled', value);
     },
     get: function get() {
       return this.hasAttribute('disabled');
@@ -242,7 +274,7 @@ var BaseDialogElement = function (_BaseElement) {
   }, {
     key: 'cancelable',
     set: function set(value) {
-      return util.toggleAttribute(this, 'cancelable', value);
+      return _util2.default.toggleAttribute(this, 'cancelable', value);
     },
     get: function get() {
       return this.hasAttribute('cancelable');
@@ -260,6 +292,6 @@ var BaseDialogElement = function (_BaseElement) {
   }]);
 
   return BaseDialogElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default BaseDialogElement;
+exports.default = BaseDialogElement;

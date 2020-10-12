@@ -1,40 +1,83 @@
-import _Promise from 'babel-runtime/core-js/promise';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import AnimatorFactory from '../ons/internal/animator-factory';
-import orientation from '../ons/orientation';
-import internal from '../ons/internal';
-import ModifierUtil from '../ons/internal/modifier-util';
-import BaseElement from './base/base-element';
-import SplitterAnimator from './ons-splitter/animator';
-import SwipeReveal from '../ons/internal/swipe-reveal';
-import DoorLock from '../ons/doorlock';
-import contentReady from '../ons/content-ready';
-import { PageLoader, defaultPageLoader } from '../ons/page-loader';
-import SplitterElement from './ons-splitter';
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _animatorFactory = require('../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _orientation = require('../ons/orientation');
+
+var _orientation2 = _interopRequireDefault(_orientation);
+
+var _internal = require('../ons/internal');
+
+var _internal2 = _interopRequireDefault(_internal);
+
+var _modifierUtil = require('../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _animator = require('./ons-splitter/animator');
+
+var _animator2 = _interopRequireDefault(_animator);
+
+var _swipeReveal = require('../ons/internal/swipe-reveal');
+
+var _swipeReveal2 = _interopRequireDefault(_swipeReveal);
+
+var _doorlock = require('../ons/doorlock');
+
+var _doorlock2 = _interopRequireDefault(_doorlock);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+var _pageLoader = require('../ons/page-loader');
+
+var _onsSplitter = require('./ons-splitter');
+
+var _onsSplitter2 = _interopRequireDefault(_onsSplitter);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var SPLIT_MODE = 'split';
 var COLLAPSE_MODE = 'collapse';
@@ -48,7 +91,7 @@ var rewritables = {
    * @param {Function} callback
    */
   ready: function ready(splitterSideElement, callback) {
-    _setImmediate(callback);
+    setImmediate(callback);
   }
 };
 
@@ -88,8 +131,8 @@ var CollapseDetection = function () {
     key: 'activate',
     value: function activate() {
       if (this._orientation) {
-        orientation.on('change', this._onChange);
-        this._onChange({ isPortrait: orientation.isPortrait() });
+        _orientation2.default.on('change', this._onChange);
+        this._onChange({ isPortrait: _orientation2.default.isPortrait() });
       } else {
         this._queryResult = window.matchMedia(this._target);
         this._queryResult.addListener(this._onChange);
@@ -100,7 +143,7 @@ var CollapseDetection = function () {
     key: 'disable',
     value: function disable() {
       if (this._orientation) {
-        orientation.off('change', this._onChange);
+        _orientation2.default.off('change', this._onChange);
       } else if (this._queryResult) {
         this._queryResult.removeListener(this._onChange);
         this._queryResult = null;
@@ -328,22 +371,22 @@ var SplitterSideElement = function (_BaseElement) {
   function SplitterSideElement() {
     _classCallCheck(this, SplitterSideElement);
 
-    var _this = _possibleConstructorReturn(this, (SplitterSideElement.__proto__ || _Object$getPrototypeOf(SplitterSideElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (SplitterSideElement.__proto__ || Object.getPrototypeOf(SplitterSideElement)).call(this));
 
     _this._page = null;
     _this._state = CLOSED_STATE;
-    _this._lock = new DoorLock();
-    _this._pageLoader = defaultPageLoader;
+    _this._lock = new _doorlock2.default();
+    _this._pageLoader = _pageLoader.defaultPageLoader;
     _this._collapseDetection = new CollapseDetection(_this);
 
-    _this._animatorFactory = new AnimatorFactory({
-      animators: SplitterElement.animators,
-      baseClass: SplitterAnimator,
+    _this._animatorFactory = new _animatorFactory2.default({
+      animators: _onsSplitter2.default.animators,
+      baseClass: _animator2.default,
       baseClassName: 'SplitterAnimator',
       defaultAnimation: _this.getAttribute('animation')
     });
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       // These attributes are used early by the parent element
       _this.attributeChangedCallback('width');
       if (!_this.hasAttribute('side')) {
@@ -363,11 +406,11 @@ var SplitterSideElement = function (_BaseElement) {
     value: function connectedCallback() {
       var _this2 = this;
 
-      if (!util.match(this.parentNode, 'ons-splitter')) {
-        util.throw('Parent must be an ons-splitter element');
+      if (!_util2.default.match(this.parentNode, 'ons-splitter')) {
+        _util2.default.throw('Parent must be an ons-splitter element');
       }
 
-      this._swipe = new SwipeReveal({
+      this._swipe = new _swipeReveal2.default({
         element: this,
         elementHandler: this.parentElement,
         swipeMax: function swipeMax() {
@@ -407,7 +450,7 @@ var SplitterSideElement = function (_BaseElement) {
 
       this.attributeChangedCallback('swipeable');
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this2.constructor.observedAttributes.forEach(function (attr) {
           return _this2.attributeChangedCallback(attr, null, _this2.getAttribute(attr));
         });
@@ -431,18 +474,18 @@ var SplitterSideElement = function (_BaseElement) {
           this.style.width = /^\d+(px|%)$/.test(current) ? current : '80%';
           break;
         default:
-          this[util.camelize('_update-' + name)](current);
+          this[_util2.default.camelize('_update-' + name)](current);
       }
     }
   }, {
     key: '_emitEvent',
     value: function _emitEvent(name) {
       if (name.slice(0, 3) !== 'pre') {
-        return util.triggerElementEvent(this, name, { side: this });
+        return _util2.default.triggerElementEvent(this, name, { side: this });
       }
       var isCanceled = false;
 
-      util.triggerElementEvent(this, name, {
+      _util2.default.triggerElementEvent(this, name, {
         side: this,
         cancel: function cancel() {
           return isCanceled = true;
@@ -456,7 +499,7 @@ var SplitterSideElement = function (_BaseElement) {
     value: function _isOtherSideOpen() {
       var _this3 = this;
 
-      return !!util.findChild(this.parentElement, function (el) {
+      return !!_util2.default.findChild(this.parentElement, function (el) {
         return el instanceof _this3.constructor && el !== _this3 && el._mode === COLLAPSE_MODE && el.isOpen;
       });
     }
@@ -491,7 +534,7 @@ var SplitterSideElement = function (_BaseElement) {
           this._state === OPEN_STATE && this._animator.open();
         }
 
-        util.triggerElementEvent(this, 'modechange', { side: this, mode: mode });
+        _util2.default.triggerElementEvent(this, 'modechange', { side: this, mode: mode });
       }
     }
   }, {
@@ -514,7 +557,7 @@ var SplitterSideElement = function (_BaseElement) {
     value: function _updateAnimationOptions() {
       var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.getAttribute('animation-options');
 
-      this._animator.updateOptions(AnimatorFactory.parseAnimationOptionsString(value));
+      this._animator.updateOptions(_animatorFactory2.default.parseAnimationOptionsString(value));
     }
 
     /**
@@ -593,31 +636,35 @@ var SplitterSideElement = function (_BaseElement) {
       var force = arguments[1];
 
       var shouldOpen = typeof force === 'boolean' ? force : !this.isOpen;
-      var action = shouldOpen ? 'open' : 'close',
-          FINAL_STATE = shouldOpen ? OPEN_STATE : CLOSED_STATE;
+      var action = shouldOpen ? 'open' : 'close';
+      var FINAL_STATE = shouldOpen ? OPEN_STATE : CLOSED_STATE;
 
       if (this._mode === SPLIT_MODE) {
-        return _Promise.resolve(false);
+        return Promise.resolve(false);
       }
       if (this._state === FINAL_STATE) {
-        return _Promise.resolve(this);
+        return Promise.resolve(this);
       }
       if (this._lock.isLocked()) {
-        return _Promise.reject('Another splitter-side action is already running.');
+        return Promise.reject('Another splitter-side action is already running.');
       }
       if (shouldOpen && this._isOtherSideOpen()) {
-        return _Promise.reject('Another menu is already open.');
+        return Promise.reject('Another menu is already open.');
       }
       if (this._emitEvent('pre' + action)) {
-        return _Promise.reject('Canceled in pre' + action + ' event.');
+        return Promise.reject('Canceled in pre' + action + ' event.');
       }
 
       var unlock = this._lock.lock();
       this._state = CHANGING_STATE;
 
-      return new _Promise(function (resolve) {
+      if (options.animation) {
+        this._updateAnimation(options.animation);
+      }
+
+      return new Promise(function (resolve) {
         _this4._animator[action](function () {
-          util.iosPageScrollFix(shouldOpen);
+          _util2.default.iosPageScrollFix(shouldOpen);
           _this4._state = FINAL_STATE;
           unlock();
           _this4._emitEvent('post' + action);
@@ -653,7 +700,7 @@ var SplitterSideElement = function (_BaseElement) {
       this._page = page;
       var callback = options.callback || function () {};
 
-      return new _Promise(function (resolve) {
+      return new Promise(function (resolve) {
         var oldContent = _this5._content || null;
 
         _this5._pageLoader.load({ page: page, parent: _this5 }, function (pageElement) {
@@ -662,7 +709,7 @@ var SplitterSideElement = function (_BaseElement) {
             oldContent = null;
           }
 
-          _setImmediate(function () {
+          setImmediate(function () {
             return _this5._show();
           });
 
@@ -730,8 +777,8 @@ var SplitterSideElement = function (_BaseElement) {
       return this._pageLoader;
     },
     set: function set(loader) {
-      if (!(loader instanceof PageLoader)) {
-        util.throwPageLoader();
+      if (!(loader instanceof _pageLoader.PageLoader)) {
+        _util2.default.throwPageLoader();
       }
       this._pageLoader = loader;
     }
@@ -766,7 +813,7 @@ var SplitterSideElement = function (_BaseElement) {
     },
     set: function set(value) {
       if (value && !(value instanceof Function)) {
-        util.throw('"onSwipe" must be a function');
+        _util2.default.throw('"onSwipe" must be a function');
       }
       this._onSwipe = value;
     }
@@ -803,10 +850,10 @@ var SplitterSideElement = function (_BaseElement) {
   }]);
 
   return SplitterSideElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default SplitterSideElement;
+exports.default = SplitterSideElement;
 
 
-onsElements.SplitterSide = SplitterSideElement;
+_elements2.default.SplitterSide = SplitterSideElement;
 customElements.define('ons-splitter-side', SplitterSideElement);

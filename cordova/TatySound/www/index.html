@@ -10,98 +10,110 @@
     <link rel="stylesheet" type="text/css" href="lib/OnsenUI/css/onsen-css-components.min.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <title>TatySound</title>
+    <script type="text/javascript">
+        window.onerror = function(message, url, lineNumber) {
+            console.log("Error: "+message+" in "+url+" at line "+lineNumber);
+        }
+    </script>
 </head>
 
 <body>
-    <ons-navigator id="appNavigator" swipeable swipe-target-width="80px">
-        <ons-page>
-            <ons-splitter id="appSplitter">
-                <ons-splitter-side id="logscreen" page="logs.html" swipeable side="right" collapse="" width="80%"></ons-splitter-side>
-                <ons-splitter-content page="tabbar.html"></ons-splitter-content>
-            </ons-splitter>
-        </ons-page>
-    </ons-navigator>
+<ons-page>
+    <ons-toolbar>
+        <div class="left">
+            <ons-toolbar-button icon="bluetooth" id="ble_button"></ons-toolbar-button>
+            <ons-toolbar-button icon="headphones" id="ble_headphone"></ons-toolbar-button>
+        </div>
+    
+        <div class="center">TatySound</div>
+    
+        <div class="right">
+            <ons-toolbar-button icon="cog" id="settings_button"></ons-toolbar-button>
+            <ons-toolbar-button icon="clipboard" id="log_button"></ons-toolbar-button>
+        </div>
+    </ons-toolbar>
 
-    <template id="tabbar.html">
-        <ons-page id="tabbar-page">
-            <ons-toolbar>
-                <div class="center">home</div>
-                <div class="right">
-                    <ons-toolbar-button id="btnLogscreen">
-                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
-                    </ons-toolbar-button>
-                </div>
-            </ons-toolbar>
-            <ons-tabbar swipeable id="appTabbar" position="auto">
-                <ons-tab label="home" icon="fa-home" page="home.html" active></ons-tab>
-                <ons-tab label="user" icon="fa-user" page="user.html"></ons-tab>
-                <ons-tab label="device" icon="fa-bluetooth" page="device.html"></ons-tab>
-                <ons-tab label="settings" icon="fa-wrench" page="settings.html"></ons-tab>
-            </ons-tabbar>
+    <div id="main-page">
 
-            <script>
-                ons.getScriptPage().addEventListener('prechange', function (event) {
-                    if (event.target.matches('#appTabbar')) {
-                        event.currentTarget.querySelector('ons-toolbar .center').innerHTML = event.tabItem.getAttribute(
-                            'label');
-                    }
-                });
+        <ons-card id="protection" style="display: none;"></ons-card>
+        <ons-card id="loading">Loading database ... this can take a while.
+            <ons-progress-bar value="0" secondary-value="100" id="progressbar_db_loading"></ons-progress-bar>
 
-                $('body').on('click', '#btnLogscreen', function (e) {
-                    document.getElementById('appSplitter').right.toggle();
-                });
-                $('body').on('click', 'a', function (e) {
-                    e.preventDefault();
-                    var page = $(this).attr('data-label');
-                    var pageItem = $('#appTabbar [label="' + page + '"]');
-                    document.querySelector('#appTabbar').setActiveTab($('ons-tab').index(pageItem));
-                });
-            </script>
-        </ons-page>
-    </template>
+        </ons-card>
+        
+        <div class="card" id="ble_config" style="display: none;">
+            <div class="center">
+                <ons-button id="refreshDeviceList" modifier="outline">Refresh</ons-button>
+                <ons-button id="disconnectDevice" modifier="outline" disabled="true">Disconnect</ons-button>    
+            </div>
+            <ul id="ble-found-devices">Looking for Devices</ul>
+            <ul id="ble-connected-device">Not connected</ul>
+        </div>
 
-    <template id="home.html">
-        <ons-page>
-            <!-- <img src="img/becme-banner.png" alt="BeCME" />
-            <ons-card>
-                <p>Text
-                </p>
-            </ons-card> -->
-            <ons-card>
-                <div class="title">Sound Level Info</div>
-                <div id="soundlevelinfo" class="content">
-            </ons-card>
-            <!-- <ons-card>
-                Veel fietsplezier!
-            </ons-card> -->
-            <!-- <div style="text-align: center;">
-                <img src="img/sponsers.png" alt="imec" />
-            </div> -->
-        </ons-page>
-    </template>
+        <ons-card id="settingscard" style="display: none;">
+            <ons-list>
+                <ons-list-item class="input-items">
+                    <div>Token:</div>
+                        <ons-input id="settings-token"></ons-input>
+                </ons-list-item>
 
-    <template id="logs.html">
-        <ons-page>
-            <ons-card>
-                <div class="title">Log</div>
-                <div id="logs" class="content">
+                <ons-list-item class="input-items">
+                    <div>Protection (dB):</div>
+                        <ons-input id="settings-attenuation"></ons-input>
+                </ons-list-item>
+                <ons-list-item class="input-items">
+                    <ons-button id="savebutton" modifier="outline">Save</ons-button>
+                </ons-list-item>
+                <ons-list-item class="input-items">
+                    <ons-button id="dropdatabase" modifier="outline">Clear Database</ons-button>
+                </ons-list-item>
+            </ons-list>
+        </ons-card>
 
-                </div>
-            </ons-card>
-        </ons-page>
-    </template>
+        <ons-card id="progresscard"style="display: none;">
+            <div style="margin: 20px auto;">
+                <p>Loading from device...</p>
+                <ons-progress-bar value="0" secondary-value="100" id="progressbar_loading"></ons-progress-bar>
+            </div>
+            <div style="margin: 20px auto;">
+                <p>Calculating Noise dose...</p>
+                <ons-progress-bar value="0" secondary-value="100" id="progressbar_calculating"></ons-progress-bar>
+            </div>
+        </ons-card>
+
+        <div class="card">
+            <div id="bar_container" class="card__content"></div>
+            <div id="plot_container" class="card__content"></div>
+        </div>
+        <div class="card">
+            <div id="soundlevelinfo" class="card__content">Sound Level Info...Loading</div>
+        </div>
+        
+    </div>
+
+
+    <div id="log_info" style="display: none;">
+        <div class="card">
+            <h2>Incoming UART messages</h2>
+            <div id="ble-received-messages" class="card__content"></div>
+        </div>
+        <div class="card">
+            <h2>log</h2>
+            <div id="logs" class="card__content"></div>
+        </div>
+    </div>
+</ons-page>
 
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="lib/OnsenUI/js/onsenui.min.js"></script>
-    <script type="text/javascript" src="lib/jquery/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="lib/jquery/jquery-3.4.1.min.js"></script>
+    <script src="lib/highcharts.js"></script> 
     <script type="text/javascript" src="lib/moment.min.js"></script>
-    <script type="text/javascript" src="lib/browserMqtt.js"></script>
     <script type="text/javascript" src="js/debug.js"></script>
     <script type="text/javascript" src="js/storage.js"></script>
-    <script type="text/javascript" src="js/gps.js"></script>
-    <script type="text/javascript" src="js/mqttclient.js"></script>
     <script type="text/javascript" src="js/noiselevel.js"></script>
     <script type="text/javascript" src="js/bluetooth.js"></script>
+    <script type="text/javascript" src="js/charting.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
 </body>
 

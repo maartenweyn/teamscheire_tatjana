@@ -22,20 +22,24 @@ var bluetooth = {
         debug.log('Initialising bluetooth ...');
         bluetooth.refreshDeviceList();
         debug.log('Bluetooth Initialised', 'success');
-        window.BackgroundTimer.onTimerEvent(bluetooth.timer_callback);
-        window.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
+        window.plugins.BackgroundTimer.onTimerEvent(bluetooth.timer_callback);
+        window.plugins.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
 
+        console.log("platform " + window.cordova.platformId);
         //autoconnect
-
-        // var previousConnectedDevice = storage.getItem('connectedDevice');
-        // if (previousConnectedDevice != undefined) {
-        //     ble.autoConnect(previousConnectedDevice.id, bluetooth.onConnect, bluetooth.onDisconnectDevice);
-        // }
+        if (window.cordova.platformId != "android") {
+            var previousConnectedDevice = storage.getItem('connectedDevice');
+            if (previousConnectedDevice != undefined) {
+                console.log("setting autoconnect to " + previousConnectedDevice);
+                ble.autoConnect(previousConnectedDevice.id, bluetooth.onConnect, bluetooth.onDisconnectDevice);
+            }
+        }
     },
     refreshDeviceList: function () {
         var onlyUART = true;
         $('#ble-found-devices').empty();
         var characteristics = (onlyUART) ? [bluetooth.serviceUuids.serviceUUID] : [];
+        console.log("scanning for devices");
         ble.scan(characteristics, 5, bluetooth.onDiscoverDevice, app.onError);
     },
     onDiscoverDevice: function (device) {
@@ -48,12 +52,14 @@ var bluetooth = {
             debug.log('no previousConnectedDevice ', 'error');
 
         //if (device.name.toLowerCase().replace(/[\W_]+/g, "").indexOf('cme') > -1) {
-        var html = '<ons-list-item modifier="chevron" data-device-id="' + device.id + '" data-device-name="' + device.name + '" tappable>' +
+        var html = '<ons-list-item modifier="tappable" data-device-id="' + device.id + '" data-device-name="' + device.name + '">' +
             '<span class="list-item__title">' + device.name + '</span>' +
             '<span class="list-item__subtitle">' + device.id + '</span>' +
             '</ons-list-item>';
 
         $('#ble-found-devices').append(html);
+
+        $('#ble-found-devices').show();
         //}
 
         if (previousConnectedDevice) {
@@ -88,7 +94,7 @@ var bluetooth = {
         //mqttclient.addMessage('device,1');
 
         bluetooth.toggleConnectionButtons();
-        window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
+        window.plugins.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
 
         //bluetooth.sendTime();
     },
@@ -137,10 +143,6 @@ var bluetooth = {
         debug.log('Has send data', 'success');
     },
     onData: function (data) {
-        //mqttclient.addMessage(bytesToString(data));
-
-        //currentmessage.push(data);
-
         data = new Uint8Array(data);
         var stringdata = String.fromCharCode.apply(null, data);
 
@@ -166,9 +168,7 @@ var bluetooth = {
         
                 bluetooth.currentmessagepointer = 0;
         
-                console.log(stringdata);
-        
-                bluetooth.refreshSentMessageList();
+                console.log("from ble: " + stringdata);
         
                 noiselevel.parseData(stringdata);
 
@@ -176,6 +176,8 @@ var bluetooth = {
                 {
                     bluetooth.sendTime();
                 }
+
+                bluetooth.refreshSentMessageList();
             }
         }
 
@@ -193,8 +195,9 @@ var bluetooth = {
         //debug.log("end character found");
     },
     timer_callback: function() {
+        console.log("timer_callback");
         ble.isConnected(bluetooth.connectedDevice.id, function () {
-            window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
+            window.plugins.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
         }, function () {
             bluetooth.refreshDeviceList();
         });
@@ -220,7 +223,7 @@ var bluetooth = {
             //mqttclient.addMessage('device,0');
             debug.log('error and disconnected from ' + bluetooth.lastConnectedDeviceId, 'success');
             bluetooth.toggleConnectionButtons();
-            window.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
+            window.plugins.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
         });
     },
     toggleConnectionButtons: function () {
@@ -229,17 +232,19 @@ var bluetooth = {
 
         if (connected) {
             var html = '<ons-list-item>' +
-                '<span class="list-item__title">' + bluetooth.connectedDevice.name + '</span>' +
+                '<span class="list-item__title">' + bluetooth.connectedDevice.name + '</span><br>' +
                 '<span class="list-item__subtitle">' + bluetooth.connectedDevice.id + '</span>' +
                 '</ons-list-item>';
             $('#ble-connected-device').html(html);
 
-            $('.ble-not-connected').hide();
-            $('.ble-connected').show();
+            $('#disconnectDevice').prop('disabled', false);
+            $('#ble-found-devices').hide();
+            $('#ble_button').css('color', 'green');
         } else {
             $('#ble-connected-device').html('no device connected');
-            $('.ble-not-connected').show();
-            $('.ble-connected').hide();
+            $('#disconnectDevice').prop('disabled', true);
+            $('#ble-found-devices').show();
+            $('#ble_button').css('color', 'red');
         }
     },
     refreshSentMessageList: function () {

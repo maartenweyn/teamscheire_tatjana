@@ -1,12 +1,30 @@
-import _Promise from 'babel-runtime/core-js/promise';
-import _Map from 'babel-runtime/core-js/map';
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import util from '../util';
-import platform from '../platform';
-import animit from '../animit';
-import GestureDetector from '../gesture-detector';
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _util = require('../util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _platform = require('../platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _animit = require('../animit');
+
+var _animit2 = _interopRequireDefault(_animit);
+
+var _gestureDetector = require('../gesture-detector');
+
+var _gestureDetector2 = _interopRequireDefault(_gestureDetector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var directionMap = {
   vertical: {
@@ -45,13 +63,13 @@ var Swiper = function () {
       var ratio = params.getAutoScrollRatio && params.getAutoScrollRatio.apply(params, arguments);
       ratio = typeof ratio === 'number' && ratio === ratio ? ratio : .5;
       if (ratio < 0.0 || ratio > 1.0) {
-        util.throw('Invalid auto-scroll-ratio ' + ratio + '. Must be between 0 and 1');
+        _util2.default.throw('Invalid auto-scroll-ratio ' + ratio + '. Must be between 0 and 1');
       }
       return ratio;
     };
 
     // Prevent clicks only on desktop
-    this.shouldBlock = util.globals.actualMobileOS === 'other';
+    this.shouldBlock = _util2.default.globals.actualMobileOS === 'other';
 
     // Bind handlers
     this.onDragStart = this.onDragStart.bind(this);
@@ -59,7 +77,7 @@ var Swiper = function () {
     this.onDragEnd = this.onDragEnd.bind(this);
     this.onResize = this.onResize.bind(this);
 
-    this._shouldFixScroll = util.globals.actualMobileOS === 'ios';
+    this._shouldFixScroll = _util2.default.globals.actualMobileOS === 'ios';
   }
 
   _createClass(Swiper, [{
@@ -75,7 +93,7 @@ var Swiper = function () {
       this.target = this.getElement().children[0];
       this.blocker = this.getElement().children[1];
       if (!this.target || !this.blocker) {
-        util.throw('Expected "target" and "blocker" elements to exist before initializing Swiper');
+        _util2.default.throw('Expected "target" and "blocker" elements to exist before initializing Swiper');
       }
 
       if (!this.shouldBlock) {
@@ -88,7 +106,7 @@ var Swiper = function () {
       this.blocker.classList.add('ons-swiper-blocker');
 
       // Setup listeners
-      this._gestureDetector = new GestureDetector(this.getElement(), { dragMinDistance: 1, dragLockToAxis: true, passive: !this._shouldFixScroll });
+      this._gestureDetector = new _gestureDetector2.default(this.getElement(), { dragMinDistance: 1, dragLockToAxis: true, passive: !this._shouldFixScroll });
       this._mutationObserver = new MutationObserver(function () {
         return _this2.refresh();
       });
@@ -99,7 +117,7 @@ var Swiper = function () {
       this._scroll = this._offset = this._lastActiveIndex = 0;
       this._updateLayout();
       this._setupInitialIndex();
-      _setImmediate(function () {
+      setImmediate(function () {
         return _this2.initialized && _this2._setupInitialIndex();
       });
 
@@ -126,7 +144,7 @@ var Swiper = function () {
   }, {
     key: 'onResize',
     value: function onResize() {
-      var i = this._scroll / this.targetSize;
+      var i = this._scroll / this.itemNumSize;
       this._reset();
       this.setActiveIndex(i);
       this.refresh();
@@ -137,7 +155,7 @@ var Swiper = function () {
       var matches = this.itemSize.match(/^(\d+)(px|%)/);
 
       if (!matches) {
-        util.throw('Invalid state: swiper\'s size unit must be \'%\' or \'px\'');
+        _util2.default.throw('Invalid state: swiper\'s size unit must be \'%\' or \'px\'');
       }
 
       var value = parseInt(matches[1], 10);
@@ -159,46 +177,13 @@ var Swiper = function () {
   }, {
     key: 'setActiveIndex',
     value: function setActiveIndex(index) {
-      var _this3 = this;
-
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       this._setSwiping(true);
       index = Math.max(0, Math.min(index, this.itemCount - 1));
       var scroll = Math.max(0, Math.min(this.maxScroll, this._offset + this.itemNumSize * index));
 
-      if (platform.isUIWebView()) {
-        /* Dirty fix for #2231(https://github.com/OnsenUI/OnsenUI/issues/2231). begin */
-        var concat = function concat(arrayOfArray) {
-          return Array.prototype.concat.apply([], arrayOfArray);
-        };
-        var contents = concat(util.arrayFrom(this.target.children).map(function (page) {
-          return util.arrayFrom(page.children).filter(function (child) {
-            return child.classList.contains('page__content');
-          });
-        }));
-
-        var map = new _Map();
-        return new _Promise(function (resolve) {
-          contents.forEach(function (content) {
-            map.set(content, content.getAttribute('class'));
-            content.classList.add('page__content--suppress-layer-creation');
-          });
-          requestAnimationFrame(resolve);
-        }).then(function () {
-          return _this3._changeTo(scroll, options);
-        }).then(function () {
-          return new _Promise(function (resolve) {
-            contents.forEach(function (content) {
-              content.setAttribute('class', map.get(content));
-            });
-            requestAnimationFrame(resolve);
-          });
-        });
-        /* end */
-      } else {
-        return this._changeTo(scroll, options);
-      }
+      return this._changeTo(scroll, options);
     }
   }, {
     key: 'getActiveIndex',
@@ -209,7 +194,7 @@ var Swiper = function () {
       var count = this.itemCount,
           size = this.itemNumSize;
 
-      if (this.itemNumSize === 0 || !util.isInteger(scroll)) {
+      if (this.itemNumSize === 0 || !_util2.default.isInteger(scroll)) {
         return this._lastActiveIndex;
       }
 
@@ -233,12 +218,12 @@ var Swiper = function () {
   }, {
     key: 'show',
     value: function show() {
-      var _this4 = this;
+      var _this3 = this;
 
       this.setupResize(true);
       this.onResize();
       setTimeout(function () {
-        return _this4.target && _this4.target.classList.add('active');
+        return _this3.target && _this3.target.classList.add('active');
       }, 1000 / 60); // Hide elements after animations
     }
   }, {
@@ -287,14 +272,14 @@ var Swiper = function () {
   }, {
     key: 'onDragStart',
     value: function onDragStart(event) {
-      var _this5 = this;
+      var _this4 = this;
 
-      this._ignoreDrag = event.consumed || !util.isValidGesture(event);
+      this._ignoreDrag = event.consumed || !_util2.default.isValidGesture(event);
 
       if (!this._ignoreDrag) {
         var consume = event.consume;
         event.consume = function () {
-          consume && consume();_this5._ignoreDrag = true;
+          consume && consume();_this4._ignoreDrag = true;
         };
 
         if (this._canConsumeGesture(event.gesture)) {
@@ -303,15 +288,15 @@ var Swiper = function () {
               start = function start() {
             consume && consume();
             event.consumed = true;
-            _this5._started = true; // Avoid starting drag from outside
-            _this5.shouldBlock && _this5.toggleBlocker(true);
-            _this5._setSwiping(true);
-            util.iosPreventScroll(_this5._gestureDetector);
+            _this4._started = true; // Avoid starting drag from outside
+            _this4.shouldBlock && _this4.toggleBlocker(true);
+            _this4._setSwiping(true);
+            _util2.default.iosPreventScroll(_this4._gestureDetector);
           };
 
           // Let parent elements consume the gesture or consume it right away
-          startX < distFromEdge || startX > this.targetSize - distFromEdge ? _setImmediate(function () {
-            return !_this5._ignoreDrag && start();
+          startX < distFromEdge || startX > this.targetSize - distFromEdge ? setImmediate(function () {
+            return !_this4._ignoreDrag && start();
           }) : start();
         }
       }
@@ -360,19 +345,19 @@ var Swiper = function () {
   }, {
     key: '_killOverScroll',
     value: function _killOverScroll(scroll) {
-      var _this6 = this;
+      var _this5 = this;
 
       this._scroll = scroll;
       var direction = this.dM.dir[Number(scroll > 0)];
       var killOverScroll = function killOverScroll() {
-        return _this6._changeTo(scroll, { animationOptions: { duration: .4, timing: 'cubic-bezier(.1, .4, .1, 1)' } });
+        return _this5._changeTo(scroll, { animationOptions: { duration: .4, timing: 'cubic-bezier(.1, .4, .1, 1)' } });
       };
       this.overScrollHook({ direction: direction, killOverScroll: killOverScroll }) || killOverScroll();
     }
   }, {
     key: '_changeTo',
     value: function _changeTo(scroll) {
-      var _this7 = this;
+      var _this6 = this;
 
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -384,19 +369,19 @@ var Swiper = function () {
       this._lastActiveIndex = canceled ? e.lastActiveIndex : e.activeIndex;
 
       return this._scrollTo(this._scroll, options).then(function () {
-        if (scroll === _this7._scroll && !canceled) {
-          _this7._setSwiping(false);
-          change && _this7.postChangeHook(e);
+        if (scroll === _this6._scroll && !canceled) {
+          _this6._setSwiping(false);
+          change && _this6.postChangeHook(e);
         } else if (options.reject) {
-          _this7._setSwiping(false);
-          return _Promise.reject('Canceled');
+          _this6._setSwiping(false);
+          return Promise.reject('Canceled');
         }
       });
     }
   }, {
     key: '_scrollTo',
     value: function _scrollTo(scroll) {
-      var _this8 = this;
+      var _this7 = this;
 
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -415,8 +400,8 @@ var Swiper = function () {
       var opt = options.animation === 'none' ? {} : options.animationOptions;
       this.scrollHook && this.itemNumSize > 0 && this.scrollHook((scroll / this.itemNumSize).toFixed(2), options.animationOptions || {});
 
-      return new _Promise(function (resolve) {
-        return animit(_this8.target).queue({ transform: _this8._getTransform(scroll) }, opt).play(resolve);
+      return new Promise(function (resolve) {
+        return (0, _animit2.default)(_this7.target).queue({ transform: _this7._getTransform(scroll) }, opt).play(resolve);
       });
     }
   }, {
@@ -471,7 +456,7 @@ var Swiper = function () {
       this._reset();
       this._updateLayout();
 
-      if (util.isInteger(this._scroll)) {
+      if (_util2.default.isInteger(this._scroll)) {
         var scroll = this._normalizeScroll(this._scroll);
         scroll !== this._scroll ? this._killOverScroll(scroll) : this._changeTo(scroll);
       } else {
@@ -541,4 +526,4 @@ var Swiper = function () {
   return Swiper;
 }();
 
-export default Swiper;
+exports.default = Swiper;

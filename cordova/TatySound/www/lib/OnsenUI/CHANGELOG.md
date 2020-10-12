@@ -2,6 +2,119 @@
 CHANGELOG
 ====
 
+2.11.1
+---
+
+ ### Misc
+
+ * Remove preinstall script that was causing npm install to fail.
+
+2.11.0
+---
+
+ ### Bug Fixes
+
+ * ons-input: Add spellcheck to list of attributes passed to inner input. ([#2706](https://github.com/OnsenUI/OnsenUI/issues/2706)).
+ * ons.notification: Fix prompt callback not running when submitOnEnter is false. ([#2618](https://github.com/OnsenUI/OnsenUI/issues/2618)).
+ * ons-tab: Fall back to icon if active-icon not set when updating button content. ([#2720](https://github.com/OnsenUI/OnsenUI/pull/2720))
+ * ons-fab: Stop fab scrolling with viewport when wrapped in another element. ([#2778](https://github.com/OnsenUI/OnsenUI/issues/2778))
+ * ons.notification: Resolve toast when hide is called before timeout. ([#2755](https://github.com/OnsenUI/OnsenUI/issues/2755))
+ * ons-navigator: Fix navigator still running when non-existent page is pushed. ([#2740](https://github.com/OnsenUI/OnsenUI/issues/2740))
+ * core: Fix status-bar-fill not being automatically set on iPadOS. ([#2745](https://github.com/OnsenUI/OnsenUI/issues/2745))
+ * core: Fix isIPad returning false on iPadOS. ([#2621](https://github.com/OnsenUI/OnsenUI/issues/2621))
+ * ons-carousel: Fix wrong active index being set on resize for carousels with items narrower that the screen width. ([#2738](https://github.com/OnsenUI/OnsenUI/issues/2738))
+ * ons-navigator: Fix bug where entry page data contains leave page data in postpop. ([#2575](https://github.com/OnsenUI/OnsenUI/issues/2575))
+ * ons-navigator: Fix pushPage's callback being called by popPage. ([#2761](https://github.com/OnsenUI/OnsenUI/issues/2761))
+ * ons-carousel: Fix carousel not swiping when inside modal on iOS. ([#2572](https://github.com/OnsenUI/OnsenUI/issues/2572))
+
+ ### BREAKING CHANGES
+
+ * UIWebView is no longer supported. FastClick is also removed.
+ * ons-navigator: If options are not set for popPage, it no longer defaults to the options set when the page was pushed.
+
+2.10.10
+---
+
+ ### Misc
+
+ * Make sure CSS imports go at the top of onsenui.css. ([#2674](https://github.com/OnsenUI/OnsenUI/issues/2674)).
+
+2.10.9
+---
+
+ ### Bug Fixes
+
+ * ons-tab: Show active-icon for initially active tab in Angular 2+. ([#2656](https://github.com/OnsenUI/OnsenUI/issues/2656)).
+
+ ### Misc
+
+ * Upgrade Font Awesome to v5.8.1
+ * Upgrade Ionicons to v4.5.5
+ * Upgrade Material Design icons to v2.2.0
+ * Stop fonts being included in onsenui-core.css
+
+2.10.8
+---
+
+ ### Misc
+
+ * Fix bug in gulpfile where `core` was signalling completion too early.
+ * Fix bug in gulpfile where distribution CSS files were output to the wrong directory.
+
+2.10.7
+---
+
+ ### Bug Fixes
+
+ * ons-icon: Compile when content is ready. ([#2547](https://github.com/OnsenUI/OnsenUI/issues/2547)).
+ * ons-icon: Fix bug where Font Awesome v5 styles (far, fal, fab) were being ignored.
+ * ons-navigator: Fix bringPageTop not working if a page is defined inside ons-navigator tags.
+ * ons-tab: Stop recreating tabs when page with tabbar is brought to top of navigator stack. ([#2604](https://github.com/OnsenUI/OnsenUI/issues/2604)).
+ * ons-fab: Fix toggled/hidden fab reappears when you leave and return to its page bug. ([#2558](https://github.com/OnsenUI/OnsenUI/issues/2558)).
+
+ ### Misc
+
+ * Upgrade to Gulp 4.
+
+2.10.6
+---
+
+ ### Misc
+
+ * Avoid event-stream@3.3.6 vulnerability (https://github.com/dominictarr/event-stream/issues/116).
+
+2.10.5
+---
+
+ ### Bug Fixes
+
+ * ons-list-item: Fix expandable list item not working correctly for lists inside expandable content. ([#2485](https://github.com/OnsenUI/OnsenUI/issues/2485)).
+ * ons.platform.isIPhoneX: Support iPhone XS, XS Max, and XR. ([#2540](https://github.com/OnsenUI/OnsenUI/issues/2540)).
+
+ ### Misc
+
+ * Updated FontAwesome to 5.2.0 ([#2502](https://github.com/OnsenUI/OnsenUI/issues/2502)).
+
+2.10.4
+---
+
+ ### New Features
+
+ * ons.platform: Can choose to ignore selected platform when checking what platform is e.g. `ons.platform.isAndroid`. ([#2475](https://github.com/OnsenUI/OnsenUI/issues/2475)).
+ * ons-toolbar: Add methods to show and hide the toolbar ([#2478](https://github.com/OnsenUI/OnsenUI/issues/2478))
+
+ ### Bug Fixes
+
+ * css: Fix button style for Firefox. ([#2469](https://github.com/OnsenUI/OnsenUI/issues/2469)).
+ * ons-toast: Fix app closing when toast is shown and back button is pressed ([#2388](https://github.com/OnsenUI/OnsenUI/issues/2388))
+
+2.10.3
+---
+
+ ### Misc
+
+ * Re-release of 2.10.2 due to npm package not containing minified Angular bindings ([#2468](https://github.com/OnsenUI/OnsenUI/issues/2468)). No functional changes.
+
 2.10.2
 ---
 
@@ -11,8 +124,8 @@ CHANGELOG
  * ons-toast: Fix padding of Material toast ([#2436](https://github.com/OnsenUI/OnsenUI/issues/2436))
  * ons-button: Remove dotted border on Firefox ([#2408](https://github.com/OnsenUI/OnsenUI/issues/2408))
  * css: Fix CSS import paths ([#2336](https://github.com/OnsenUI/OnsenUI/issues/2336), [#2453](https://github.com/OnsenUI/OnsenUI/issues/2453))
- * ons-input: Prevent zooming of inputs on iOS ([#2400](https://github.com/OnsenUI/OnsenUI/issues/2400)
- * ons-page: Fix `page-with-bottom-toolbar` not being set in some cases ([#2459](https://github.com/OnsenUI/OnsenUI/issues/2459)
+ * ons-input: Prevent zooming of inputs on iOS ([#2400](https://github.com/OnsenUI/OnsenUI/issues/2400))
+ * ons-page: Fix `page-with-bottom-toolbar` not being set in some cases ([#2459](https://github.com/OnsenUI/OnsenUI/issues/2459))
 
 2.10.1
 ---

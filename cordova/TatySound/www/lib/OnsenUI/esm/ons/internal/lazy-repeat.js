@@ -1,42 +1,56 @@
-import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-import _Object$keys from 'babel-runtime/core-js/object/keys';
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _typeof from 'babel-runtime/helpers/typeof';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.LazyRepeatProvider = exports.LazyRepeatDelegate = undefined;
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
 
-*/
+var _util = require('../util');
 
-import util from '../util';
-import platform from '../platform';
+var _util2 = _interopRequireDefault(_util);
 
-export var LazyRepeatDelegate = function () {
+var _platform = require('../platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var LazyRepeatDelegate = exports.LazyRepeatDelegate = function () {
   function LazyRepeatDelegate(userDelegate) {
     var templateElement = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
     _classCallCheck(this, LazyRepeatDelegate);
 
     if ((typeof userDelegate === 'undefined' ? 'undefined' : _typeof(userDelegate)) !== 'object' || userDelegate === null) {
-      util.throw('"delegate" parameter must be an object');
+      _util2.default.throw('"delegate" parameter must be an object');
     }
     this._userDelegate = userDelegate;
 
     if (!(templateElement instanceof Element) && templateElement !== null) {
-      util.throw('"templateElement" parameter must be an instance of Element or null');
+      _util2.default.throw('"templateElement" parameter must be an instance of Element or null');
     }
     this._templateElement = templateElement;
   }
@@ -75,7 +89,7 @@ export var LazyRepeatDelegate = function () {
       } else {
         var element = this._userDelegate.createItemContent(index, this._templateElement);
         if (!(element instanceof Element)) {
-          util.throw('"createItemContent" must return an instance of Element');
+          _util2.default.throw('"createItemContent" must return an instance of Element');
         }
 
         done({ element: element });
@@ -91,7 +105,7 @@ export var LazyRepeatDelegate = function () {
     value: function countItems() {
       var count = this._userDelegate.countItems();
       if (typeof count !== 'number') {
-        util.throw('"countItems" must return a number');
+        _util2.default.throw('"countItems" must return a number');
       }
       return count;
     }
@@ -121,7 +135,7 @@ export var LazyRepeatDelegate = function () {
         var height = this._userDelegate.calculateItemHeight(index);
 
         if (typeof height !== 'number') {
-          util.throw('"calculateItemHeight" must return a number');
+          _util2.default.throw('"calculateItemHeight" must return a number');
         }
 
         return height;
@@ -169,7 +183,9 @@ export var LazyRepeatDelegate = function () {
 /**
  * This class provide core functions for ons-lazy-repeat.
  */
-export var LazyRepeatProvider = function () {
+
+
+var LazyRepeatProvider = exports.LazyRepeatProvider = function () {
 
   /**
    * @param {Element} wrapperElement
@@ -179,7 +195,7 @@ export var LazyRepeatProvider = function () {
     _classCallCheck(this, LazyRepeatProvider);
 
     if (!(delegate instanceof LazyRepeatDelegate)) {
-      util.throw('"delegate" parameter must be an instance of LazyRepeatDelegate');
+      _util2.default.throw('"delegate" parameter must be an instance of LazyRepeatDelegate');
     }
 
     this._wrapperElement = wrapperElement;
@@ -193,7 +209,7 @@ export var LazyRepeatProvider = function () {
     this._pageContent = this._findPageContentElement(wrapperElement);
 
     if (!this._pageContent) {
-      util.throw('LazyRepeat must be descendant of a Page element');
+      _util2.default.throw('LazyRepeat must be descendant of a Page element');
     }
 
     this.lastScrollTop = this._pageContent.scrollTop;
@@ -212,15 +228,15 @@ export var LazyRepeatProvider = function () {
   _createClass(LazyRepeatProvider, [{
     key: '_findPageContentElement',
     value: function _findPageContentElement(wrapperElement) {
-      var pageContent = util.findParent(wrapperElement, '.page__content');
+      var pageContent = _util2.default.findParent(wrapperElement, '.page__content');
 
       if (pageContent) {
         return pageContent;
       }
 
-      var page = util.findParent(wrapperElement, 'ons-page');
+      var page = _util2.default.findParent(wrapperElement, 'ons-page');
       if (page) {
-        var content = util.findChild(page, '.content');
+        var content = _util2.default.findChild(page, '.content');
         if (content) {
           return content;
         }
@@ -235,7 +251,7 @@ export var LazyRepeatProvider = function () {
 
       this._delegate.loadItemElement(0, function (item) {
         if (!_this._unknownItemHeight) {
-          util.throw('Invalid state');
+          _util2.default.throw('Invalid state');
         }
 
         _this._wrapperElement.appendChild(item.element);
@@ -259,10 +275,10 @@ export var LazyRepeatProvider = function () {
         _this._wrapperElement.style.visibility = 'hidden';
         item.element.style.visibility = 'hidden';
 
-        _setImmediate(function () {
+        setImmediate(function () {
           _this._itemHeight = item.element.offsetHeight;
           if (_this._itemHeight == 0) {
-            util.throw('Invalid state: "itemHeight" must be greater than zero');
+            _util2.default.throw('Invalid state: "itemHeight" must be greater than zero');
           }
           _this._wrapperElement.style.visibility = '';
           done();
@@ -297,7 +313,7 @@ export var LazyRepeatProvider = function () {
     value: function _calculateRenderedHeight() {
       var _this2 = this;
 
-      return _Object$keys(this._renderedItems).reduce(function (a, b) {
+      return Object.keys(this._renderedItems).reduce(function (a, b) {
         return a + _this2._getItemHeight(+b);
       }, 0);
     }
@@ -309,12 +325,12 @@ export var LazyRepeatProvider = function () {
   }, {
     key: '_lastItemRendered',
     value: function _lastItemRendered() {
-      return Math.max.apply(Math, _toConsumableArray(_Object$keys(this._renderedItems)));
+      return Math.max.apply(Math, _toConsumableArray(Object.keys(this._renderedItems)));
     }
   }, {
     key: '_firstItemRendered',
     value: function _firstItemRendered() {
-      return Math.min.apply(Math, _toConsumableArray(_Object$keys(this._renderedItems)));
+      return Math.min.apply(Math, _toConsumableArray(Object.keys(this._renderedItems)));
     }
   }, {
     key: 'refresh',
@@ -322,7 +338,7 @@ export var LazyRepeatProvider = function () {
       var forceRender = { forceScrollDown: true };
       var firstItemIndex = this._firstItemRendered();
 
-      if (util.isInteger(firstItemIndex)) {
+      if (_util2.default.isInteger(firstItemIndex)) {
         this._wrapperElement.style.height = this._topPositions[firstItemIndex] + this._calculateRenderedHeight() + 'px';
         this.padding = this._topPositions[firstItemIndex];
         forceRender.forceFirstIndex = firstItemIndex;
@@ -381,14 +397,14 @@ export var LazyRepeatProvider = function () {
           this._renderElement(j, isScrollUp);
         }
       } else {
-        var lastIndex = forceLastIndex || Math.max.apply(Math, [i - 1].concat(_toConsumableArray(_Object$keys(this._renderedItems)))); // Recalculate for 0 or undefined
+        var lastIndex = forceLastIndex || Math.max.apply(Math, [i - 1].concat(_toConsumableArray(Object.keys(this._renderedItems)))); // Recalculate for 0 or undefined
         for (var _j = start; _j <= lastIndex; _j++) {
           keep[_j] = true;
           this._renderElement(_j, isScrollUp);
         }
       }
 
-      _Object$keys(this._renderedItems).forEach(function (key) {
+      Object.keys(this._renderedItems).forEach(function (key) {
         return keep[key] || _this3._removeElement(key, isScrollUp);
       });
     }
@@ -453,7 +469,7 @@ export var LazyRepeatProvider = function () {
     value: function _removeAllElements() {
       var _this5 = this;
 
-      _Object$keys(this._renderedItems).forEach(function (key) {
+      Object.keys(this._renderedItems).forEach(function (key) {
         return _this5._removeElement(key);
       });
     }
@@ -521,16 +537,16 @@ export var LazyRepeatProvider = function () {
   }, {
     key: '_addEventListeners',
     value: function _addEventListeners() {
-      util.bindListeners(this, ['_onChange', '_doubleFireOnTouchend']);
+      _util2.default.bindListeners(this, ['_onChange', '_doubleFireOnTouchend']);
 
-      if (platform.isIOS()) {
+      if (_platform2.default.isIOS()) {
         this._boundOnChange = this._debounce(this._boundOnChange, 30);
       }
 
       this._pageContent.addEventListener('scroll', this._boundOnChange, true);
 
-      if (platform.isIOS()) {
-        util.addEventListener(this._pageContent, 'touchmove', this._boundOnChange, { capture: true, passive: true });
+      if (_platform2.default.isIOS()) {
+        _util2.default.addEventListener(this._pageContent, 'touchmove', this._boundOnChange, { capture: true, passive: true });
         this._pageContent.addEventListener('touchend', this._boundDoubleFireOnTouchend, true);
       }
 
@@ -541,8 +557,8 @@ export var LazyRepeatProvider = function () {
     value: function _removeEventListeners() {
       this._pageContent.removeEventListener('scroll', this._boundOnChange, true);
 
-      if (platform.isIOS()) {
-        util.removeEventListener(this._pageContent, 'touchmove', this._boundOnChange, { capture: true, passive: true });
+      if (_platform2.default.isIOS()) {
+        _util2.default.removeEventListener(this._pageContent, 'touchmove', this._boundOnChange, { capture: true, passive: true });
         this._pageContent.removeEventListener('touchend', this._boundDoubleFireOnTouchend, true);
       }
 

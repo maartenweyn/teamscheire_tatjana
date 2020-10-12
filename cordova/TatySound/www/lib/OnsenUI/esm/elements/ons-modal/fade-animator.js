@@ -1,9 +1,26 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
+'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _animit = require('../../ons/animit');
+
+var _animit2 = _interopRequireDefault(_animit);
+
+var _animator = require('./animator');
+
+var _animator2 = _interopRequireDefault(_animator);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 
@@ -21,13 +38,9 @@ limitations under the License.
 
 */
 
-import animit from '../../ons/animit';
-import ModalAnimator from './animator';
-
 /**
  * iOS style animator for dialog.
  */
-
 var FadeModalAnimator = function (_ModalAnimator) {
   _inherits(FadeModalAnimator, _ModalAnimator);
 
@@ -42,7 +55,7 @@ var FadeModalAnimator = function (_ModalAnimator) {
 
     _classCallCheck(this, FadeModalAnimator);
 
-    return _possibleConstructorReturn(this, (FadeModalAnimator.__proto__ || _Object$getPrototypeOf(FadeModalAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    return _possibleConstructorReturn(this, (FadeModalAnimator.__proto__ || Object.getPrototypeOf(FadeModalAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
   }
 
   /**
@@ -56,7 +69,7 @@ var FadeModalAnimator = function (_ModalAnimator) {
     value: function show(modal, callback) {
       callback = callback ? callback : function () {};
 
-      animit(modal, this.def).default({ opacity: 0 }, { opacity: 1 }).queue(function (done) {
+      (0, _animit2.default)(modal, this.def).default({ opacity: 0 }, { opacity: 1 }).queue(function (done) {
         callback();
         done();
       }).play();
@@ -72,7 +85,7 @@ var FadeModalAnimator = function (_ModalAnimator) {
     value: function hide(modal, callback) {
       callback = callback ? callback : function () {};
 
-      animit(modal, this.def).default({ opacity: 1 }, { opacity: 0 }).queue(function (done) {
+      (0, _animit2.default)(modal, this.def).default({ opacity: 1 }, { opacity: 0 }).queue(function (done) {
         callback();
         done();
       }).play();
@@ -80,6 +93,6 @@ var FadeModalAnimator = function (_ModalAnimator) {
   }]);
 
   return FadeModalAnimator;
-}(ModalAnimator);
+}(_animator2.default);
 
-export default FadeModalAnimator;
+exports.default = FadeModalAnimator;

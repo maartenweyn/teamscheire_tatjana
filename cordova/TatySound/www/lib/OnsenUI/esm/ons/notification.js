@@ -1,27 +1,39 @@
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _Object$keys from 'babel-runtime/core-js/object/keys';
-import _Promise from 'babel-runtime/core-js/promise';
-import _extends from 'babel-runtime/helpers/extends';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /*
+                                                                                                                                                                                                                                                                  Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                  Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                  you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                  You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                     http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                  Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                  distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                  See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                  limitations under the License.
+                                                                                                                                                                                                                                                                  
+                                                                                                                                                                                                                                                                  */
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _util = require('./util');
 
-*/
+var _util2 = _interopRequireDefault(_util);
 
-import util from './util';
-import contentReady from './content-ready';
-import ToastQueue from './internal/toast-queue';
+var _contentReady = require('./content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+var _toastQueue = require('./internal/toast-queue');
+
+var _toastQueue2 = _interopRequireDefault(_toastQueue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _setAttributes = function _setAttributes(element, options) {
   ['id', 'class', 'animation'].forEach(function (a) {
@@ -29,7 +41,7 @@ var _setAttributes = function _setAttributes(element, options) {
   });
 
   if (options.modifier) {
-    util.addModifier(element, options.modifier);
+    _util2.default.addModifier(element, options.modifier);
   }
 };
 
@@ -40,7 +52,7 @@ var _normalizeArguments = function _normalizeArguments(message) {
   options = _extends({}, options);
   typeof message === 'string' ? options.message = message : options = message;
   if (!options || !options.message && !options.messageHTML) {
-    util.throw('Notifications must contain a message');
+    _util2.default.throw('Notifications must contain a message');
   }
 
   if (options.hasOwnProperty('buttonLabels') || options.hasOwnProperty('buttonLabel')) {
@@ -50,7 +62,7 @@ var _normalizeArguments = function _normalizeArguments(message) {
     }
   }
 
-  return util.extend({
+  return _util2.default.extend({
     compile: function compile(param) {
       return param;
     },
@@ -105,9 +117,9 @@ notification._createAlertDialog = function () {
     params[_key] = arguments[_key];
   }
 
-  return new _Promise(function (resolve) {
+  return new Promise(function (resolve) {
     var options = _normalizeArguments.apply(undefined, params);
-    util.checkMissingImport('AlertDialog', 'AlertDialogButton');
+    _util2.default.checkMissingImport('AlertDialog', 'AlertDialogButton');
 
     // Prompt input string
     var inputString = '';
@@ -128,7 +140,7 @@ notification._createAlertDialog = function () {
         el.dialog.removeEventListener('dialog-cancel', el.dialog.onDialogCancel);
       }
 
-      _Object$keys(el).forEach(function (key) {
+      Object.keys(el).forEach(function (key) {
         return delete el[key];
       });
       el = null;
@@ -140,31 +152,34 @@ notification._createAlertDialog = function () {
 
     el.dialog = document.createElement('ons-alert-dialog');
     el.dialog.innerHTML = '\n    <div class="alert-dialog-mask"\n      style="\n        ' + (options.maskColor ? 'background-color: ' + options.maskColor : '') + '\n      "></div>\n    <div class="alert-dialog">\n      <div class="alert-dialog-container">\n        <div class="alert-dialog-title">\n          ' + (options.title || '') + '\n        </div>\n        <div class="alert-dialog-content">\n          ' + (options.message || options.messageHTML) + '\n          ' + inputString + '\n        </div>\n        <div class="\n          alert-dialog-footer\n          ' + (options.buttonLabels.length <= 2 ? ' alert-dialog-footer--rowfooter' : '') + '\n        ">\n          ' + buttons + '\n        </div>\n      </div>\n    </div>\n  ';
-    contentReady(el.dialog);
+    (0, _contentReady2.default)(el.dialog);
 
     // Set attributes
     _setAttributes(el.dialog, options);
 
     // Prompt events
-    if (options.isPrompt && options.submitOnEnter) {
+    if (options.isPrompt) {
       el.input = el.dialog.querySelector('.text-input');
-      el.input.onkeypress = function (event) {
-        if (event.keyCode === 13) {
-          el.dialog.hide().then(function () {
-            if (el) {
-              var resolveValue = el.input.value;
-              _destroyDialog();
-              options.callback(resolveValue);
-              resolve(resolveValue);
-            }
-          });
-        }
-      };
+
+      if (options.submitOnEnter) {
+        el.input.onkeypress = function (event) {
+          if (event.keyCode === 13) {
+            el.dialog.hide().then(function () {
+              if (el) {
+                var resolveValue = el.input.value;
+                _destroyDialog();
+                options.callback(resolveValue);
+                resolve(resolveValue);
+              }
+            });
+          }
+        };
+      }
     }
 
     // Button events
     el.footer = el.dialog.querySelector('.alert-dialog-footer');
-    util.arrayFrom(el.dialog.querySelectorAll('.alert-dialog-button')).forEach(function (buttonElement, index) {
+    _util2.default.arrayFrom(el.dialog.querySelectorAll('.alert-dialog-button')).forEach(function (buttonElement, index) {
       buttonElement.onclick = function () {
         el.dialog.hide().then(function () {
           if (el) {
@@ -187,7 +202,7 @@ notification._createAlertDialog = function () {
     if (options.cancelable) {
       el.dialog.cancelable = true;
       el.dialog.onDialogCancel = function () {
-        _setImmediate(function () {
+        setImmediate(function () {
           el.dialog.remove();
           _destroyDialog();
         });
@@ -201,7 +216,7 @@ notification._createAlertDialog = function () {
     // Show dialog
     document.body.appendChild(el.dialog);
     options.compile(el.dialog);
-    _setImmediate(function () {
+    setImmediate(function () {
       el.dialog.show().then(function () {
         if (el.input && options.isPrompt && options.autofocus) {
           var strLength = el.input.value.length;
@@ -447,21 +462,23 @@ notification.prompt = function (message, options) {
  *   [ja][/ja]
  */
 notification.toast = function (message, options) {
-  var promise = new _Promise(function (resolve) {
-    util.checkMissingImport('Toast'); // Throws error, must be inside promise
+  var promise = new Promise(function (resolve) {
+    _util2.default.checkMissingImport('Toast'); // Throws error, must be inside promise
 
     options = _normalizeArguments(message, options, {
       timeout: 0,
       force: false
     });
 
-    var toast = util.createElement('\n      <ons-toast>\n        ' + options.message + '\n        ' + (options.buttonLabels ? '<button>' + options.buttonLabels[0] + '</button>' : '') + '\n      </ons-toast>\n    ');
+    var toast = _util2.default.createElement('\n      <ons-toast>\n        ' + options.message + '\n        ' + (options.buttonLabels ? '<button>' + options.buttonLabels[0] + '</button>' : '') + '\n      </ons-toast>\n    ');
 
     _setAttributes(toast, options);
 
+    var originalHide = toast.hide.bind(toast);
+
     var finish = function finish(value) {
       if (toast) {
-        toast.hide().then(function () {
+        originalHide().then(function () {
           if (toast) {
             toast.remove();
             toast = null;
@@ -473,10 +490,15 @@ notification.toast = function (message, options) {
     };
 
     if (options.buttonLabels) {
-      util.findChild(toast._toast, 'button').onclick = function () {
+      _util2.default.findChild(toast._toast, 'button').onclick = function () {
         return finish(0);
       };
     }
+
+    // overwrite so that ons.notification.hide resolves when toast.hide is called
+    toast.hide = function () {
+      return finish(-1);
+    };
 
     document.body.appendChild(toast);
     options.compile(toast);
@@ -491,12 +513,12 @@ notification.toast = function (message, options) {
       });
     };
 
-    _setImmediate(function () {
-      return options.force ? show() : ToastQueue.add(show, promise);
+    setImmediate(function () {
+      return options.force ? show() : _toastQueue2.default.add(show, promise);
     });
   });
 
   return promise;
 };
 
-export default notification;
+exports.default = notification;

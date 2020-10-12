@@ -1,5 +1,9 @@
-import _setImmediate from "babel-runtime/core-js/set-immediate";
-import _WeakMap from "babel-runtime/core-js/weak-map";
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = contentReady;
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 
@@ -46,12 +50,12 @@ function consumeQueue(element) {
   });
 }
 
-export default function contentReady(element) {
+function contentReady(element) {
   var fn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
   if (readyMap === undefined) {
-    readyMap = new _WeakMap();
-    queueMap = new _WeakMap();
+    readyMap = new WeakMap();
+    queueMap = new WeakMap();
   }
 
   addCallback(element, fn);
@@ -68,7 +72,7 @@ export default function contentReady(element) {
   observer.observe(element, { childList: true, characterData: true });
 
   // failback for elements has empty content.
-  _setImmediate(function () {
+  setImmediate(function () {
     setContentReady(element);
     consumeQueue(element);
   });

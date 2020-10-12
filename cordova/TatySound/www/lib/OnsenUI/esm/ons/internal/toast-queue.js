@@ -1,6 +1,12 @@
-import _setImmediate from "babel-runtime/core-js/set-immediate";
-import _classCallCheck from "babel-runtime/helpers/classCallCheck";
-import _createClass from "babel-runtime/helpers/createClass";
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
 Copyright 2013-2015 ASIAL CORPORATION
@@ -34,7 +40,7 @@ var ToastQueue = function () {
       this.queue.push(fn);
 
       if (this.queue.length === 1) {
-        _setImmediate(this.queue[0]);
+        setImmediate(this.queue[0]);
       }
 
       promise.then(function () {
@@ -50,4 +56,4 @@ var ToastQueue = function () {
   return ToastQueue;
 }();
 
-export default new ToastQueue();
+exports.default = new ToastQueue();
