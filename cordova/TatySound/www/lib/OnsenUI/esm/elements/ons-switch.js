@@ -1,34 +1,65 @@
-import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _get from 'babel-runtime/helpers/get';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-*/
+var _elements = require('../ons/elements');
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import autoStyle from '../ons/autostyle';
-import ModifierUtil from '../ons/internal/modifier-util';
-import BaseCheckboxElement from './base/base-checkbox';
-import contentReady from '../ons/content-ready';
-import GestureDetector from '../ons/gesture-detector';
+var _elements2 = _interopRequireDefault(_elements);
+
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _autostyle = require('../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseCheckbox = require('./base/base-checkbox');
+
+var _baseCheckbox2 = _interopRequireDefault(_baseCheckbox);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+var _gestureDetector = require('../ons/gesture-detector');
+
+var _gestureDetector2 = _interopRequireDefault(_gestureDetector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var scheme = {
   '': 'switch--*',
@@ -70,9 +101,9 @@ var SwitchElement = function (_BaseCheckboxElement) {
   function SwitchElement() {
     _classCallCheck(this, SwitchElement);
 
-    var _this = _possibleConstructorReturn(this, (SwitchElement.__proto__ || _Object$getPrototypeOf(SwitchElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (SwitchElement.__proto__ || Object.getPrototypeOf(SwitchElement)).call(this));
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       _this.attributeChangedCallback('modifier', null, _this.getAttribute('modifier'));
     });
 
@@ -95,7 +126,7 @@ var SwitchElement = function (_BaseCheckboxElement) {
   }, {
     key: '_emitChangeEvent',
     value: function _emitChangeEvent() {
-      util.triggerElementEvent(this, 'change', {
+      _util2.default.triggerElementEvent(this, 'change', {
         value: this.checked,
         switch: this,
         isInteractive: true
@@ -123,7 +154,7 @@ var SwitchElement = function (_BaseCheckboxElement) {
     key: '_onHold',
     value: function _onHold(e) {
       if (!this.disabled) {
-        ModifierUtil.addModifier(this, 'active');
+        _modifierUtil2.default.addModifier(this, 'active');
         document.addEventListener('release', this._onRelease);
       }
     }
@@ -131,13 +162,13 @@ var SwitchElement = function (_BaseCheckboxElement) {
     key: '_onDragStart',
     value: function _onDragStart(e) {
       if (this.disabled || ['left', 'right'].indexOf(e.gesture.direction) === -1) {
-        ModifierUtil.removeModifier(this, 'active');
+        _modifierUtil2.default.removeModifier(this, 'active');
         return;
       }
 
       e.consumed = true;
 
-      ModifierUtil.addModifier(this, 'active');
+      _modifierUtil2.default.addModifier(this, 'active');
       this._startX = this._locations[this.checked ? 1 : 0]; // - e.gesture.deltaX;
 
       this.addEventListener('drag', this._onDrag);
@@ -166,7 +197,7 @@ var SwitchElement = function (_BaseCheckboxElement) {
       document.removeEventListener('release', this._onRelease);
 
       this._handle.style.left = '';
-      ModifierUtil.removeModifier(this, 'active');
+      _modifierUtil2.default.removeModifier(this, 'active');
     }
   }, {
     key: 'click',
@@ -184,7 +215,7 @@ var SwitchElement = function (_BaseCheckboxElement) {
     value: function connectedCallback() {
       var _this2 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this2._input.addEventListener('change', _this2._onChange);
       });
 
@@ -192,14 +223,14 @@ var SwitchElement = function (_BaseCheckboxElement) {
       this.addEventListener('hold', this._onHold);
       this.addEventListener('tap', this.click);
       this.addEventListener('click', this._onClick);
-      this._gestureDetector = new GestureDetector(this, { dragMinDistance: 1, holdTimeout: 251, passive: true });
+      this._gestureDetector = new _gestureDetector2.default(this, { dragMinDistance: 1, holdTimeout: 251, passive: true });
     }
   }, {
     key: 'disconnectedCallback',
     value: function disconnectedCallback() {
       var _this3 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this3._input.removeEventListener('change', _this3._onChange);
       });
 
@@ -219,7 +250,7 @@ var SwitchElement = function (_BaseCheckboxElement) {
         this._locations = locations[md ? 'material' : 'ios'];
       }
 
-      _get(SwitchElement.prototype.__proto__ || _Object$getPrototypeOf(SwitchElement.prototype), 'attributeChangedCallback', this).call(this, name, last, current);
+      _get(SwitchElement.prototype.__proto__ || Object.getPrototypeOf(SwitchElement.prototype), 'attributeChangedCallback', this).call(this, name, last, current);
     }
 
     /**
@@ -337,15 +368,15 @@ var SwitchElement = function (_BaseCheckboxElement) {
   }], [{
     key: 'observedAttributes',
     get: function get() {
-      return [].concat(_toConsumableArray(_get(SwitchElement.__proto__ || _Object$getPrototypeOf(SwitchElement), 'observedAttributes', this)), ['modifier']);
+      return [].concat(_toConsumableArray(_get(SwitchElement.__proto__ || Object.getPrototypeOf(SwitchElement), 'observedAttributes', this)), ['modifier']);
     }
   }]);
 
   return SwitchElement;
-}(BaseCheckboxElement);
+}(_baseCheckbox2.default);
 
-export default SwitchElement;
+exports.default = SwitchElement;
 
 
-onsElements.Switch = SwitchElement;
+_elements2.default.Switch = SwitchElement;
 customElements.define('ons-switch', SwitchElement);

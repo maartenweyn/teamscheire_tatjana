@@ -1,4 +1,38 @@
-import _Object$keys from 'babel-runtime/core-js/object/keys';
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Add vendor prefix.
+ *
+ * @param {String} name
+ * @return {String}
+ */
+var prefix = function () {
+  var styles = window.getComputedStyle(document.documentElement, '');
+  var prefix = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1];
+
+  return function (name) {
+    return '-' + prefix + '-' + _util2.default.hyphenate(name);
+  };
+}();
+
+/**
+ * Minimal utility library for manipulating element's style.
+ * Set element's style.
+ *
+ * @param {Element} element
+ * @param {Object} styles
+ * @return {Element}
+ */
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 
@@ -16,39 +50,14 @@ limitations under the License.
 
 */
 
-import util from '../ons/util';
-
-/**
- * Add vendor prefix.
- *
- * @param {String} name
- * @return {String}
- */
-var prefix = function () {
-  var styles = window.getComputedStyle(document.documentElement, '');
-  var prefix = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms)-/) || styles.OLink === '' && ['', 'o'])[1];
-
-  return function (name) {
-    return '-' + prefix + '-' + util.hyphenate(name);
-  };
-}();
-
-/**
- * Minimal utility library for manipulating element's style.
- * Set element's style.
- *
- * @param {Element} element
- * @param {Object} styles
- * @return {Element}
- */
 var styler = function styler(element, style) {
-  _Object$keys(style).forEach(function (key) {
+  Object.keys(style).forEach(function (key) {
     if (key in element.style) {
       element.style[key] = style[key];
     } else if (prefix(key) in element.style) {
       element.style[prefix(key)] = style[key];
     } else {
-      util.warn('No such style property: ' + key);
+      _util2.default.warn('No such style property: ' + key);
     }
   });
   return element;
@@ -62,7 +71,7 @@ styler.clear = function (element) {
   var styles = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 
   var clearlist = styles.split(/\s+/).reduce(function (r, s) {
-    return r.concat([util.hyphenate(s), prefix(s)]);
+    return r.concat([_util2.default.hyphenate(s), prefix(s)]);
   }, []),
       keys = [];
 
@@ -85,4 +94,4 @@ styler.clear = function (element) {
   element.getAttribute('style') === '' && element.removeAttribute('style');
 };
 
-export default styler;
+exports.default = styler;

@@ -42,8 +42,8 @@ var noiselevel = {
       }
 
       document.getElementById('settings-token').value = noiselevel.token;
-      noiselevel.posturl = "http://teamscheire.wesdec.be:8080/api/v1/" + noiselevel.token + "/telemetry";
-      debug.log("posturl " + noiselevel.posturl , "success");
+      // noiselevel.posturl = "http://teamscheire.wesdec.be:8080/api/v1/" + noiselevel.token + "/telemetry";
+      // debug.log("posturl " + noiselevel.posturl , "success");
 
       noiselevel.attenuation = storage.getItem('attenuation', 20);
       document.getElementById('settings-attenuation').value = noiselevel.attenuation;
@@ -370,11 +370,11 @@ var noiselevel = {
           headers: {}
           };
 
-        cordova.plugin.http.setDataSerializer('json');
-        console.log("sendRequest: "+ noiselevel.posturl + " with " + json.length + " items");
-        cordova.plugin.http.sendRequest(noiselevel.posturl, options, function(response) {
+        // cordova.plugin.http.setDataSerializer('json');
+        // console.log("sendRequest: "+ noiselevel.posturl + " with " + json.length + " items");
+        // cordova.plugin.http.sendRequest(noiselevel.posturl, options, function(response) {
             // prints 200
-            debug.log("POST RESPONSE: " + response.status + " on ts " + json[0].ts, "succes");
+            // debug.log("POST RESPONSE: " + response.status + " on ts " + json[0].ts, "succes");
             noiselevel.upload_status = true;
             var i;
             for (i=0; i<json.length; i++)
@@ -389,13 +389,13 @@ var noiselevel = {
               noiselevel.is_uploading = false;
               console.log("noiselevel.is_uploading = false");
             }
-          }, function(response) {
-            // prints 403
-            debug.log("POST RESPONSE: " + response.status  + " " + response.error, "error");
-            noiselevel.upload_status = false;
-            noiselevel.is_uploading = false;
-            console.log("noiselevel.is_uploading = false");
-        });
+        //   }, function(response) {
+        //     // prints 403
+        //     debug.log("POST RESPONSE: " + response.status  + " " + response.error, "error");
+        //     noiselevel.upload_status = false;
+        //     noiselevel.is_uploading = false;
+        //     console.log("noiselevel.is_uploading = false");
+        // });
 
         //noiselevel.showNoiseLevel();
         console.log("uploadNoiseData done, sheduling new");
@@ -505,8 +505,9 @@ var noiselevel = {
             'Last 8 Hours: ' + noiselevel.sound_data.hours8 + ' dBA <br />' +
             'Last Day: ' + noiselevel.sound_data.day + ' dBA <br />'+
             'Noise Dose 8 Hours: ' + noiselevel.sound_data.hours8dose + '%<br />'+
-            'Noise dose Last Day: ' + noiselevel.sound_data.daydose + '% <br />'+
-            'Upload status: ' + noiselevel.upload_status + '<br />');
+            'Noise dose Last Day: ' + noiselevel.sound_data.daydose + '% <br />');//+
+            //'Upload status: ' + noiselevel.upload_status + '<br />');
+
             //  +
             // 'Remaining as similar then last hour: <br>' +
             // ' - 8 Hours dose: ' + noiselevel.sound_data.remaining8hours + 'h <br />'+

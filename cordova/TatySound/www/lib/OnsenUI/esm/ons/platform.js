@@ -1,6 +1,15 @@
-import _typeof from 'babel-runtime/helpers/typeof';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 
@@ -121,17 +130,22 @@ var Platform = function () {
      * @method isIPhoneX
      * @signature isIPhoneX()
      * @description
-     *   [en]Returns whether the device is iPhone X.[/en]
-     *   [ja]iPhone X上で実行されているかどうかを返します。[/ja]
+     *   [en]Returns whether the device is iPhone X, XS, XS Max, or XR.[/en]
+     *   [ja]iPhone X や XS、XS Max、または XR 上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isIPhoneX',
     value: function isIPhoneX() {
-      // iPhone 8 and iPhone X have a same user agent. We cannot avoid using window.screen.
+      // iOS WebViews on the same iOS version have the same user agent.
+      // We cannot avoid using window.screen.
+      // We also cannot use cordova-plugin-device since its behavior is different between simulators and real devices.
       // This works well both in iOS Safari and (UI|WK)WebView of iPhone X.
-      return this.isIPhone() && (window.screen.width === 375 && window.screen.height === 812 || window.screen.width === 812 && window.screen.height === 375);
+      return this.isIPhone() && (window.screen.width === 375 && window.screen.height === 812 || // X, XS portrait
+      window.screen.width === 812 && window.screen.height === 375 || // X, XS landscape
+      window.screen.width === 414 && window.screen.height === 896 || // XS Max, XR portrait
+      window.screen.width === 896 && window.screen.height === 414); // XS Max, XR landscape
     }
 
     /**
@@ -146,7 +160,7 @@ var Platform = function () {
   }, {
     key: 'isIPad',
     value: function isIPad() {
-      return (/iPad/i.test(navigator.userAgent)
+      return (/iPad/i.test(navigator.userAgent) || this.isIPadOS()
       );
     }
 
@@ -166,17 +180,20 @@ var Platform = function () {
     //----------------
     /**
      * @method isIOS
-     * @signature isIOS()
+     * @signature isIOS([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the OS is iOS.[/en]
+     *   [en]Returns whether the OS is iOS. By default will return manually selected platform if it is set.[/en]
      *   [ja]iOS上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isIOS',
-    value: function isIOS() {
-      if (this._getSelectedPlatform()) {
+    value: function isIOS(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'ios';
       }
 
@@ -209,6 +226,24 @@ var Platform = function () {
         return parseInt(ver.split('.')[0]) >= 7;
       }
       return false;
+    }
+
+    /**
+     * @method isIPadOS
+     * @signature isIPadOS()
+     * @description
+     *   [en]Returns whether the OS is iPadOS.[/en]
+     *   [ja][/ja]
+     * @return {Boolean}
+     */
+
+  }, {
+    key: 'isIPadOS',
+    value: function isIPadOS() {
+      // The iPadOS User Agent string is the same as MacOS so as a
+      // workaround we test the max touch points, which is 5 for
+      // iPads and 0 for desktop browsers.
+      return !!(/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints && navigator.maxTouchPoints === 5);
     }
 
     //----------------
@@ -246,21 +281,6 @@ var Platform = function () {
     value: function isWKWebView() {
       var lte9 = /constructor/i.test(NativeHTMLElement);
       return !!(this.isIOS() && window.webkit && window.webkit.messageHandlers && window.indexedDB && !lte9);
-    }
-
-    /**
-     * @method isUIWebView
-     * @signature isUIWebView()
-     * @description
-     *   [en]Returns whether app is running in UIWebView.[/en]
-     *   [ja]UIWebViewで実行されているかどうかを返します。[/ja]
-     * @return {Boolean}
-     */
-
-  }, {
-    key: 'isUIWebView',
-    value: function isUIWebView() {
-      return !!(this.isIOS() && !this.isIOSSafari() && !this.isWKWebView());
     }
 
     //----------------
@@ -303,17 +323,20 @@ var Platform = function () {
     //----------------
     /**
      * @method isAndroid
-     * @signature isAndroid()
+     * @signature isAndroid([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the OS is Android.[/en]
+     *   [en]Returns whether the OS is Android. By default will return manually selected platform if it is set.[/en]
      *   [ja]Android上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isAndroid',
-    value: function isAndroid() {
-      if (this._getSelectedPlatform()) {
+    value: function isAndroid(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'android';
       }
 
@@ -330,13 +353,21 @@ var Platform = function () {
     // Other devices
     //----------------
     /**
+     * @method isWP
+     * @signature isWP([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
+     * @description
+     *   [en]Returns whether the OS is Windows phone. By default will return manually selected platform if it is set.[/en]
+     *   [ja][/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isWP',
-    value: function isWP() {
-      if (this._getSelectedPlatform()) {
+    value: function isWP(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'wp';
       }
 
@@ -351,17 +382,20 @@ var Platform = function () {
 
     /**
      * @method isBlackBerry
-     * @signature isBlackBerry()
+     * @signature isBlackBerry([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the device is BlackBerry.[/en]
+     *   [en]Returns whether the device is BlackBerry. By default will return manually selected platform if it is set.[/en]
      *   [ja]BlackBerry上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isBlackBerry',
-    value: function isBlackBerry() {
-      if (this._getSelectedPlatform()) {
+    value: function isBlackBerry(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'blackberry';
       }
 
@@ -379,17 +413,20 @@ var Platform = function () {
     //----------------
     /**
      * @method isOpera
-     * @signature isOpera()
+     * @signature isOpera([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the browser is Opera.[/en]
+     *   [en]Returns whether the browser is Opera. By default will return manually selected platform if it is set.[/en]
      *   [ja]Opera上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isOpera',
-    value: function isOpera() {
-      if (this._getSelectedPlatform()) {
+    value: function isOpera(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'opera';
       }
 
@@ -398,17 +435,20 @@ var Platform = function () {
 
     /**
      * @method isFirefox
-     * @signature isFirefox()
+     * @signature isFirefox([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the browser is Firefox.[/en]
+     *   [en]Returns whether the browser is Firefox. By default will return manually selected platform if it is set.[/en]
      *   [ja]Firefox上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isFirefox',
-    value: function isFirefox() {
-      if (this._getSelectedPlatform()) {
+    value: function isFirefox(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'firefox';
       }
 
@@ -417,17 +457,20 @@ var Platform = function () {
 
     /**
      * @method isSafari
-     * @signature isSafari()
+     * @signature isSafari([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the browser is Safari.[/en]
+     *   [en]Returns whether the browser is Safari. By default will return manually selected platform if it is set.[/en]
      *   [ja]Safari上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isSafari',
-    value: function isSafari() {
-      if (this._getSelectedPlatform()) {
+    value: function isSafari(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'safari';
       }
 
@@ -438,17 +481,20 @@ var Platform = function () {
 
     /**
      * @method isChrome
-     * @signature isChrome()
+     * @signature isChrome([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the browser is Chrome.[/en]
+     *   [en]Returns whether the browser is Chrome. By default will return manually selected platform if it is set.[/en]
      *   [ja]Chrome上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isChrome',
-    value: function isChrome() {
-      if (this._getSelectedPlatform()) {
+    value: function isChrome(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'chrome';
       }
 
@@ -457,17 +503,20 @@ var Platform = function () {
 
     /**
      * @method isIE
-     * @signature isIE()
+     * @signature isIE([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the browser is Internet Explorer.[/en]
+     *   [en]Returns whether the browser is Internet Explorer. By default will return manually selected platform if it is set.[/en]
      *   [ja]Internet Explorer上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isIE',
-    value: function isIE() {
-      if (this._getSelectedPlatform()) {
+    value: function isIE(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'ie';
       }
 
@@ -476,17 +525,20 @@ var Platform = function () {
 
     /**
      * @method isEdge
-     * @signature isEdge()
+     * @signature isEdge([forceActualPlatform])
+     * @param {Boolean} forceActualPlatform
+     *   [en]If true, selected platform is ignored and the actual platform is returned.[/en]
+     *   [ja][/ja]
      * @description
-     *   [en]Returns whether the browser is Edge.[/en]
+     *   [en]Returns whether the browser is Edge. By default will return manually selected platform if it is set.[/en]
      *   [ja]Edge上で実行されているかどうかを返します。[/ja]
      * @return {Boolean}
      */
 
   }, {
     key: 'isEdge',
-    value: function isEdge() {
-      if (this._getSelectedPlatform()) {
+    value: function isEdge(forceActualPlatform) {
+      if (!forceActualPlatform && this._getSelectedPlatform()) {
         return this._getSelectedPlatform() === 'edge';
       }
 
@@ -536,4 +588,4 @@ var Platform = function () {
   return Platform;
 }();
 
-export default new Platform();
+exports.default = new Platform();

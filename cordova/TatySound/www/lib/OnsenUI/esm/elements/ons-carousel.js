@@ -1,32 +1,55 @@
-import _Promise from 'babel-runtime/core-js/promise';
-import _extends from 'babel-runtime/helpers/extends';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-*/
+var _elements = require('../ons/elements');
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import BaseElement from './base/base-element';
-import contentReady from '../ons/content-ready';
-import Swiper from '../ons/internal/swiper';
+var _elements2 = _interopRequireDefault(_elements);
+
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+var _swiper = require('../ons/internal/swiper');
+
+var _swiper2 = _interopRequireDefault(_swiper);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 /**
  * @element ons-carousel
@@ -53,7 +76,6 @@ import Swiper from '../ons/internal/swiper';
  *   </ons-carousel-item>
  * </ons-carousel>
  */
-
 var CarouselElement = function (_BaseElement) {
   _inherits(CarouselElement, _BaseElement);
 
@@ -221,9 +243,9 @@ var CarouselElement = function (_BaseElement) {
   function CarouselElement() {
     _classCallCheck(this, CarouselElement);
 
-    var _this = _possibleConstructorReturn(this, (CarouselElement.__proto__ || _Object$getPrototypeOf(CarouselElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (CarouselElement.__proto__ || Object.getPrototypeOf(CarouselElement)).call(this));
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
     return _this;
@@ -251,7 +273,7 @@ var CarouselElement = function (_BaseElement) {
       var _this2 = this;
 
       if (!this._swiper) {
-        this._swiper = new Swiper({
+        this._swiper = new _swiper2.default({
           getElement: function getElement() {
             return _this2;
           },
@@ -283,7 +305,7 @@ var CarouselElement = function (_BaseElement) {
           }
         });
 
-        contentReady(this, function () {
+        (0, _contentReady2.default)(this, function () {
           return _this2._swiper.init({
             swipeable: _this2.hasAttribute('swipeable'),
             autoRefresh: _this2.hasAttribute('auto-refresh')
@@ -340,7 +362,7 @@ var CarouselElement = function (_BaseElement) {
           killOverScroll = _ref.killOverScroll;
 
       var waitForAction = false;
-      util.triggerElementEvent(this, 'overscroll', {
+      _util2.default.triggerElementEvent(this, 'overscroll', {
         carousel: this,
         activeIndex: this.getActiveIndex(),
         direction: direction,
@@ -358,12 +380,12 @@ var CarouselElement = function (_BaseElement) {
       var activeIndex = _ref2.activeIndex,
           lastActiveIndex = _ref2.lastActiveIndex;
 
-      util.triggerElementEvent(this, eventName, { carousel: this, activeIndex: activeIndex, lastActiveIndex: lastActiveIndex });
+      _util2.default.triggerElementEvent(this, eventName, { carousel: this, activeIndex: activeIndex, lastActiveIndex: lastActiveIndex });
     }
   }, {
     key: '_onRefresh',
     value: function _onRefresh() {
-      util.triggerElementEvent(this, 'refresh', { carousel: this });
+      _util2.default.triggerElementEvent(this, 'refresh', { carousel: this });
     }
 
     /**
@@ -401,12 +423,12 @@ var CarouselElement = function (_BaseElement) {
 
       options = _extends({
         animation: this.getAttribute('animation'),
-        animationOptions: this.hasAttribute('animation-options') ? util.animationOptionsParse(this.getAttribute('animation-options')) : { duration: .3, timing: 'cubic-bezier(.4, .7, .5, 1)' }
+        animationOptions: this.hasAttribute('animation-options') ? _util2.default.animationOptionsParse(this.getAttribute('animation-options')) : { duration: .3, timing: 'cubic-bezier(.4, .7, .5, 1)' }
       }, options);
 
       return this._swiper.setActiveIndex(index, options).then(function () {
         options.callback instanceof Function && options.callback(_this3);
-        return _Promise.resolve(_this3);
+        return Promise.resolve(_this3);
       });
     }
 
@@ -586,7 +608,7 @@ var CarouselElement = function (_BaseElement) {
       return this.hasAttribute('swipeable');
     },
     set: function set(value) {
-      return util.toggleAttribute(this, 'swipeable', value);
+      return _util2.default.toggleAttribute(this, 'swipeable', value);
     }
 
     /**
@@ -604,7 +626,7 @@ var CarouselElement = function (_BaseElement) {
     },
     set: function set(value) {
       if (value && !(value instanceof Function)) {
-        util.throw('"onSwipe" must be a function');
+        _util2.default.throw('"onSwipe" must be a function');
       }
       this._onSwipe = value;
     }
@@ -623,7 +645,7 @@ var CarouselElement = function (_BaseElement) {
       return this.hasAttribute('auto-scroll');
     },
     set: function set(value) {
-      return util.toggleAttribute(this, 'auto-scroll', value);
+      return _util2.default.toggleAttribute(this, 'auto-scroll', value);
     }
   }, {
     key: 'vertical',
@@ -668,7 +690,7 @@ var CarouselElement = function (_BaseElement) {
       return this.hasAttribute('disabled');
     },
     set: function set(value) {
-      return util.toggleAttribute(this, 'disabled', value);
+      return _util2.default.toggleAttribute(this, 'disabled', value);
     }
 
     /**
@@ -685,7 +707,7 @@ var CarouselElement = function (_BaseElement) {
       return this.hasAttribute('overscrollable');
     },
     set: function set(value) {
-      return util.toggleAttribute(this, 'overscrollable', value);
+      return _util2.default.toggleAttribute(this, 'overscrollable', value);
     }
 
     /**
@@ -702,7 +724,7 @@ var CarouselElement = function (_BaseElement) {
       return this.hasAttribute('centered');
     },
     set: function set(value) {
-      return util.toggleAttribute(this, 'centered', value);
+      return _util2.default.toggleAttribute(this, 'centered', value);
     }
   }], [{
     key: 'observedAttributes',
@@ -717,10 +739,10 @@ var CarouselElement = function (_BaseElement) {
   }]);
 
   return CarouselElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default CarouselElement;
+exports.default = CarouselElement;
 
 
-onsElements.Carousel = CarouselElement;
+_elements2.default.Carousel = CarouselElement;
 customElements.define('ons-carousel', CarouselElement);

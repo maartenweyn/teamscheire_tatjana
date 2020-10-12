@@ -1,37 +1,77 @@
-import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _get from 'babel-runtime/helpers/get';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-*/
+var _elements = require('../../ons/elements');
 
-import onsElements from '../../ons/elements';
-import util from '../../ons/util';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import AnimatorFactory from '../../ons/internal/animator-factory';
-import ModalAnimator from './animator';
-import FadeModalAnimator from './fade-animator';
-import LiftModalAnimator from './lift-animator';
-import platform from '../../ons/platform';
-import BaseDialogElement from '../base/base-dialog';
-import contentReady from '../../ons/content-ready';
+var _elements2 = _interopRequireDefault(_elements);
+
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _animatorFactory = require('../../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _animator = require('./animator');
+
+var _animator2 = _interopRequireDefault(_animator);
+
+var _fadeAnimator = require('./fade-animator');
+
+var _fadeAnimator2 = _interopRequireDefault(_fadeAnimator);
+
+var _liftAnimator = require('./lift-animator');
+
+var _liftAnimator2 = _interopRequireDefault(_liftAnimator);
+
+var _platform = require('../../ons/platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _baseDialog = require('../base/base-dialog');
+
+var _baseDialog2 = _interopRequireDefault(_baseDialog);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var scheme = {
   '': 'modal--*',
@@ -41,10 +81,10 @@ var scheme = {
 var defaultClassName = 'modal';
 
 var _animatorDict = {
-  'default': ModalAnimator,
-  'fade': FadeModalAnimator,
-  'lift': LiftModalAnimator,
-  'none': ModalAnimator
+  'default': _animator2.default,
+  'fade': _fadeAnimator2.default,
+  'lift': _liftAnimator2.default,
+  'none': _animator2.default
 };
 
 /**
@@ -148,12 +188,12 @@ var ModalElement = function (_BaseDialogElement) {
   function ModalElement() {
     _classCallCheck(this, ModalElement);
 
-    var _this = _possibleConstructorReturn(this, (ModalElement.__proto__ || _Object$getPrototypeOf(ModalElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (ModalElement.__proto__ || Object.getPrototypeOf(ModalElement)).call(this));
 
     _this._defaultDBB = function () {
       return undefined;
     };
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
     return _this;
@@ -162,9 +202,9 @@ var ModalElement = function (_BaseDialogElement) {
   _createClass(ModalElement, [{
     key: '_updateAnimatorFactory',
     value: function _updateAnimatorFactory() {
-      return new AnimatorFactory({
+      return new _animatorFactory2.default({
         animators: _animatorDict,
-        baseClass: ModalAnimator,
+        baseClass: _animator2.default,
         baseClassName: 'ModalAnimator',
         defaultAnimation: this.getAttribute('animation')
       });
@@ -185,7 +225,7 @@ var ModalElement = function (_BaseDialogElement) {
       this.style.zIndex = 10001;
       this.classList.add(defaultClassName);
 
-      if (!util.findChild(this, '.modal__content')) {
+      if (!_util2.default.findChild(this, '.modal__content')) {
         var content = document.createElement('div');
         content.classList.add('modal__content');
 
@@ -198,7 +238,7 @@ var ModalElement = function (_BaseDialogElement) {
         this.appendChild(content);
       }
 
-      ModifierUtil.initModifier(this, this._scheme);
+      _modifierUtil2.default.initModifier(this, this._scheme);
     }
   }, {
     key: '_toggleStyle',
@@ -208,12 +248,12 @@ var ModalElement = function (_BaseDialogElement) {
   }, {
     key: 'connectedCallback',
     value: function connectedCallback() {
-      _get(ModalElement.prototype.__proto__ || _Object$getPrototypeOf(ModalElement.prototype), 'connectedCallback', this).call(this);
+      _get(ModalElement.prototype.__proto__ || Object.getPrototypeOf(ModalElement.prototype), 'connectedCallback', this).call(this);
     }
   }, {
     key: 'disconnectedCallback',
     value: function disconnectedCallback() {
-      _get(ModalElement.prototype.__proto__ || _Object$getPrototypeOf(ModalElement.prototype), 'disconnectedCallback', this).call(this);
+      _get(ModalElement.prototype.__proto__ || Object.getPrototypeOf(ModalElement.prototype), 'disconnectedCallback', this).call(this);
     }
 
     /**
@@ -295,9 +335,9 @@ var ModalElement = function (_BaseDialogElement) {
     key: 'attributeChangedCallback',
     value: function attributeChangedCallback(name, last, current) {
       if (name === 'class') {
-        util.restoreClass(this, defaultClassName, scheme);
+        _util2.default.restoreClass(this, defaultClassName, scheme);
       } else {
-        _get(ModalElement.prototype.__proto__ || _Object$getPrototypeOf(ModalElement.prototype), 'attributeChangedCallback', this).call(this, name, last, current);
+        _get(ModalElement.prototype.__proto__ || Object.getPrototypeOf(ModalElement.prototype), 'attributeChangedCallback', this).call(this, name, last, current);
       }
     }
 
@@ -314,15 +354,15 @@ var ModalElement = function (_BaseDialogElement) {
   }], [{
     key: 'registerAnimator',
     value: function registerAnimator(name, Animator) {
-      if (!(Animator.prototype instanceof ModalAnimator)) {
-        util.throwAnimator('Modal');
+      if (!(Animator.prototype instanceof _animator2.default)) {
+        _util2.default.throwAnimator('Modal');
       }
       _animatorDict[name] = Animator;
     }
   }, {
     key: 'observedAttributes',
     get: function get() {
-      return [].concat(_toConsumableArray(_get(ModalElement.__proto__ || _Object$getPrototypeOf(ModalElement), 'observedAttributes', this)), ['class']);
+      return [].concat(_toConsumableArray(_get(ModalElement.__proto__ || Object.getPrototypeOf(ModalElement), 'observedAttributes', this)), ['class']);
     }
   }, {
     key: 'animators',
@@ -332,15 +372,15 @@ var ModalElement = function (_BaseDialogElement) {
   }, {
     key: 'ModalAnimator',
     get: function get() {
-      return ModalAnimator;
+      return _animator2.default;
     }
   }]);
 
   return ModalElement;
-}(BaseDialogElement);
+}(_baseDialog2.default);
 
-export default ModalElement;
+exports.default = ModalElement;
 
 
-onsElements.Modal = ModalElement;
+_elements2.default.Modal = ModalElement;
 customElements.define('ons-modal', ModalElement);

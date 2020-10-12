@@ -1,38 +1,55 @@
-import _Object$keys from 'babel-runtime/core-js/object/keys';
-import _WeakMap from 'babel-runtime/core-js/weak-map';
-import _extends from 'babel-runtime/helpers/extends';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _get from 'babel-runtime/helpers/get';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-*/
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-import NavigatorAnimator from './animator';
-import util from '../../ons/util';
-import animit from '../../ons/animit';
+var _animator = require('./animator');
+
+var _animator2 = _interopRequireDefault(_animator);
+
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _animit = require('../../ons/animit');
+
+var _animit2 = _interopRequireDefault(_animit);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 /**
  * Abstract swipe animator for iOS navigator transition.
  */
-
 var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
   _inherits(IOSSwipeNavigatorAnimator, _NavigatorAnimator);
 
@@ -56,10 +73,10 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
 
     _classCallCheck(this, IOSSwipeNavigatorAnimator);
 
-    var _this = _possibleConstructorReturn(this, (IOSSwipeNavigatorAnimator.__proto__ || _Object$getPrototypeOf(IOSSwipeNavigatorAnimator)).call(this, _extends({}, rest)));
+    var _this = _possibleConstructorReturn(this, (IOSSwipeNavigatorAnimator.__proto__ || Object.getPrototypeOf(IOSSwipeNavigatorAnimator)).call(this, _extends({}, rest)));
 
     if (_this.constructor === IOSSwipeNavigatorAnimator) {
-      util.throwAbstract();
+      _util2.default.throwAbstract();
     }
 
     _this.durationRestore = durationRestore;
@@ -69,7 +86,7 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
     _this.optSwipe = { timing: timingSwipe, duration: durationSwipe };
     _this.optRestore = { timing: timingSwipe, duration: durationRestore };
 
-    _this.swipeShadow = util.createElement('<div style="position: absolute; height: 100%; width: 12px; right: 100%; top: 0; bottom: 0; z-index: -1;' + 'background: linear-gradient(to right, transparent 0, rgba(0,0,0,.04) 40%, rgba(0,0,0,.12) 80%, rgba(0,0,0,.16) 100%);"></div>');
+    _this.swipeShadow = _util2.default.createElement('<div style="position: absolute; height: 100%; width: 12px; right: 100%; top: 0; bottom: 0; z-index: -1;' + 'background: linear-gradient(to right, transparent 0, rgba(0,0,0,.04) 40%, rgba(0,0,0,.12) 80%, rgba(0,0,0,.16) 100%);"></div>');
 
     _this.isDragStart = true;
     return _this;
@@ -78,17 +95,17 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
   _createClass(IOSSwipeNavigatorAnimator, [{
     key: '_decompose',
     value: function _decompose() {
-      util.throwMember();
+      _util2.default.throwMember();
     }
   }, {
     key: '_shouldAnimateToolbar',
     value: function _shouldAnimateToolbar() {
-      util.throwMember();
+      _util2.default.throwMember();
     }
   }, {
     key: '_calculateDelta',
     value: function _calculateDelta() {
-      util.throwMember();
+      _util2.default.throwMember();
     }
   }, {
     key: '_dragStartSetup',
@@ -96,15 +113,15 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
       this.isDragStart = false;
 
       // Avoid content clicks
-      this.unblock = _get(IOSSwipeNavigatorAnimator.prototype.__proto__ || _Object$getPrototypeOf(IOSSwipeNavigatorAnimator.prototype), 'block', this).call(this, leavePage);
+      this.unblock = _get(IOSSwipeNavigatorAnimator.prototype.__proto__ || Object.getPrototypeOf(IOSSwipeNavigatorAnimator.prototype), 'block', this).call(this, leavePage);
 
       // Mask
       enterPage.parentElement.insertBefore(this.backgroundMask, enterPage);
 
       // Decomposition
       this.target = {
-        enter: util.findToolbarPage(enterPage) || enterPage,
-        leave: util.findToolbarPage(leavePage) || leavePage
+        enter: _util2.default.findToolbarPage(enterPage) || enterPage,
+        leave: _util2.default.findToolbarPage(leavePage) || leavePage
       };
       this.decomp = {
         enter: this._decompose(this.target.enter),
@@ -146,48 +163,48 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
 
       if (this.shouldAnimateToolbar) {
 
-        animit.runAll(
+        _animit2.default.runAll(
 
         /* Enter page */
 
-        animit([this.decomp.enter.content, this.decomp.enter.bottomToolbar, this.decomp.enter.background]).queue({
+        (0, _animit2.default)([this.decomp.enter.content, this.decomp.enter.bottomToolbar, this.decomp.enter.background]).queue({
           transform: 'translate3d(' + swipeRatio * 25 + '%, 0, 0)',
           opacity: 1 + swipeRatio * 10 / 100 // 0.9 -> 1
-        }), animit(this.decomp.enter.toolbarCenter).queue({
+        }), (0, _animit2.default)(this.decomp.enter.toolbarCenter).queue({
           transform: 'translate3d(' + this.delta.title * swipeRatio + 'px, 0, 0)',
           opacity: 1 + swipeRatio // 0 -> 1
-        }), animit(this.decomp.enter.backButtonLabel).queue({
+        }), (0, _animit2.default)(this.decomp.enter.backButtonLabel).queue({
           opacity: 1 + swipeRatio * 10 / 100, // 0.9 -> 1
           transform: 'translate3d(' + this.delta.label * swipeRatio + 'px, 0, 0)'
-        }), animit(this.decomp.enter.other).queue({
+        }), (0, _animit2.default)(this.decomp.enter.other).queue({
           opacity: 1 + swipeRatio // 0 -> 1
         }),
 
         /* Leave page */
 
-        animit([this.decomp.leave.content, this.decomp.leave.bottomToolbar, this.decomp.leave.background, this.swipeShadow]).queue({
+        (0, _animit2.default)([this.decomp.leave.content, this.decomp.leave.bottomToolbar, this.decomp.leave.background, this.swipeShadow]).queue({
           transform: 'translate3d(' + distance + 'px, 0, 0)'
-        }), animit(this.decomp.leave.toolbar).queue({
+        }), (0, _animit2.default)(this.decomp.leave.toolbar).queue({
           opacity: -1 * swipeRatio // 1 -> 0
-        }), animit(this.decomp.leave.toolbarCenter).queue({
+        }), (0, _animit2.default)(this.decomp.leave.toolbarCenter).queue({
           transform: 'translate3d(' + (1 + swipeRatio) * 125 + '%, 0, 0)'
-        }), animit(this.decomp.leave.backButtonLabel).queue({
+        }), (0, _animit2.default)(this.decomp.leave.backButtonLabel).queue({
           opacity: -1 * swipeRatio, // 1 -> 0
           transform: 'translate3d(' + this.delta.title * (1 + swipeRatio) + 'px, 0, 0)'
         }),
 
         /* Other */
 
-        animit(this.swipeShadow).queue({
+        (0, _animit2.default)(this.swipeShadow).queue({
           opacity: -1 * swipeRatio // 1 -> 0
         }));
       } else {
-        animit.runAll(animit(leavePage).queue({
+        _animit2.default.runAll((0, _animit2.default)(leavePage).queue({
           transform: 'translate3d(' + distance + 'px, 0, 0)'
-        }), animit(enterPage).queue({
+        }), (0, _animit2.default)(enterPage).queue({
           transform: 'translate3d(' + swipeRatio * 25 + '%, 0, 0)',
           opacity: 1 + swipeRatio * 10 / 100 // 0.9 -> 1
-        }), animit(this.swipeShadow).queue({
+        }), (0, _animit2.default)(this.swipeShadow).queue({
           opacity: -1 * swipeRatio // 1 -> 0
         }));
       }
@@ -203,32 +220,32 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
 
       if (this.shouldAnimateToolbar) {
 
-        animit.runAll(
+        _animit2.default.runAll(
 
         /* Enter page */
 
-        animit([this.decomp.enter.content, this.decomp.enter.bottomToolbar, this.decomp.enter.background]).queue({
+        (0, _animit2.default)([this.decomp.enter.content, this.decomp.enter.bottomToolbar, this.decomp.enter.background]).queue({
           transform: 'translate3d(-25%, 0, 0)',
           opacity: 0.9
-        }, this.optRestore), animit(this.decomp.enter.toolbarCenter).queue({
+        }, this.optRestore), (0, _animit2.default)(this.decomp.enter.toolbarCenter).queue({
           transform: 'translate3d(-' + this.delta.title + 'px, 0, 0)',
           transition: 'opacity ' + this.durationRestore + 's linear, transform ' + this.durationRestore + 's ' + this.timingSwipe,
           opacity: 0
-        }), animit(this.decomp.enter.backButtonLabel).queue({
+        }), (0, _animit2.default)(this.decomp.enter.backButtonLabel).queue({
           transform: 'translate3d(-' + this.delta.label + 'px, 0, 0)'
-        }, this.optRestore), animit(this.decomp.enter.other).queue({
+        }, this.optRestore), (0, _animit2.default)(this.decomp.enter.other).queue({
           opacity: 0
         }, this.optRestore),
 
         /* Leave page */
 
-        animit([this.decomp.leave.content, this.decomp.leave.bottomToolbar, this.decomp.leave.background, this.swipeShadow]).queue({
+        (0, _animit2.default)([this.decomp.leave.content, this.decomp.leave.bottomToolbar, this.decomp.leave.background, this.swipeShadow]).queue({
           transform: 'translate3d(0, 0, 0)'
-        }, this.optRestore), animit(this.decomp.leave.toolbar).queue({
+        }, this.optRestore), (0, _animit2.default)(this.decomp.leave.toolbar).queue({
           opacity: 1
-        }, this.optRestore), animit(this.decomp.leave.toolbarCenter).queue({
+        }, this.optRestore), (0, _animit2.default)(this.decomp.leave.toolbarCenter).queue({
           transform: 'translate3d(0, 0, 0)'
-        }, this.optRestore), animit(this.decomp.leave.backButtonLabel).queue({
+        }, this.optRestore), (0, _animit2.default)(this.decomp.leave.backButtonLabel).queue({
           opacity: 1,
           transform: 'translate3d(0, 0, 0)',
           transition: 'opacity ' + this.durationRestore + 's linear, transform ' + this.durationRestore + 's ' + this.timingSwipe
@@ -236,7 +253,7 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
 
         /* Other */
 
-        animit(this.swipeShadow).queue({
+        (0, _animit2.default)(this.swipeShadow).queue({
           opacity: 0
         }, this.optRestore).queue(function (done) {
           _this2._reset(_this2.target.enter, _this2.target.leave);
@@ -245,10 +262,10 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
           done();
         }));
       } else {
-        animit.runAll(animit(enterPage).queue({
+        _animit2.default.runAll((0, _animit2.default)(enterPage).queue({
           transform: 'translate3D(-25%, 0, 0)',
           opacity: 0.9
-        }, this.optRestore), animit(leavePage).queue({
+        }, this.optRestore), (0, _animit2.default)(leavePage).queue({
           transform: 'translate3D(0, 0, 0)'
         }, this.optRestore).queue(function (done) {
           _this2._reset(enterPage, leavePage);
@@ -269,32 +286,32 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
 
       if (this.shouldAnimateToolbar) {
 
-        animit.runAll(
+        _animit2.default.runAll(
 
         /* Enter page */
 
-        animit([this.decomp.enter.content, this.decomp.enter.bottomToolbar, this.decomp.enter.background]).queue({
+        (0, _animit2.default)([this.decomp.enter.content, this.decomp.enter.bottomToolbar, this.decomp.enter.background]).queue({
           transform: 'translate3d(0, 0, 0)',
           opacity: 1
-        }, this.optSwipe), animit(this.decomp.enter.toolbarCenter).queue({
+        }, this.optSwipe), (0, _animit2.default)(this.decomp.enter.toolbarCenter).queue({
           transform: 'translate3d(0, 0, 0)',
           transition: 'opacity ' + this.durationSwipe + 's linear, transform ' + this.durationSwipe + 's ' + this.timingSwipe,
           opacity: 1
-        }), animit(this.decomp.enter.backButtonLabel).queue({
+        }), (0, _animit2.default)(this.decomp.enter.backButtonLabel).queue({
           transform: 'translate3d(0, 0, 0)'
-        }, this.optSwipe), animit(this.decomp.enter.other).queue({
+        }, this.optSwipe), (0, _animit2.default)(this.decomp.enter.other).queue({
           opacity: 1
         }, this.optSwipe),
 
         /* Leave page */
 
-        animit([this.decomp.leave.content, this.decomp.leave.bottomToolbar, this.decomp.leave.background]).queue({
+        (0, _animit2.default)([this.decomp.leave.content, this.decomp.leave.bottomToolbar, this.decomp.leave.background]).queue({
           transform: 'translate3d(100%, 0, 0)'
-        }, this.optSwipe), animit(this.decomp.leave.toolbar).queue({
+        }, this.optSwipe), (0, _animit2.default)(this.decomp.leave.toolbar).queue({
           opacity: 0
-        }, this.optSwipe), animit(this.decomp.leave.toolbarCenter).queue({
+        }, this.optSwipe), (0, _animit2.default)(this.decomp.leave.toolbarCenter).queue({
           transform: 'translate3d(125%, 0, 0)'
-        }, this.optSwipe), animit(this.decomp.leave.backButtonLabel).queue({
+        }, this.optSwipe), (0, _animit2.default)(this.decomp.leave.backButtonLabel).queue({
           opacity: 0,
           transform: 'translate3d(' + this.delta.title + 'px, 0, 0)',
           transition: 'opacity ' + this.durationSwipe + 's linear, transform ' + this.durationSwipe + 's ' + this.timingSwipe
@@ -302,7 +319,7 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
 
         /* Other */
 
-        animit(this.swipeShadow).queue({
+        (0, _animit2.default)(this.swipeShadow).queue({
           opacity: 0,
           transform: 'translate3d(' + this.maxWidth + 'px, 0, 0)'
         }, this.optSwipe).queue(function (done) {
@@ -311,10 +328,10 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
           done();
         }));
       } else {
-        animit.runAll(animit(enterPage).queue({
+        _animit2.default.runAll((0, _animit2.default)(enterPage).queue({
           transform: 'translate3D(0, 0, 0)',
           opacity: 1.0
-        }, this.optSwipe), animit(leavePage).queue({
+        }, this.optSwipe), (0, _animit2.default)(leavePage).queue({
           transform: 'translate3D(100%, 0, 0)'
         }, this.optSwipe).queue(function (done) {
           _this3._reset(enterPage, leavePage);
@@ -328,7 +345,7 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
     value: function _saveStyle() {
       var _this4 = this;
 
-      this._savedStyle = new _WeakMap();
+      this._savedStyle = new WeakMap();
       var save = function save(el) {
         return _this4._savedStyle.set(el, el.getAttribute('style'));
       };
@@ -339,8 +356,8 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
 
       args.forEach(save);
 
-      _Object$keys(this.decomp).forEach(function (p) {
-        _Object$keys(_this4.decomp[p]).forEach(function (k) {
+      Object.keys(this.decomp).forEach(function (p) {
+        Object.keys(_this4.decomp[p]).forEach(function (k) {
           (_this4.decomp[p][k] instanceof Array ? _this4.decomp[p][k] : [_this4.decomp[p][k]]).forEach(save);
         });
       });
@@ -361,8 +378,8 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
 
       args.forEach(restore);
 
-      _Object$keys(this.decomp).forEach(function (p) {
-        _Object$keys(_this5.decomp[p]).forEach(function (k) {
+      Object.keys(this.decomp).forEach(function (p) {
+        Object.keys(_this5.decomp[p]).forEach(function (k) {
           (_this5.decomp[p][k] instanceof Array ? _this5.decomp[p][k] : [_this5.decomp[p][k]]).forEach(restore);
         });
       });
@@ -383,6 +400,6 @@ var IOSSwipeNavigatorAnimator = function (_NavigatorAnimator) {
   }]);
 
   return IOSSwipeNavigatorAnimator;
-}(NavigatorAnimator);
+}(_animator2.default);
 
-export default IOSSwipeNavigatorAnimator;
+exports.default = IOSSwipeNavigatorAnimator;

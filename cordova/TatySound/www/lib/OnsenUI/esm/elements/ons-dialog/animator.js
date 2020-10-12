@@ -1,29 +1,44 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.SlideDialogAnimator = exports.IOSDialogAnimator = exports.AndroidDialogAnimator = exports.DialogAnimator = undefined;
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _animit = require('../../ons/animit');
 
-*/
+var _animit2 = _interopRequireDefault(_animit);
 
-import animit from '../../ons/animit';
-import BaseAnimator from '../../ons/base-animator';
+var _baseAnimator = require('../../ons/base-animator');
 
-export var DialogAnimator = function (_BaseAnimator) {
+var _baseAnimator2 = _interopRequireDefault(_baseAnimator);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+var DialogAnimator = exports.DialogAnimator = function (_BaseAnimator) {
   _inherits(DialogAnimator, _BaseAnimator);
 
   function DialogAnimator() {
@@ -37,7 +52,7 @@ export var DialogAnimator = function (_BaseAnimator) {
 
     _classCallCheck(this, DialogAnimator);
 
-    return _possibleConstructorReturn(this, (DialogAnimator.__proto__ || _Object$getPrototypeOf(DialogAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    return _possibleConstructorReturn(this, (DialogAnimator.__proto__ || Object.getPrototypeOf(DialogAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
   }
 
   /**
@@ -65,12 +80,14 @@ export var DialogAnimator = function (_BaseAnimator) {
   }]);
 
   return DialogAnimator;
-}(BaseAnimator);
+}(_baseAnimator2.default);
 
 /**
  * Android style animator for dialog.
  */
-export var AndroidDialogAnimator = function (_DialogAnimator) {
+
+
+var AndroidDialogAnimator = exports.AndroidDialogAnimator = function (_DialogAnimator) {
   _inherits(AndroidDialogAnimator, _DialogAnimator);
 
   function AndroidDialogAnimator() {
@@ -84,7 +101,7 @@ export var AndroidDialogAnimator = function (_DialogAnimator) {
 
     _classCallCheck(this, AndroidDialogAnimator);
 
-    return _possibleConstructorReturn(this, (AndroidDialogAnimator.__proto__ || _Object$getPrototypeOf(AndroidDialogAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    return _possibleConstructorReturn(this, (AndroidDialogAnimator.__proto__ || Object.getPrototypeOf(AndroidDialogAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
   }
 
   /**
@@ -98,7 +115,7 @@ export var AndroidDialogAnimator = function (_DialogAnimator) {
     value: function show(dialog, callback) {
       callback = callback ? callback : function () {};
 
-      animit.runAll(animit(dialog._mask, this.def).default({ opacity: 0 }, { opacity: 1 }), animit(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, -60%, 0)', opacity: 0 }, { transform: 'translate3d(-50%, -50%, 0)', opacity: 1 }).queue(function (done) {
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask, this.def).default({ opacity: 0 }, { opacity: 1 }), (0, _animit2.default)(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, -60%, 0)', opacity: 0 }, { transform: 'translate3d(-50%, -50%, 0)', opacity: 1 }).queue(function (done) {
         callback();
         done();
       }));
@@ -114,7 +131,7 @@ export var AndroidDialogAnimator = function (_DialogAnimator) {
     value: function hide(dialog, callback) {
       callback = callback ? callback : function () {};
 
-      animit.runAll(animit(dialog._mask, this.def).default({ opacity: 1 }, { opacity: 0 }), animit(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, -50%, 0)', opacity: 1 }, { transform: 'translate3d(-50%, -60%, 0)', opacity: 0 }).queue(function (done) {
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask, this.def).default({ opacity: 1 }, { opacity: 0 }), (0, _animit2.default)(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, -50%, 0)', opacity: 1 }, { transform: 'translate3d(-50%, -60%, 0)', opacity: 0 }).queue(function (done) {
         callback();
         done();
       }));
@@ -127,7 +144,9 @@ export var AndroidDialogAnimator = function (_DialogAnimator) {
 /**
  * iOS style animator for dialog.
  */
-export var IOSDialogAnimator = function (_DialogAnimator2) {
+
+
+var IOSDialogAnimator = exports.IOSDialogAnimator = function (_DialogAnimator2) {
   _inherits(IOSDialogAnimator, _DialogAnimator2);
 
   function IOSDialogAnimator() {
@@ -141,7 +160,7 @@ export var IOSDialogAnimator = function (_DialogAnimator2) {
 
     _classCallCheck(this, IOSDialogAnimator);
 
-    var _this3 = _possibleConstructorReturn(this, (IOSDialogAnimator.__proto__ || _Object$getPrototypeOf(IOSDialogAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    var _this3 = _possibleConstructorReturn(this, (IOSDialogAnimator.__proto__ || Object.getPrototypeOf(IOSDialogAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
 
     _this3.bodyHeight = document.body.clientHeight; // avoid Forced Synchronous Layout
     return _this3;
@@ -158,7 +177,7 @@ export var IOSDialogAnimator = function (_DialogAnimator2) {
     value: function show(dialog, callback) {
       callback = callback ? callback : function () {};
 
-      animit.runAll(animit(dialog._mask, this.def).default({ opacity: 0 }, { opacity: 1 }), animit(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, ' + (this.bodyHeight / 2.0 - 1) + 'px, 0)' }, { transform: 'translate3d(-50%, -50%, 0)' }).queue(function (done) {
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask, this.def).default({ opacity: 0 }, { opacity: 1 }), (0, _animit2.default)(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, ' + (this.bodyHeight / 2.0 - 1) + 'px, 0)' }, { transform: 'translate3d(-50%, -50%, 0)' }).queue(function (done) {
         callback();
         done();
       }));
@@ -174,7 +193,7 @@ export var IOSDialogAnimator = function (_DialogAnimator2) {
     value: function hide(dialog, callback) {
       callback = callback ? callback : function () {};
 
-      animit.runAll(animit(dialog._mask, this.def).default({ opacity: 1 }, { opacity: 0 }), animit(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, -50%, 0)' }, { transform: 'translate3d(-50%, ' + (this.bodyHeight / 2.0 - 1) + 'px, 0)' }).queue(function (done) {
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask, this.def).default({ opacity: 1 }, { opacity: 0 }), (0, _animit2.default)(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, -50%, 0)' }, { transform: 'translate3d(-50%, ' + (this.bodyHeight / 2.0 - 1) + 'px, 0)' }).queue(function (done) {
         callback();
         done();
       }));
@@ -187,7 +206,9 @@ export var IOSDialogAnimator = function (_DialogAnimator2) {
 /**
  * Slide animator for dialog.
  */
-export var SlideDialogAnimator = function (_DialogAnimator3) {
+
+
+var SlideDialogAnimator = exports.SlideDialogAnimator = function (_DialogAnimator3) {
   _inherits(SlideDialogAnimator, _DialogAnimator3);
 
   function SlideDialogAnimator() {
@@ -201,7 +222,7 @@ export var SlideDialogAnimator = function (_DialogAnimator3) {
 
     _classCallCheck(this, SlideDialogAnimator);
 
-    var _this4 = _possibleConstructorReturn(this, (SlideDialogAnimator.__proto__ || _Object$getPrototypeOf(SlideDialogAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    var _this4 = _possibleConstructorReturn(this, (SlideDialogAnimator.__proto__ || Object.getPrototypeOf(SlideDialogAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
 
     _this4.bodyHeight = document.body.clientHeight; // avoid Forced Synchronous Layout
     return _this4;
@@ -218,7 +239,7 @@ export var SlideDialogAnimator = function (_DialogAnimator3) {
     value: function show(dialog, callback) {
       callback = callback ? callback : function () {};
 
-      animit.runAll(animit(dialog._mask, this.def).default({ opacity: 0 }, { opacity: 1 }), animit(dialog._dialog, this.def).default(
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask, this.def).default({ opacity: 0 }, { opacity: 1 }), (0, _animit2.default)(dialog._dialog, this.def).default(
       // FIXME: This should avoid Forced Synchronous Layout. Otherwise, fade animation of mask will be broken.
       { transform: 'translate3d(-50%, ' + (-(this.bodyHeight / 2.0) + 1 - dialog._dialog.clientHeight) + 'px, 0)' }, { transform: 'translate3d(-50%, -50%, 0)' }).queue(function (done) {
         callback();
@@ -236,7 +257,7 @@ export var SlideDialogAnimator = function (_DialogAnimator3) {
     value: function hide(dialog, callback) {
       callback = callback ? callback : function () {};
 
-      animit.runAll(animit(dialog._mask, this.def).default({ opacity: 1 }, { opacity: 0 }), animit(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, -50%, 0)' },
+      _animit2.default.runAll((0, _animit2.default)(dialog._mask, this.def).default({ opacity: 1 }, { opacity: 0 }), (0, _animit2.default)(dialog._dialog, this.def).default({ transform: 'translate3d(-50%, -50%, 0)' },
       // FIXME: This should avoid Forced Synchronous Layout. Otherwise, fade animation of mask will be broken.
       { transform: 'translate3d(-50%, ' + (-(this.bodyHeight / 2.0) + 1 - dialog._dialog.clientHeight) + 'px, 0)' }).queue(function (done) {
         callback();

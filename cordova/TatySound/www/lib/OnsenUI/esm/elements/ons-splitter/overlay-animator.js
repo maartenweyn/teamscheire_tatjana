@@ -1,27 +1,41 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _animit = require('../../ons/animit');
 
-*/
+var _animit2 = _interopRequireDefault(_animit);
 
-import animit from '../../ons/animit';
-import SplitterAnimator from './animator.js';
+var _animator = require('./animator.js');
+
+var _animator2 = _interopRequireDefault(_animator);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var OverlaySplitterAnimator = function (_SplitterAnimator) {
   _inherits(OverlaySplitterAnimator, _SplitterAnimator);
@@ -29,7 +43,7 @@ var OverlaySplitterAnimator = function (_SplitterAnimator) {
   function OverlaySplitterAnimator() {
     _classCallCheck(this, OverlaySplitterAnimator);
 
-    return _possibleConstructorReturn(this, (OverlaySplitterAnimator.__proto__ || _Object$getPrototypeOf(OverlaySplitterAnimator)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (OverlaySplitterAnimator.__proto__ || Object.getPrototypeOf(OverlaySplitterAnimator)).apply(this, arguments));
   }
 
   _createClass(OverlaySplitterAnimator, [{
@@ -37,7 +51,7 @@ var OverlaySplitterAnimator = function (_SplitterAnimator) {
     value: function translate(distance) {
       this._mask.style.display = 'block'; // Avoid content clicks
 
-      animit(this._side).queue({
+      (0, _animit2.default)(this._side).queue({
         transform: 'translate3d(' + (this.minus + distance) + 'px, 0, 0)'
       }).play();
     }
@@ -49,12 +63,12 @@ var OverlaySplitterAnimator = function (_SplitterAnimator) {
   }, {
     key: 'open',
     value: function open(done) {
-      animit.runAll(animit(this._side).wait(this.delay).queue({
+      _animit2.default.runAll((0, _animit2.default)(this._side).wait(this.delay).queue({
         transform: 'translate3d(' + this.minus + '100%, 0, 0)'
       }, this.def).queue(function (callback) {
         callback();
         done && done();
-      }), animit(this._mask).wait(this.delay).queue({
+      }), (0, _animit2.default)(this._mask).wait(this.delay).queue({
         display: 'block'
       }).queue({
         opacity: '1'
@@ -72,12 +86,12 @@ var OverlaySplitterAnimator = function (_SplitterAnimator) {
     key: 'close',
     value: function close(done) {
 
-      animit.runAll(animit(this._side).wait(this.delay).queue({
+      _animit2.default.runAll((0, _animit2.default)(this._side).wait(this.delay).queue({
         transform: 'translate3d(0, 0, 0)'
       }, this.def).queue(function (callback) {
         done && done();
         callback();
-      }), animit(this._mask).wait(this.delay).queue({
+      }), (0, _animit2.default)(this._mask).wait(this.delay).queue({
         opacity: '0'
       }, {
         duration: this.duration,
@@ -89,6 +103,6 @@ var OverlaySplitterAnimator = function (_SplitterAnimator) {
   }]);
 
   return OverlaySplitterAnimator;
-}(SplitterAnimator);
+}(_animator2.default);
 
-export default OverlaySplitterAnimator;
+exports.default = OverlaySplitterAnimator;

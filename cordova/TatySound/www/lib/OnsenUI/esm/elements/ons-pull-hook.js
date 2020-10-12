@@ -1,40 +1,68 @@
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import styler from '../ons/styler';
-import platform from '../ons/platform';
-import BaseElement from './base/base-element';
-import GestureDetector from '../ons/gesture-detector';
-import animit from '../ons/animit';
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _styler = require('../ons/styler');
+
+var _styler2 = _interopRequireDefault(_styler);
+
+var _platform = require('../ons/platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _gestureDetector = require('../ons/gesture-detector');
+
+var _gestureDetector2 = _interopRequireDefault(_gestureDetector);
+
+var _animit = require('../ons/animit');
+
+var _animit2 = _interopRequireDefault(_animit);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var STATE_INITIAL = 'initial';
 var STATE_PREACTION = 'preaction';
 var STATE_ACTION = 'action';
 
 var throwType = function throwType(el, type) {
-  return util.throw('"' + el + '" must be ' + type);
+  return _util2.default.throw('"' + el + '" must be ' + type);
 };
 
 /**
@@ -115,9 +143,7 @@ var PullHookElement = function (_BaseElement) {
   function PullHookElement() {
     _classCallCheck(this, PullHookElement);
 
-    var _this = _possibleConstructorReturn(this, (PullHookElement.__proto__ || _Object$getPrototypeOf(PullHookElement)).call(this));
-
-    _this._shouldFixScroll = util.globals.isUIWebView;
+    var _this = _possibleConstructorReturn(this, (PullHookElement.__proto__ || Object.getPrototypeOf(PullHookElement)).call(this));
 
     _this._onDrag = _this._onDrag.bind(_this);
     _this._onDragStart = _this._onDragStart.bind(_this);
@@ -133,7 +159,7 @@ var PullHookElement = function (_BaseElement) {
     key: '_setStyle',
     value: function _setStyle() {
       var height = this.height + 'px';
-      styler(this, { height: height, lineHeight: height });
+      (0, _styler2.default)(this, { height: height, lineHeight: height });
       this.style.display === '' && this._show();
     }
   }, {
@@ -162,7 +188,7 @@ var PullHookElement = function (_BaseElement) {
       var tapY = event.gesture.center.clientY + this._pageElement.scrollTop;
       var maxY = window.innerHeight;
       // Only use drags that start near the pullHook to reduce flickerings
-      var draggableAreaRatio = this._shouldFixScroll ? .8 : 1;
+      var draggableAreaRatio = 1;
 
       this._ignoreDrag = event.consumed || tapY > maxY * draggableAreaRatio;
 
@@ -204,24 +230,13 @@ var PullHookElement = function (_BaseElement) {
       var tapY = event.gesture.center.clientY + this._pageElement.scrollTop;
       var maxY = window.innerHeight;
 
-      // Hack to make it work on Android 4.4 WebView and iOS UIWebView. Scrolls manually
-      // near the top of the page so there will be no inertial scroll when scrolling down.
-      // Allowing default scrolling will kill all 'touchmove' events.
-      if (this._shouldFixScroll) {
-        this._pageElement.scrollTop = this._startScroll - event.gesture.deltaY;
-        // Allow inertia when scrolling down below 50% of the view to reduce flickerings
-        if (event.gesture.interimDirection !== 'up' || tapY <= maxY * .5) {
-          event.gesture.preventDefault();
-        }
-      }
-
       var scroll = Math.max(event.gesture.deltaY - this._startScroll, 0);
       if (scroll !== this._currentTranslation) {
 
         var th = this.thresholdHeight;
         if (th > 0 && scroll >= th) {
           event.gesture.stopDetect();
-          _setImmediate(function () {
+          setImmediate(function () {
             return _this3._finish();
           });
         } else if (scroll >= this.height) {
@@ -293,7 +308,7 @@ var PullHookElement = function (_BaseElement) {
       this.setAttribute('state', state);
 
       if (!noEvent && lastState !== this.state) {
-        util.triggerElementEvent(this, 'changestate', {
+        _util2.default.triggerElementEvent(this, 'changestate', {
           pullHook: this,
           state: state,
           lastState: lastState
@@ -316,7 +331,7 @@ var PullHookElement = function (_BaseElement) {
       var _this5 = this;
 
       // Run asyncrhonously to avoid conflicts with Animit's style clean
-      _setImmediate(function () {
+      setImmediate(function () {
         _this5.style.display = '';
         if (_this5._pageElement) {
           _this5._pageElement.style.marginTop = '-' + _this5.height + 'px';
@@ -352,8 +367,8 @@ var PullHookElement = function (_BaseElement) {
       this._onPull && this._onPull((scroll / this.height).toFixed(2), opt);
       var scrollElement = this.hasAttribute('fixed-content') ? this : this._pageElement;
 
-      animit(scrollElement).queue({ transform: 'translate3d(0px, ' + scroll + 'px, 0px)' }, opt).play(function () {
-        scroll === 0 && styler.clear(scrollElement, 'transition transform');
+      (0, _animit2.default)(scrollElement).queue({ transform: 'translate3d(0px, ' + scroll + 'px, 0px)' }, opt).play(function () {
+        scroll === 0 && _styler2.default.clear(scrollElement, 'transition transform');
         options.callback instanceof Function && options.callback();
       });
     }
@@ -387,11 +402,11 @@ var PullHookElement = function (_BaseElement) {
       scrollToggle('remove');
 
       if (add) {
-        this._gestureDetector = new GestureDetector(this._pageElement, {
+        this._gestureDetector = new _gestureDetector2.default(this._pageElement, {
           dragMinDistance: 1,
           dragDistanceCorrection: false,
           dragLockToAxis: !this._dragLockDisabled,
-          passive: !this._shouldFixScroll
+          passive: true
         });
 
         gdToggle('on');
@@ -454,7 +469,7 @@ var PullHookElement = function (_BaseElement) {
   }, {
     key: 'height',
     set: function set(value) {
-      if (!util.isInteger(value)) {
+      if (!_util2.default.isInteger(value)) {
         throwType('height', 'integer');
       }
 
@@ -475,7 +490,7 @@ var PullHookElement = function (_BaseElement) {
   }, {
     key: 'thresholdHeight',
     set: function set(value) {
-      if (!util.isInteger(value)) {
+      if (!_util2.default.isInteger(value)) {
         throwType('thresholdHeight', 'integer');
       }
 
@@ -516,7 +531,7 @@ var PullHookElement = function (_BaseElement) {
   }, {
     key: 'disabled',
     set: function set(value) {
-      return util.toggleAttribute(this, 'disabled', value);
+      return _util2.default.toggleAttribute(this, 'disabled', value);
     },
     get: function get() {
       return this.hasAttribute('disabled');
@@ -534,10 +549,10 @@ var PullHookElement = function (_BaseElement) {
   }]);
 
   return PullHookElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default PullHookElement;
+exports.default = PullHookElement;
 
 
-onsElements.PullHook = PullHookElement;
+_elements2.default.PullHook = PullHookElement;
 customElements.define('ons-pull-hook', PullHookElement);

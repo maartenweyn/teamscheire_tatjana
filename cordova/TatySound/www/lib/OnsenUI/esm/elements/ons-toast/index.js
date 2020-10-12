@@ -1,38 +1,85 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../../ons/elements';
-import util from '../../ons/util';
-import autoStyle from '../../ons/autostyle';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import AnimatorFactory from '../../ons/internal/animator-factory';
-import ToastAnimator from './animator';
-import FadeToastAnimator from './fade-animator';
-import AscendToastAnimator from './ascend-animator';
-import LiftToastAnimator from './lift-animator';
-import FallToastAnimator from './fall-animator';
-import platform from '../../ons/platform';
-import BaseDialogElement from '../base/base-dialog';
-import contentReady from '../../ons/content-ready';
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _autostyle = require('../../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _animatorFactory = require('../../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _animator = require('./animator');
+
+var _animator2 = _interopRequireDefault(_animator);
+
+var _fadeAnimator = require('./fade-animator');
+
+var _fadeAnimator2 = _interopRequireDefault(_fadeAnimator);
+
+var _ascendAnimator = require('./ascend-animator');
+
+var _ascendAnimator2 = _interopRequireDefault(_ascendAnimator);
+
+var _liftAnimator = require('./lift-animator');
+
+var _liftAnimator2 = _interopRequireDefault(_liftAnimator);
+
+var _fallAnimator = require('./fall-animator');
+
+var _fallAnimator2 = _interopRequireDefault(_fallAnimator);
+
+var _platform = require('../../ons/platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _baseDialog = require('../base/base-dialog');
+
+var _baseDialog2 = _interopRequireDefault(_baseDialog);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var scheme = {
   '.toast': 'toast--*',
@@ -43,12 +90,12 @@ var scheme = {
 var defaultClassName = 'toast';
 
 var _animatorDict = {
-  'default': platform.isAndroid() ? AscendToastAnimator : LiftToastAnimator,
-  'fade': FadeToastAnimator,
-  'ascend': AscendToastAnimator,
-  'lift': LiftToastAnimator,
-  'fall': FallToastAnimator,
-  'none': ToastAnimator
+  'default': _platform2.default.isAndroid() ? _ascendAnimator2.default : _liftAnimator2.default,
+  'fade': _fadeAnimator2.default,
+  'ascend': _ascendAnimator2.default,
+  'lift': _liftAnimator2.default,
+  'fall': _fallAnimator2.default,
+  'none': _animator2.default
 };
 
 /**
@@ -90,12 +137,10 @@ var ToastElement = function (_BaseDialogElement) {
   function ToastElement() {
     _classCallCheck(this, ToastElement);
 
-    var _this = _possibleConstructorReturn(this, (ToastElement.__proto__ || _Object$getPrototypeOf(ToastElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (ToastElement.__proto__ || Object.getPrototypeOf(ToastElement)).call(this));
 
-    _this._defaultDBB = function (e) {
-      return e.callParentHandler();
-    };
-    contentReady(_this, function () {
+    _this._defaultDBB = null;
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
     return _this;
@@ -107,9 +152,9 @@ var ToastElement = function (_BaseDialogElement) {
       // Reset position style
       this._toast && (this._toast.style.top = this._toast.style.bottom = '');
 
-      return new AnimatorFactory({
+      return new _animatorFactory2.default({
         animators: _animatorDict,
-        baseClass: ToastAnimator,
+        baseClass: _animator2.default,
         baseClassName: 'ToastAnimator',
         defaultAnimation: this.getAttribute('animation')
       });
@@ -126,7 +171,7 @@ var ToastElement = function (_BaseDialogElement) {
   }, {
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
 
       this.style.display = 'none';
       this.style.zIndex = 10000; // Lower than dialogs
@@ -134,7 +179,7 @@ var ToastElement = function (_BaseDialogElement) {
       var messageClassName = 'toast__message';
       var buttonClassName = 'toast__button';
 
-      var toast = util.findChild(this, '.' + defaultClassName);
+      var toast = _util2.default.findChild(this, '.' + defaultClassName);
       if (!toast) {
         toast = document.createElement('div');
         toast.classList.add(defaultClassName);
@@ -143,10 +188,10 @@ var ToastElement = function (_BaseDialogElement) {
         }
       }
 
-      var button = util.findChild(toast, '.' + buttonClassName);
+      var button = _util2.default.findChild(toast, '.' + buttonClassName);
       if (!button) {
-        button = util.findChild(toast, function (e) {
-          return util.match(e, '.button') || util.match(e, 'button');
+        button = _util2.default.findChild(toast, function (e) {
+          return _util2.default.match(e, '.button') || _util2.default.match(e, 'button');
         });
         if (button) {
           button.classList.remove('button');
@@ -155,8 +200,8 @@ var ToastElement = function (_BaseDialogElement) {
         }
       }
 
-      if (!util.findChild(toast, '.' + messageClassName)) {
-        var message = util.findChild(toast, '.message');
+      if (!_util2.default.findChild(toast, '.' + messageClassName)) {
+        var message = _util2.default.findChild(toast, '.message');
         if (!message) {
           message = document.createElement('div');
           for (var i = toast.childNodes.length - 1; i >= 0; i--) {
@@ -174,7 +219,7 @@ var ToastElement = function (_BaseDialogElement) {
         this.appendChild(toast);
       }
 
-      ModifierUtil.initModifier(this, this._scheme);
+      _modifierUtil2.default.initModifier(this, this._scheme);
     }
 
     /**
@@ -256,13 +301,13 @@ var ToastElement = function (_BaseDialogElement) {
   }, {
     key: '_toast',
     get: function get() {
-      return util.findChild(this, '.' + defaultClassName);
+      return _util2.default.findChild(this, '.' + defaultClassName);
     }
   }], [{
     key: 'registerAnimator',
     value: function registerAnimator(name, Animator) {
-      if (!(Animator.prototype instanceof ToastAnimator)) {
-        util.throw('"Animator" param must inherit OnsToastElement.ToastAnimator');
+      if (!(Animator.prototype instanceof _animator2.default)) {
+        _util2.default.throw('"Animator" param must inherit OnsToastElement.ToastAnimator');
       }
       _animatorDict[name] = Animator;
     }
@@ -274,15 +319,15 @@ var ToastElement = function (_BaseDialogElement) {
   }, {
     key: 'ToastAnimator',
     get: function get() {
-      return ToastAnimator;
+      return _animator2.default;
     }
   }]);
 
   return ToastElement;
-}(BaseDialogElement);
+}(_baseDialog2.default);
 
-export default ToastElement;
+exports.default = ToastElement;
 
 
-onsElements.Toast = ToastElement;
+_elements2.default.Toast = ToastElement;
 customElements.define('ons-toast', ToastElement);

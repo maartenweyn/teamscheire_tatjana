@@ -1,36 +1,67 @@
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _Promise from 'babel-runtime/core-js/promise';
-import _extends from 'babel-runtime/helpers/extends';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-*/
+var _elements = require('../../ons/elements');
 
-import onsElements from '../../ons/elements';
-import util from '../../ons/util';
-import internal from '../../ons/internal';
-import autoStyle from '../../ons/autostyle';
-import Swiper from '../../ons/internal/swiper';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import BaseElement from '../base/base-element';
-import contentReady from '../../ons/content-ready';
+var _elements2 = _interopRequireDefault(_elements);
+
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _internal = require('../../ons/internal');
+
+var _internal2 = _interopRequireDefault(_internal);
+
+var _autostyle = require('../../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _swiper = require('../../ons/internal/swiper');
+
+var _swiper2 = _interopRequireDefault(_swiper);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseElement = require('../base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var scheme = {
   '.tabbar__content': 'tabbar--*__content',
@@ -48,7 +79,7 @@ var rewritables = {
   }
 };
 
-var nullPage = internal.nullElement;
+var nullPage = _internal2.default.nullElement;
 var lerp = function lerp(x0, x1, t) {
   return (1 - t) * x0 + t * x1;
 };
@@ -224,10 +255,10 @@ var TabbarElement = function (_BaseElement) {
   function TabbarElement() {
     _classCallCheck(this, TabbarElement);
 
-    var _this = _possibleConstructorReturn(this, (TabbarElement.__proto__ || _Object$getPrototypeOf(TabbarElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (TabbarElement.__proto__ || Object.getPrototypeOf(TabbarElement)).call(this));
 
-    _this._loadInactive = util.defer(); // Improves #2324
-    contentReady(_this, function () {
+    _this._loadInactive = _util2.default.defer(); // Improves #2324
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
     return _this;
@@ -239,7 +270,7 @@ var TabbarElement = function (_BaseElement) {
       var _this2 = this;
 
       if (!this._swiper) {
-        this._swiper = new Swiper({
+        this._swiper = new _swiper2.default({
           getElement: function getElement() {
             return _this2._contentElement;
           },
@@ -259,16 +290,16 @@ var TabbarElement = function (_BaseElement) {
           scrollHook: this._onScroll.bind(this)
         });
 
-        contentReady(this, function () {
-          _this2._tabbarBorder = util.findChild(_this2._tabbarElement, '.tabbar__border');
+        (0, _contentReady2.default)(this, function () {
+          _this2._tabbarBorder = _util2.default.findChild(_this2._tabbarElement, '.tabbar__border');
           _this2._swiper.init({ swipeable: _this2.hasAttribute('swipeable') });
         });
       }
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this2._updatePosition();
 
-        if (!util.findParent(_this2, 'ons-page', function (p) {
+        if (!_util2.default.findParent(_this2, 'ons-page', function (p) {
           return p === document.body;
         })) {
           _this2._show(); // This tabbar is the top component
@@ -294,7 +325,7 @@ var TabbarElement = function (_BaseElement) {
     key: '_onPostChange',
     value: function _onPostChange(event) {
       event = this._normalizeEvent(event);
-      util.triggerElementEvent(this, 'postchange', event);
+      _util2.default.triggerElementEvent(this, 'postchange', event);
       var page = event.tabItem.pageElement;
       page && page._show();
     }
@@ -306,7 +337,7 @@ var TabbarElement = function (_BaseElement) {
         return event.canceled = true;
       };
 
-      util.triggerElementEvent(this, 'prechange', event);
+      _util2.default.triggerElementEvent(this, 'prechange', event);
 
       if (!event.canceled) {
         var _event = event,
@@ -349,12 +380,12 @@ var TabbarElement = function (_BaseElement) {
   }, {
     key: '_onRefresh',
     value: function _onRefresh() {
-      this._autogrow = util.hasModifier(this, 'autogrow');
+      this._autogrow = _util2.default.hasModifier(this, 'autogrow');
       this._tabsRect = this.tabs.map(function (tab) {
         return tab.getBoundingClientRect();
       });
       if (this._tabbarBorder) {
-        this._tabbarBorder.style.display = this.hasAttribute('tab-border') || util.hasModifier(this, 'material') ? 'block' : 'none';
+        this._tabbarBorder.style.display = this.hasAttribute('tab-border') || _util2.default.hasModifier(this, 'material') ? 'block' : 'none';
         var index = this.getActiveTabIndex();
         if (this._tabsRect.length > 0 && index >= 0) {
           this._tabbarBorder.style.width = this._tabsRect[index].width + 'px';
@@ -371,11 +402,11 @@ var TabbarElement = function (_BaseElement) {
   }, {
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
 
-      var content = this._contentElement || util.create('.tabbar__content');
+      var content = this._contentElement || _util2.default.create('.tabbar__content');
       content.classList.add('ons-tabbar__content');
-      var tabbar = this._tabbarElement || util.create('.tabbar');
+      var tabbar = this._tabbarElement || _util2.default.create('.tabbar');
       tabbar.classList.add('ons-tabbar__footer');
 
       if (!tabbar.parentNode) {
@@ -385,11 +416,11 @@ var TabbarElement = function (_BaseElement) {
       }
 
       var activeIndex = Number(this.getAttribute('activeIndex')); // 0 by default
-      if (tabbar.children.length > activeIndex && !util.findChild(tabbar, '[active]')) {
+      if (tabbar.children.length > activeIndex && !_util2.default.findChild(tabbar, '[active]')) {
         tabbar.children[activeIndex].setAttribute('active', '');
       }
 
-      this._tabbarBorder = util.findChild(tabbar, '.tabbar__border') || util.create('.tabbar__border');
+      this._tabbarBorder = _util2.default.findChild(tabbar, '.tabbar__border') || _util2.default.create('.tabbar__border');
       tabbar.appendChild(this._tabbarBorder);
       tabbar.classList.add('ons-swiper-tabbar'); // Hides material border
 
@@ -401,7 +432,7 @@ var TabbarElement = function (_BaseElement) {
       this.appendChild(content);
       this.appendChild(tabbar); // Triggers ons-tab connectedCallback
 
-      ModifierUtil.initModifier(this, scheme);
+      _modifierUtil2.default.initModifier(this, scheme);
     }
   }, {
     key: '_updatePosition',
@@ -410,16 +441,16 @@ var TabbarElement = function (_BaseElement) {
 
       var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.getAttribute('position');
 
-      var top = this._top = position === 'top' || position === 'auto' && util.hasModifier(this, 'material');
-      var action = top ? util.addModifier : util.removeModifier;
+      var top = this._top = position === 'top' || position === 'auto' && _util2.default.hasModifier(this, 'material');
+      var action = top ? _util2.default.addModifier : _util2.default.removeModifier;
 
       action(this, 'top');
 
-      var page = util.findParent(this, 'ons-page');
+      var page = _util2.default.findParent(this, 'ons-page');
       if (page) {
-        contentReady(page, function () {
+        (0, _contentReady2.default)(page, function () {
           var p = 0;
-          if (page.children[0] && util.match(page.children[0], 'ons-toolbar')) {
+          if (page.children[0] && _util2.default.match(page.children[0], 'ons-toolbar')) {
             action(page.children[0], 'noshadow');
             p = 1; // Visual fix for some devices
           }
@@ -435,11 +466,11 @@ var TabbarElement = function (_BaseElement) {
         });
       }
 
-      internal.autoStatusBarFill(function () {
-        var filled = util.findParent(_this3, function (e) {
+      _internal2.default.autoStatusBarFill(function () {
+        var filled = _util2.default.findParent(_this3, function (e) {
           return e.hasAttribute('status-bar-fill');
         });
-        util.toggleAttribute(_this3, 'status-bar-fill', top && !filled);
+        _util2.default.toggleAttribute(_this3, 'status-bar-fill', top && !filled);
       });
     }
   }, {
@@ -481,22 +512,22 @@ var TabbarElement = function (_BaseElement) {
           nextTab = this.tabs[nextIndex];
 
       if (!nextTab) {
-        return _Promise.reject('Specified index does not match any tab.');
+        return Promise.reject('Specified index does not match any tab.');
       }
 
       if (nextIndex === prevIndex) {
-        util.triggerElementEvent(this, 'reactive', { index: nextIndex, activeIndex: nextIndex, tabItem: nextTab });
-        return _Promise.resolve(nextTab.pageElement);
+        _util2.default.triggerElementEvent(this, 'reactive', { index: nextIndex, activeIndex: nextIndex, tabItem: nextTab });
+        return Promise.resolve(nextTab.pageElement);
       }
 
       // FIXME: nextTab.loaded is broken in Zone.js promises (Angular2)
       var nextPage = nextTab.pageElement;
-      return (nextPage ? _Promise.resolve(nextPage) : nextTab.loaded).then(function (nextPage) {
+      return (nextPage ? Promise.resolve(nextPage) : nextTab.loaded).then(function (nextPage) {
         return _this4._swiper.setActiveIndex(nextIndex, _extends({
           reject: true
         }, options, {
           animation: prevTab && nextPage ? options.animation || _this4.getAttribute('animation') : 'none',
-          animationOptions: util.extend({ duration: .3, timing: 'cubic-bezier(.4, .7, .5, 1)' }, _this4.hasAttribute('animation-options') ? util.animationOptionsParse(_this4.getAttribute('animation-options')) : {}, options.animationOptions || {})
+          animationOptions: _util2.default.extend({ duration: .3, timing: 'cubic-bezier(.4, .7, .5, 1)' }, _this4.hasAttribute('animation-options') ? _util2.default.animationOptionsParse(_this4.getAttribute('animation-options')) : {}, options.animationOptions || {})
         })).then(function () {
           options.callback instanceof Function && options.callback(nextPage);
           return nextPage;
@@ -518,7 +549,7 @@ var TabbarElement = function (_BaseElement) {
     value: function setTabbarVisibility(visible) {
       var _this5 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this5._contentElement.style[_this5._top ? 'top' : 'bottom'] = visible ? '' : '0px';
         _this5._tabbarElement.style.display = visible ? '' : 'none';
         visible && _this5._onRefresh();
@@ -575,13 +606,13 @@ var TabbarElement = function (_BaseElement) {
 
       this._swiper.show();
 
-      _setImmediate(function () {
+      setImmediate(function () {
         var tabs = _this6.tabs;
         var activeIndex = _this6.getActiveTabIndex(tabs);
         _this6._loadInactive.resolve();
         if (tabs.length > 0 && activeIndex >= 0) {
           tabs[activeIndex].loaded.then(function (el) {
-            return el && _setImmediate(function () {
+            return el && setImmediate(function () {
               return el._show();
             });
           });
@@ -607,14 +638,14 @@ var TabbarElement = function (_BaseElement) {
     key: 'attributeChangedCallback',
     value: function attributeChangedCallback(name, last, current) {
       if (name === 'modifier') {
-        ModifierUtil.onModifierChanged(last, current, this, scheme);
+        _modifierUtil2.default.onModifierChanged(last, current, this, scheme);
         var isTop = function isTop(m) {
           return (/(^|\s+)top($|\s+)/i.test(m)
           );
         };
         isTop(last) !== isTop(current) && this._updatePosition();
       } else if (name === 'position') {
-        util.isAttached(this) && this._updatePosition();
+        _util2.default.isAttached(this) && this._updatePosition();
       } else if (name === 'swipeable') {
         this._swiper && this._swiper.updateSwipeable(this.hasAttribute('swipeable'));
       } else if (name === 'hide-tabs') {
@@ -624,12 +655,12 @@ var TabbarElement = function (_BaseElement) {
   }, {
     key: '_tabbarElement',
     get: function get() {
-      return util.findChild(this, '.tabbar');
+      return _util2.default.findChild(this, '.tabbar');
     }
   }, {
     key: '_contentElement',
     get: function get() {
-      return util.findChild(this, '.tabbar__content');
+      return _util2.default.findChild(this, '.tabbar__content');
     }
   }, {
     key: '_targetElement',
@@ -647,7 +678,7 @@ var TabbarElement = function (_BaseElement) {
   }, {
     key: 'pages',
     get: function get() {
-      return util.arrayFrom(this._targetElement.children);
+      return _util2.default.arrayFrom(this._targetElement.children);
     }
   }, {
     key: 'tabs',
@@ -676,7 +707,7 @@ var TabbarElement = function (_BaseElement) {
       return this.hasAttribute('swipeable');
     },
     set: function set(value) {
-      return util.toggleAttribute(this, 'swipeable', value);
+      return _util2.default.toggleAttribute(this, 'swipeable', value);
     }
 
     /**
@@ -694,7 +725,7 @@ var TabbarElement = function (_BaseElement) {
     },
     set: function set(value) {
       if (value && !(value instanceof Function)) {
-        util.throw('"onSwipe" must be a function');
+        _util2.default.throw('"onSwipe" must be a function');
       }
       this._onSwipe = value;
     }
@@ -716,10 +747,10 @@ var TabbarElement = function (_BaseElement) {
   }]);
 
   return TabbarElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default TabbarElement;
+exports.default = TabbarElement;
 
 
-onsElements.Tabbar = TabbarElement;
+_elements2.default.Tabbar = TabbarElement;
 customElements.define('ons-tabbar', TabbarElement);

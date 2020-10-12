@@ -1,24 +1,33 @@
-import _Object$keys from 'babel-runtime/core-js/object/keys';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-/*
-Copyright 2013-2016 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Copyright 2013-2016 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _internal = require('../../ons/internal');
 
-*/
+var _internal2 = _interopRequireDefault(_internal);
 
-import internal from '../../ons/internal';
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (cb) {
   setTimeout(function () {
@@ -67,7 +76,7 @@ var AnimatorJS = function () {
           stopped = false,
           next,
           elapsed,
-          properties = _Object$keys(final);
+          properties = Object.keys(final);
 
       var result = {
         stop: function stop() {
@@ -93,7 +102,7 @@ var AnimatorJS = function () {
           var milliseconds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 50;
 
           var k = milliseconds / (duration - elapsed);
-          if (internal.config.animationsDisabled) {
+          if (_internal2.default.config.animationsDisabled) {
             k = 0;
           }
           if (k < 1) {
@@ -107,7 +116,7 @@ var AnimatorJS = function () {
         }
       };
 
-      if (el.hasAttribute('disabled') || internal.config.animationsDisabled) {
+      if (el.hasAttribute('disabled') || _internal2.default.config.animationsDisabled) {
         return result;
       }
 
@@ -197,7 +206,7 @@ var AnimatorJS = function () {
     value: function stopAll() {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      this.stopAnimations(_Object$keys(this._queue), options);
+      this.stopAnimations(Object.keys(this._queue), options);
     }
 
     /**
@@ -219,4 +228,4 @@ var AnimatorJS = function () {
   return AnimatorJS;
 }();
 
-export default AnimatorJS;
+exports.default = AnimatorJS;

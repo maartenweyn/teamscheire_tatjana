@@ -20,8 +20,9 @@ limitations under the License.
  */
 'use strict';
 
-import _Object$keys from 'babel-runtime/core-js/object/keys';
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 var TIMEOUT_RATIO = 1.4;
 
 var util = {};
@@ -148,7 +149,7 @@ util.batchImmediate = function () {
 
   return function (callback) {
     if (callbacks.length === 0) {
-      _setImmediate(function () {
+      setImmediate(function () {
         var concreateCallbacks = callbacks.slice(0);
         callbacks = [];
         concreateCallbacks.forEach(function (callback) {
@@ -413,7 +414,7 @@ Animit.prototype = {
 
           element.style[transitionName] = transitionValue;
 
-          _Object$keys(css).forEach(function (key) {
+          Object.keys(css).forEach(function (key) {
             if (key !== transitionName) {
               element.style[key] = css[key];
             }
@@ -451,7 +452,7 @@ Animit.prototype = {
           }
         }
 
-        _Object$keys(css).forEach(function (key) {
+        Object.keys(css).forEach(function (key) {
           element.style[key] = css[key];
         });
       });
@@ -524,7 +525,7 @@ Animit.Transition.prototype = {
    */
   build: function build() {
 
-    if (_Object$keys(this.options.css).length === 0) {
+    if (Object.keys(this.options.css).length === 0) {
       throw new Error('options.css is required.');
     }
 
@@ -552,7 +553,7 @@ Animit.Transition.prototype = {
         elements.forEach(function (element) {
           element.style[util.transitionPropertyName] = transitionValue;
 
-          _Object$keys(css).forEach(function (name) {
+          Object.keys(css).forEach(function (name) {
             element.style[name] = css[name];
           });
         });
@@ -566,7 +567,7 @@ Animit.Transition.prototype = {
         elements.forEach(function (element) {
           element.style[util.transitionPropertyName] = '';
 
-          _Object$keys(css).forEach(function (name) {
+          Object.keys(css).forEach(function (name) {
             element.style[name] = css[name];
           });
         });
@@ -584,7 +585,7 @@ Animit.Transition.prototype = {
     function createActualCssProps(css) {
       var result = {};
 
-      _Object$keys(css).forEach(function (name) {
+      Object.keys(css).forEach(function (name) {
         var value = css[name];
 
         if (util.hasCssProperty(name)) {
@@ -606,4 +607,4 @@ Animit.Transition.prototype = {
   }
 };
 
-export default Animit;
+exports.default = Animit;

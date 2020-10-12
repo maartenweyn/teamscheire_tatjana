@@ -1,41 +1,79 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../../ons/elements';
-import util from '../../ons/util';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import AnimatorFactory from '../../ons/internal/animator-factory';
-import OverlaySplitterAnimator from './overlay-animator';
-import PushSplitterAnimator from './push-animator';
-import RevealSplitterAnimator from './reveal-animator';
-import BaseElement from '../base/base-element';
-import deviceBackButtonDispatcher from '../../ons/internal/device-back-button-dispatcher';
-import contentReady from '../../ons/content-ready';
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _animatorFactory = require('../../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _overlayAnimator = require('./overlay-animator');
+
+var _overlayAnimator2 = _interopRequireDefault(_overlayAnimator);
+
+var _pushAnimator = require('./push-animator');
+
+var _pushAnimator2 = _interopRequireDefault(_pushAnimator);
+
+var _revealAnimator = require('./reveal-animator');
+
+var _revealAnimator2 = _interopRequireDefault(_revealAnimator);
+
+var _baseElement = require('../base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _deviceBackButtonDispatcher = require('../../ons/internal/device-back-button-dispatcher');
+
+var _deviceBackButtonDispatcher2 = _interopRequireDefault(_deviceBackButtonDispatcher);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var _animatorDict = {
-  default: OverlaySplitterAnimator,
-  overlay: OverlaySplitterAnimator,
-  push: PushSplitterAnimator,
-  reveal: RevealSplitterAnimator
+  default: _overlayAnimator2.default,
+  overlay: _overlayAnimator2.default,
+  push: _pushAnimator2.default,
+  reveal: _revealAnimator2.default
 };
 
 /**
@@ -82,8 +120,8 @@ var SplitterElement = function (_BaseElement) {
   _createClass(SplitterElement, [{
     key: '_getSide',
     value: function _getSide(side) {
-      var element = util.findChild(this, function (e) {
-        return util.match(e, 'ons-splitter-side') && e.getAttribute('side') === side;
+      var element = _util2.default.findChild(this, function (e) {
+        return _util2.default.match(e, 'ons-splitter-side') && e.getAttribute('side') === side;
       });
       return element;
     }
@@ -110,7 +148,7 @@ var SplitterElement = function (_BaseElement) {
       var _this2 = this;
 
       if (e.target.parentNode) {
-        contentReady(this, function () {
+        (0, _contentReady2.default)(this, function () {
           _this2._layout();
         });
       }
@@ -158,7 +196,7 @@ var SplitterElement = function (_BaseElement) {
   }, {
     key: 'side',
     get: function get() {
-      return util.findChild(this, 'ons-splitter-side');
+      return _util2.default.findChild(this, 'ons-splitter-side');
     }
   }, {
     key: '_sides',
@@ -179,7 +217,7 @@ var SplitterElement = function (_BaseElement) {
   }, {
     key: 'content',
     get: function get() {
-      return util.findChild(this, 'ons-splitter-content');
+      return _util2.default.findChild(this, 'ons-splitter-content');
     }
   }, {
     key: 'topPage',
@@ -189,7 +227,7 @@ var SplitterElement = function (_BaseElement) {
   }, {
     key: 'mask',
     get: function get() {
-      return util.findChild(this, 'ons-splitter-mask');
+      return _util2.default.findChild(this, 'ons-splitter-mask');
     }
 
     /**
@@ -210,18 +248,18 @@ var SplitterElement = function (_BaseElement) {
         this._backButtonHandler.destroy();
       }
 
-      this._backButtonHandler = deviceBackButtonDispatcher.createHandler(this, callback);
+      this._backButtonHandler = _deviceBackButtonDispatcher2.default.createHandler(this, callback);
     }
   }]);
 
   function SplitterElement() {
     _classCallCheck(this, SplitterElement);
 
-    var _this = _possibleConstructorReturn(this, (SplitterElement.__proto__ || _Object$getPrototypeOf(SplitterElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (SplitterElement.__proto__ || Object.getPrototypeOf(SplitterElement)).call(this));
 
     _this._onModeChange = _this._onModeChange.bind(_this);
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       !_this.mask && _this.appendChild(document.createElement('ons-splitter-mask'));
       _this._layout();
     });
@@ -247,24 +285,24 @@ var SplitterElement = function (_BaseElement) {
   }, {
     key: '_show',
     value: function _show() {
-      util.propagateAction(this, '_show');
+      _util2.default.propagateAction(this, '_show');
     }
   }, {
     key: '_hide',
     value: function _hide() {
-      util.propagateAction(this, '_hide');
+      _util2.default.propagateAction(this, '_hide');
     }
   }, {
     key: '_destroy',
     value: function _destroy() {
-      util.propagateAction(this, '_destroy');
+      _util2.default.propagateAction(this, '_destroy');
       this.remove();
     }
   }], [{
     key: 'registerAnimator',
     value: function registerAnimator(name, Animator) {
       if (!(Animator instanceof SplitterAnimator)) {
-        util.throwAnimator('Splitter');
+        _util2.default.throwAnimator('Splitter');
       }
       _animatorDict[name] = Animator;
     }
@@ -281,10 +319,10 @@ var SplitterElement = function (_BaseElement) {
   }]);
 
   return SplitterElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default SplitterElement;
+exports.default = SplitterElement;
 
 
-onsElements.Splitter = SplitterElement;
+_elements2.default.Splitter = SplitterElement;
 customElements.define('ons-splitter', SplitterElement);

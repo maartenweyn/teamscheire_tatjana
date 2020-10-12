@@ -1,68 +1,126 @@
-import _typeof from 'babel-runtime/helpers/typeof';
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _Promise from 'babel-runtime/core-js/promise';
-import _WeakMap from 'babel-runtime/core-js/weak-map';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-*/
+var _elements = require('../../ons/elements');
 
-import onsElements from '../../ons/elements';
-import util from '../../ons/util';
-import internal from '../../ons/internal';
-import SwipeReveal from '../../ons/internal/swipe-reveal';
-import AnimatorFactory from '../../ons/internal/animator-factory';
-import NavigatorAnimator from './animator';
-import IOSSlideNavigatorAnimator from './ios-slide-animator';
-import IOSLiftNavigatorAnimator from './ios-lift-animator';
-import IOSFadeNavigatorAnimator from './ios-fade-animator';
-import MDSlideNavigatorAnimator from './md-slide-animator';
-import MDLiftNavigatorAnimator from './md-lift-animator';
-import MDFadeNavigatorAnimator from './md-fade-animator';
-import NoneNavigatorAnimator from './none-animator';
-import platform from '../../ons/platform';
-import contentReady from '../../ons/content-ready';
-import BaseElement from '../base/base-element';
-import deviceBackButtonDispatcher from '../../ons/internal/device-back-button-dispatcher';
-import { PageLoader, defaultPageLoader, instantPageLoader } from '../../ons/page-loader';
+var _elements2 = _interopRequireDefault(_elements);
+
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _internal = require('../../ons/internal');
+
+var _internal2 = _interopRequireDefault(_internal);
+
+var _swipeReveal = require('../../ons/internal/swipe-reveal');
+
+var _swipeReveal2 = _interopRequireDefault(_swipeReveal);
+
+var _animatorFactory = require('../../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _animator = require('./animator');
+
+var _animator2 = _interopRequireDefault(_animator);
+
+var _iosSlideAnimator = require('./ios-slide-animator');
+
+var _iosSlideAnimator2 = _interopRequireDefault(_iosSlideAnimator);
+
+var _iosLiftAnimator = require('./ios-lift-animator');
+
+var _iosLiftAnimator2 = _interopRequireDefault(_iosLiftAnimator);
+
+var _iosFadeAnimator = require('./ios-fade-animator');
+
+var _iosFadeAnimator2 = _interopRequireDefault(_iosFadeAnimator);
+
+var _mdSlideAnimator = require('./md-slide-animator');
+
+var _mdSlideAnimator2 = _interopRequireDefault(_mdSlideAnimator);
+
+var _mdLiftAnimator = require('./md-lift-animator');
+
+var _mdLiftAnimator2 = _interopRequireDefault(_mdLiftAnimator);
+
+var _mdFadeAnimator = require('./md-fade-animator');
+
+var _mdFadeAnimator2 = _interopRequireDefault(_mdFadeAnimator);
+
+var _noneAnimator = require('./none-animator');
+
+var _noneAnimator2 = _interopRequireDefault(_noneAnimator);
+
+var _platform = require('../../ons/platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+var _baseElement = require('../base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _deviceBackButtonDispatcher = require('../../ons/internal/device-back-button-dispatcher');
+
+var _deviceBackButtonDispatcher2 = _interopRequireDefault(_deviceBackButtonDispatcher);
+
+var _pageLoader = require('../../ons/page-loader');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var _animatorDict = {
   'default': function _default() {
-    return platform.isAndroid() ? MDFadeNavigatorAnimator : IOSSlideNavigatorAnimator;
+    return _platform2.default.isAndroid() ? _mdFadeAnimator2.default : _iosSlideAnimator2.default;
   },
   'slide': function slide() {
-    return platform.isAndroid() ? MDSlideNavigatorAnimator : IOSSlideNavigatorAnimator;
+    return _platform2.default.isAndroid() ? _mdSlideAnimator2.default : _iosSlideAnimator2.default;
   },
   'lift': function lift() {
-    return platform.isAndroid() ? MDLiftNavigatorAnimator : IOSLiftNavigatorAnimator;
+    return _platform2.default.isAndroid() ? _mdLiftAnimator2.default : _iosLiftAnimator2.default;
   },
   'fade': function fade() {
-    return platform.isAndroid() ? MDFadeNavigatorAnimator : IOSFadeNavigatorAnimator;
+    return _platform2.default.isAndroid() ? _mdFadeAnimator2.default : _iosFadeAnimator2.default;
   },
-  'slide-ios': IOSSlideNavigatorAnimator,
-  'slide-md': MDSlideNavigatorAnimator,
-  'lift-ios': IOSLiftNavigatorAnimator,
-  'lift-md': MDLiftNavigatorAnimator,
-  'fade-ios': IOSFadeNavigatorAnimator,
-  'fade-md': MDFadeNavigatorAnimator,
-  'none': NoneNavigatorAnimator
+  'slide-ios': _iosSlideAnimator2.default,
+  'slide-md': _mdSlideAnimator2.default,
+  'lift-ios': _iosLiftAnimator2.default,
+  'lift-md': _mdLiftAnimator2.default,
+  'fade-ios': _iosFadeAnimator2.default,
+  'fade-md': _mdFadeAnimator2.default,
+  'none': _noneAnimator2.default
 };
 
 var rewritables = {
@@ -76,7 +134,7 @@ var rewritables = {
 };
 
 var verifyPageElement = function verifyPageElement(el) {
-  return el.nodeName !== 'ONS-PAGE' && util.throw('Only page elements can be children of navigator');
+  return el.nodeName !== 'ONS-PAGE' && _util2.default.throw('Only page elements can be children of navigator');
 };
 
 /**
@@ -270,12 +328,12 @@ var NavigatorElement = function (_BaseElement) {
   function NavigatorElement() {
     _classCallCheck(this, NavigatorElement);
 
-    var _this = _possibleConstructorReturn(this, (NavigatorElement.__proto__ || _Object$getPrototypeOf(NavigatorElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (NavigatorElement.__proto__ || Object.getPrototypeOf(NavigatorElement)).call(this));
 
     _this._isRunning = false;
     _this._initialized = false;
-    _this._pageLoader = defaultPageLoader;
-    _this._pageMap = new _WeakMap();
+    _this._pageLoader = _pageLoader.defaultPageLoader;
+    _this._pageMap = new WeakMap();
 
     _this._updateAnimatorFactory();
     return _this;
@@ -311,10 +369,10 @@ var NavigatorElement = function (_BaseElement) {
 
       this.onDeviceBackButton = this._onDeviceBackButton.bind(this);
 
-      if (!platform.isAndroid() || this.getAttribute('swipeable') === 'force') {
+      if (!_platform2.default.isAndroid() || this.getAttribute('swipeable') === 'force') {
         var swipeAnimator = void 0;
 
-        this._swipe = new SwipeReveal({
+        this._swipe = new _swipeReveal2.default({
           element: this,
           getThreshold: function getThreshold() {
             return Math.max(0.2, parseFloat(_this2.getAttribute('swipe-threshold')) || 0);
@@ -348,7 +406,7 @@ var NavigatorElement = function (_BaseElement) {
                   return (/ons-back-button/i.test(el.tagName)
                   );
                 };
-                if (!isBB(event.target) && !util.findParent(event.target, isBB, function (p) {
+                if (!isBB(event.target) && !_util2.default.findParent(event.target, isBB, function (p) {
                   return (/ons-page/i.test(p.tagName)
                   );
                 })) {
@@ -378,11 +436,11 @@ var NavigatorElement = function (_BaseElement) {
 
       this._initialized = true;
 
-      var deferred = util.defer();
+      var deferred = _util2.default.defer();
       this.loaded = deferred.promise;
 
       rewritables.ready(this, function () {
-        var show = !util.hasAnyComponentAsParent(_this2);
+        var show = !_util2.default.hasAnyComponentAsParent(_this2);
         var options = { animation: 'none', show: show };
 
         if (_this2.pages.length === 0 && _this2._getPageTarget()) {
@@ -395,7 +453,7 @@ var NavigatorElement = function (_BaseElement) {
           }
 
           if (_this2.topPage) {
-            contentReady(_this2.topPage, function () {
+            (0, _contentReady2.default)(_this2.topPage, function () {
               return setTimeout(function () {
                 deferred.resolve();
                 show && _this2.topPage._show();
@@ -404,7 +462,7 @@ var NavigatorElement = function (_BaseElement) {
             });
           }
         } else {
-          contentReady(_this2, function () {
+          (0, _contentReady2.default)(_this2, function () {
             if (_this2.pages.length === 0 && _this2._getPageTarget()) {
               _this2.pushPage(_this2._getPageTarget(), options).then(function () {
                 return deferred.resolve();
@@ -419,9 +477,9 @@ var NavigatorElement = function (_BaseElement) {
   }, {
     key: '_updateAnimatorFactory',
     value: function _updateAnimatorFactory() {
-      this._animatorFactory = new AnimatorFactory({
+      this._animatorFactory = new _animatorFactory2.default({
         animators: _animatorDict,
-        baseClass: NavigatorAnimator,
+        baseClass: _animator2.default,
         baseClassName: 'NavigatorAnimator',
         defaultAnimation: this.getAttribute('animation')
       });
@@ -493,12 +551,12 @@ var NavigatorElement = function (_BaseElement) {
       options = _preparePageAndOption.options;
 
 
-      if (util.isInteger(options.times) && options.times > 1) {
+      if (_util2.default.isInteger(options.times) && options.times > 1) {
         this._removePages(options.times);
       }
 
       var popUpdate = function popUpdate() {
-        return new _Promise(function (resolve) {
+        return new Promise(function (resolve) {
           _this3._pageLoader.unload(_this3.pages[_this3.pages.length - 1]);
           resolve();
         });
@@ -512,19 +570,19 @@ var NavigatorElement = function (_BaseElement) {
       var _this4 = this;
 
       var update = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
-        return _Promise.resolve();
+        return Promise.resolve();
       };
 
       if (this._isRunning) {
-        return _Promise.reject('popPage is already running.');
+        return Promise.reject('popPage is already running.');
       }
 
       if (this.pages.length <= 1) {
-        return _Promise.reject('ons-navigator\'s page stack is empty.');
+        return Promise.reject('ons-navigator\'s page stack is empty.');
       }
 
       if (this._emitPrePopEvent()) {
-        return _Promise.reject('Canceled in prepop event.');
+        return Promise.reject('Canceled in prepop event.');
       }
 
       var length = this.pages.length;
@@ -533,14 +591,14 @@ var NavigatorElement = function (_BaseElement) {
 
       this.pages[length - 2].updateBackButton(length - 2 > 0);
 
-      return new _Promise(function (resolve) {
+      return new Promise(function (resolve) {
         var leavePage = _this4.pages[length - 1];
         var enterPage = _this4.pages[length - 2];
 
-        options = util.extend({}, _this4.options || {}, leavePage.pushedOptions || {}, options);
+        options = _util2.default.extend({}, _this4.options || {}, options);
 
         if (options.data) {
-          enterPage.data = util.extend({}, enterPage.data || {}, options.data || {});
+          enterPage.data = _util2.default.extend({}, enterPage.data || {}, options.data || {});
         }
 
         var done = function done() {
@@ -548,7 +606,7 @@ var NavigatorElement = function (_BaseElement) {
             _this4._isRunning = false;
 
             enterPage._show();
-            util.triggerElementEvent(_this4, 'postpop', { leavePage: leavePage, enterPage: enterPage, navigator: _this4 });
+            _util2.default.triggerElementEvent(_this4, 'postpop', { leavePage: leavePage, enterPage: enterPage, navigator: _this4 });
 
             options.callback && options.callback(enterPage);
 
@@ -621,7 +679,7 @@ var NavigatorElement = function (_BaseElement) {
       var prepare = function prepare(pageElement) {
         verifyPageElement(pageElement);
         _this5._pageMap.set(pageElement, page);
-        pageElement = util.extend(pageElement, {
+        pageElement = _util2.default.extend(pageElement, {
           data: options.data
         });
         pageElement.style.visibility = 'hidden';
@@ -629,8 +687,8 @@ var NavigatorElement = function (_BaseElement) {
 
       if (options.pageHTML) {
         return this._pushPage(options, function () {
-          return new _Promise(function (resolve) {
-            instantPageLoader.load({ page: options.pageHTML, parent: _this5, params: options.data }, function (pageElement) {
+          return new Promise(function (resolve) {
+            _pageLoader.instantPageLoader.load({ page: options.pageHTML, parent: _this5, params: options.data }, function (pageElement) {
               prepare(pageElement);
               resolve();
             });
@@ -639,10 +697,13 @@ var NavigatorElement = function (_BaseElement) {
       }
 
       return this._pushPage(options, function () {
-        return new _Promise(function (resolve) {
+        return new Promise(function (resolve) {
           _this5._pageLoader.load({ page: page, parent: _this5, params: options.data }, function (pageElement) {
             prepare(pageElement);
             resolve();
+          }, function (error) {
+            _this5._isRunning = false;
+            throw error;
           });
         });
       });
@@ -654,21 +715,21 @@ var NavigatorElement = function (_BaseElement) {
 
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var update = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {
-        return _Promise.resolve();
+        return Promise.resolve();
       };
 
       if (this._isRunning) {
-        return _Promise.reject('pushPage is already running.');
+        return Promise.reject('pushPage is already running.');
       }
 
       if (this._emitPrePushEvent()) {
-        return _Promise.reject('Canceled in prepush event.');
+        return Promise.reject('Canceled in prepush event.');
       }
 
       this._isRunning = true;
 
-      var animationOptions = AnimatorFactory.parseAnimationOptionsString(this.getAttribute('animation-options'));
-      options = util.extend({}, this.options || {}, { animationOptions: animationOptions }, options);
+      var animationOptions = _animatorFactory2.default.parseAnimationOptionsString(this.getAttribute('animation-options'));
+      options = _util2.default.extend({}, this.options || {}, { animationOptions: animationOptions }, options);
 
       var animator = this._animatorFactory.newAnimator(options);
 
@@ -682,18 +743,18 @@ var NavigatorElement = function (_BaseElement) {
 
         enterPage.updateBackButton(pageLength > (options._replacePage ? 2 : 1));
 
-        enterPage.pushedOptions = util.extend({}, enterPage.pushedOptions || {}, options || {});
-        enterPage.data = util.extend({}, enterPage.data || {}, options.data || {});
+        enterPage.pushedOptions = _util2.default.extend({}, enterPage.pushedOptions || {}, options || {});
+        enterPage.data = _util2.default.extend({}, enterPage.data || {}, options.data || {});
         enterPage.unload = enterPage.unload || options.unload;
 
-        return new _Promise(function (resolve) {
+        return new Promise(function (resolve) {
           var done = function done() {
             _this6._isRunning = false;
 
-            options.show !== false && _setImmediate(function () {
+            options.show !== false && setImmediate(function () {
               return enterPage._show();
             });
-            util.triggerElementEvent(_this6, 'postpush', { leavePage: leavePage, enterPage: enterPage, navigator: _this6 });
+            _util2.default.triggerElementEvent(_this6, 'postpush', { leavePage: leavePage, enterPage: enterPage, navigator: _this6 });
 
             if (leavePage) {
               leavePage.style.display = 'none';
@@ -742,7 +803,7 @@ var NavigatorElement = function (_BaseElement) {
         }
         _this7._updateLastPageBackButton();
 
-        return _Promise.resolve(resolvedValue);
+        return Promise.resolve(resolvedValue);
       });
     }
 
@@ -779,18 +840,18 @@ var NavigatorElement = function (_BaseElement) {
       }
 
       page = typeof options.pageHTML === 'string' ? options.pageHTML : page;
-      var loader = typeof options.pageHTML === 'string' ? instantPageLoader : this._pageLoader;
+      var loader = typeof options.pageHTML === 'string' ? _pageLoader.instantPageLoader : this._pageLoader;
 
-      return new _Promise(function (resolve) {
+      return new Promise(function (resolve) {
         loader.load({ page: page, parent: _this8 }, function (pageElement) {
           verifyPageElement(pageElement);
           _this8._pageMap.set(pageElement, page);
-          pageElement = util.extend(pageElement, {
+          pageElement = _util2.default.extend(pageElement, {
             data: options.data,
             pushedOptions: options
           });
 
-          options.animationOptions = util.extend({}, AnimatorFactory.parseAnimationOptionsString(_this8.getAttribute('animation-options')), options.animationOptions || {});
+          options.animationOptions = _util2.default.extend({}, _animatorFactory2.default.parseAnimationOptionsString(_this8.getAttribute('animation-options')), options.animationOptions || {});
 
           pageElement.style.display = 'none';
           _this8.insertBefore(pageElement, _this8.pages[index]);
@@ -828,7 +889,7 @@ var NavigatorElement = function (_BaseElement) {
       index = this._normalizeIndex(index);
 
       if (index < this.pages.length - 1) {
-        return new _Promise(function (resolve) {
+        return new Promise(function (resolve) {
           var leavePage = _this9.pages[index];
           var enterPage = _this9.topPage;
 
@@ -919,7 +980,7 @@ var NavigatorElement = function (_BaseElement) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       if (['number', 'string'].indexOf(typeof item === 'undefined' ? 'undefined' : _typeof(item)) === -1) {
-        util.throw('First argument must be a page name or the index of an existing page. You supplied ' + item);
+        _util2.default.throw('First argument must be a page name or the index of an existing page. You supplied ' + item);
       }
       var index = typeof item === 'number' ? this._normalizeIndex(item) : this._lastIndexOfPage(item);
       var page = this.pages[index];
@@ -934,16 +995,16 @@ var NavigatorElement = function (_BaseElement) {
 
 
       if (index === this.pages.length - 1) {
-        return _Promise.resolve(page);
+        return Promise.resolve(page);
       }
       if (!page) {
-        util.throw('Failed to find item ' + item);
+        _util2.default.throw('Failed to find item ' + item);
       }
       if (this._isRunning) {
-        return _Promise.reject('pushPage is already running.');
+        return Promise.reject('pushPage is already running.');
       }
       if (this._emitPrePushEvent()) {
-        return _Promise.reject('Canceled in prepush event.');
+        return Promise.reject('Canceled in prepush event.');
       }
 
       page.style.display = '';
@@ -957,14 +1018,14 @@ var NavigatorElement = function (_BaseElement) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) != 'object') {
-        util.throw('options must be an object. You supplied ' + options);
+        _util2.default.throw('options must be an object. You supplied ' + options);
       }
 
       if ((page === null || page === undefined) && options.page) {
         page = options.page;
       }
 
-      options = util.extend({}, this.options || {}, options, { page: page });
+      options = _util2.default.extend({}, this.options || {}, options, { page: page });
 
       return { page: page, options: options };
     }
@@ -1007,10 +1068,6 @@ var NavigatorElement = function (_BaseElement) {
     value: function _lastIndexOfPage(pageName) {
       var index = void 0;
       for (index = this.pages.length - 1; index >= 0; index--) {
-        if (!this._pageMap.has(this.pages[index])) {
-          util.throw('Incorrect state of pageMap');
-        }
-
         if (pageName === this._pageMap.get(this.pages[index])) {
           break;
         }
@@ -1024,7 +1081,7 @@ var NavigatorElement = function (_BaseElement) {
 
       var isCanceled = false;
 
-      util.triggerElementEvent(this, 'pre' + name, util.extend({
+      _util2.default.triggerElementEvent(this, 'pre' + name, _util2.default.extend({
         navigator: this,
         currentPage: this.pages[this.pages.length - 1],
         cancel: function cancel() {
@@ -1054,7 +1111,7 @@ var NavigatorElement = function (_BaseElement) {
   }, {
     key: '_createPageElement',
     value: function _createPageElement(templateHTML) {
-      var pageElement = util.createElement(internal.normalizePageHTML(templateHTML));
+      var pageElement = _util2.default.createElement(_internal2.default.normalizePageHTML(templateHTML));
       verifyPageElement(pageElement);
       return pageElement;
     }
@@ -1102,8 +1159,8 @@ var NavigatorElement = function (_BaseElement) {
       return this._pageLoader;
     },
     set: function set(pageLoader) {
-      if (!(pageLoader instanceof PageLoader)) {
-        util.throwPageLoader();
+      if (!(pageLoader instanceof _pageLoader.PageLoader)) {
+        _util2.default.throwPageLoader();
       }
       this._pageLoader = pageLoader;
     }
@@ -1125,7 +1182,7 @@ var NavigatorElement = function (_BaseElement) {
         this._backButtonHandler.destroy();
       }
 
-      this._backButtonHandler = deviceBackButtonDispatcher.createHandler(this, callback);
+      this._backButtonHandler = _deviceBackButtonDispatcher2.default.createHandler(this, callback);
     }
 
     /**
@@ -1159,7 +1216,7 @@ var NavigatorElement = function (_BaseElement) {
   }, {
     key: 'pages',
     get: function get() {
-      return util.arrayFrom(this.children).filter(function (element) {
+      return _util2.default.arrayFrom(this.children).filter(function (element) {
         return element.tagName === 'ONS-PAGE';
       });
     }
@@ -1179,7 +1236,7 @@ var NavigatorElement = function (_BaseElement) {
     },
     set: function set(value) {
       if (value && !(value instanceof Function)) {
-        util.throw('"onSwipe" must be a function');
+        _util2.default.throw('"onSwipe" must be a function');
       }
       this._onSwipe = value;
     }
@@ -1238,8 +1295,8 @@ var NavigatorElement = function (_BaseElement) {
   }], [{
     key: 'registerAnimator',
     value: function registerAnimator(name, Animator) {
-      if (!(Animator.prototype instanceof NavigatorAnimator)) {
-        util.throwAnimator('Navigator');
+      if (!(Animator.prototype instanceof _animator2.default)) {
+        _util2.default.throwAnimator('Navigator');
       }
 
       _animatorDict[name] = Animator;
@@ -1257,7 +1314,7 @@ var NavigatorElement = function (_BaseElement) {
   }, {
     key: 'NavigatorAnimator',
     get: function get() {
-      return NavigatorAnimator;
+      return _animator2.default;
     }
   }, {
     key: 'events',
@@ -1272,10 +1329,10 @@ var NavigatorElement = function (_BaseElement) {
   }]);
 
   return NavigatorElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default NavigatorElement;
+exports.default = NavigatorElement;
 
 
-onsElements.Navigator = NavigatorElement;
+_elements2.default.Navigator = NavigatorElement;
 customElements.define('ons-navigator', NavigatorElement);

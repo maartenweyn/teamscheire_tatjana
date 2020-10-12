@@ -1,32 +1,55 @@
-import _extends from 'babel-runtime/helpers/extends';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _get from 'babel-runtime/helpers/get';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-*/
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-import IOSSwipeNavigatorAnimator from './ios-swipe-animator';
-import util from '../../ons/util';
-import animit from '../../ons/animit';
-import contentReady from '../../ons/content-ready';
+var _iosSwipeAnimator = require('./ios-swipe-animator');
+
+var _iosSwipeAnimator2 = _interopRequireDefault(_iosSwipeAnimator);
+
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _animit = require('../../ons/animit');
+
+var _animit2 = _interopRequireDefault(_animit);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var translate3d = function translate3d() {
   var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
@@ -55,9 +78,9 @@ var IOSSlideNavigatorAnimator = function (_IOSSwipeNavigatorAni) {
 
     _classCallCheck(this, IOSSlideNavigatorAnimator);
 
-    var _this = _possibleConstructorReturn(this, (IOSSlideNavigatorAnimator.__proto__ || _Object$getPrototypeOf(IOSSlideNavigatorAnimator)).call(this, _extends({ timing: timing, delay: delay, duration: duration }, rest)));
+    var _this = _possibleConstructorReturn(this, (IOSSlideNavigatorAnimator.__proto__ || Object.getPrototypeOf(IOSSlideNavigatorAnimator)).call(this, _extends({ timing: timing, delay: delay, duration: duration }, rest)));
 
-    _this.backgroundMask = util.createElement('<div style="position: absolute; width: 100%; height: 100%;' + 'background-color: black; z-index: 2"></div>');
+    _this.backgroundMask = _util2.default.createElement('<div style="position: absolute; width: 100%; height: 100%;' + 'background-color: black; z-index: 2"></div>');
     return _this;
   }
 
@@ -102,8 +125,8 @@ var IOSSlideNavigatorAnimator = function (_IOSSwipeNavigatorAni) {
       var leaveToolbar = leavePage._getToolbarElement();
 
       var isStatic = enterToolbar.hasAttribute('static') || leaveToolbar.hasAttribute('static');
-      var isMaterial = util.hasModifier(enterToolbar, 'material') || util.hasModifier(leaveToolbar, 'material');
-      var isTransparent = util.hasModifier(enterToolbar, 'transparent') || util.hasModifier(leaveToolbar, 'transparent');
+      var isMaterial = _util2.default.hasModifier(enterToolbar, 'material') || _util2.default.hasModifier(leaveToolbar, 'material');
+      var isTransparent = _util2.default.hasModifier(enterToolbar, 'transparent') || _util2.default.hasModifier(leaveToolbar, 'transparent');
 
       return toolbars && !isStatic && !isMaterial && !isTransparent;
     }
@@ -142,11 +165,11 @@ var IOSSlideNavigatorAnimator = function (_IOSSwipeNavigatorAni) {
       this.backgroundMask.remove();
       leavePage.parentNode.insertBefore(this.backgroundMask, leavePage);
 
-      var unblock = _get(IOSSlideNavigatorAnimator.prototype.__proto__ || _Object$getPrototypeOf(IOSSlideNavigatorAnimator.prototype), 'block', this).call(this, enterPage);
+      var unblock = _get(IOSSlideNavigatorAnimator.prototype.__proto__ || Object.getPrototypeOf(IOSSlideNavigatorAnimator.prototype), 'block', this).call(this, enterPage);
 
-      contentReady(enterPage, function () {
-        var enterPageTarget = util.findToolbarPage(enterPage) || enterPage;
-        var leavePageTarget = util.findToolbarPage(leavePage) || leavePage;
+      (0, _contentReady2.default)(enterPage, function () {
+        var enterPageTarget = _util2.default.findToolbarPage(enterPage) || enterPage;
+        var leavePageTarget = _util2.default.findToolbarPage(leavePage) || leavePage;
         var enterPageDecomposition = _this2._decompose(enterPageTarget);
         var leavePageDecomposition = _this2._decompose(leavePageTarget);
 
@@ -156,23 +179,23 @@ var IOSSlideNavigatorAnimator = function (_IOSSwipeNavigatorAni) {
 
         if (shouldAnimateToolbar) {
 
-          animit.runAll(animit([enterPageDecomposition.content, enterPageDecomposition.bottomToolbar, enterPageDecomposition.background], _this2.def).default({ transform: translate3d('100%') }, { transform: translate3d() }), animit(enterPageDecomposition.toolbar, _this2.def).default({ opacity: 0 }, { opacity: 1 }), animit(enterPageDecomposition.toolbarCenter, _this2.def).default({ transform: translate3d('125%'), opacity: 1 }, { transform: translate3d(), opacity: 1 }), animit(enterPageDecomposition.backButtonLabel, _this2.def).default({ transform: translate3d(delta.title + 'px'), opacity: 0 }, {
+          _animit2.default.runAll((0, _animit2.default)([enterPageDecomposition.content, enterPageDecomposition.bottomToolbar, enterPageDecomposition.background], _this2.def).default({ transform: translate3d('100%') }, { transform: translate3d() }), (0, _animit2.default)(enterPageDecomposition.toolbar, _this2.def).default({ opacity: 0 }, { opacity: 1 }), (0, _animit2.default)(enterPageDecomposition.toolbarCenter, _this2.def).default({ transform: translate3d('125%'), opacity: 1 }, { transform: translate3d(), opacity: 1 }), (0, _animit2.default)(enterPageDecomposition.backButtonLabel, _this2.def).default({ transform: translate3d(delta.title + 'px'), opacity: 0 }, {
             transform: translate3d(),
             opacity: 1,
             transition: 'opacity ' + _this2.duration + 's linear, transform ' + _this2.duration + 's ' + _this2.timing
-          }), animit(enterPageDecomposition.other, _this2.def).default({ opacity: 0 }, { css: { opacity: 1 }, timing: 'linear' }), animit([leavePageDecomposition.content, leavePageDecomposition.bottomToolbar, leavePageDecomposition.background], _this2.def).default({ transform: translate3d(), opacity: 1 }, { transform: translate3d('-25%'), opacity: 0.9 }).queue(function (done) {
+          }), (0, _animit2.default)(enterPageDecomposition.other, _this2.def).default({ opacity: 0 }, { css: { opacity: 1 }, timing: 'linear' }), (0, _animit2.default)([leavePageDecomposition.content, leavePageDecomposition.bottomToolbar, leavePageDecomposition.background], _this2.def).default({ transform: translate3d(), opacity: 1 }, { transform: translate3d('-25%'), opacity: 0.9 }).queue(function (done) {
             _this2.backgroundMask.remove();
             unblock();
             callback();
             done();
-          }), animit(leavePageDecomposition.toolbarCenter, _this2.def).default({ transform: translate3d(), opacity: 1 }, {
+          }), (0, _animit2.default)(leavePageDecomposition.toolbarCenter, _this2.def).default({ transform: translate3d(), opacity: 1 }, {
             transform: translate3d('-' + delta.title + 'px'),
             opacity: 0,
             transition: 'opacity ' + _this2.duration + 's linear, transform ' + _this2.duration + 's ' + _this2.timing
-          }), animit(leavePageDecomposition.backButtonLabel, _this2.def).default({ transform: translate3d(), opacity: 1 }, { transform: translate3d('-' + delta.label + 'px'), opacity: 0 }), animit(leavePageDecomposition.other, _this2.def).default({ opacity: 1 }, { css: { opacity: 0 }, timing: 'linear' }));
+          }), (0, _animit2.default)(leavePageDecomposition.backButtonLabel, _this2.def).default({ transform: translate3d(), opacity: 1 }, { transform: translate3d('-' + delta.label + 'px'), opacity: 0 }), (0, _animit2.default)(leavePageDecomposition.other, _this2.def).default({ opacity: 1 }, { css: { opacity: 0 }, timing: 'linear' }));
         } else {
 
-          animit.runAll(animit(enterPage, _this2.def).default({ transform: translate3d('100%') }, { transform: translate3d() }), animit(leavePage, _this2.def).default({ transform: translate3d(), opacity: 1 }, { transform: translate3d('-25%'), opacity: .9 }).queue(function (done) {
+          _animit2.default.runAll((0, _animit2.default)(enterPage, _this2.def).default({ transform: translate3d('100%') }, { transform: translate3d() }), (0, _animit2.default)(leavePage, _this2.def).default({ transform: translate3d(), opacity: 1 }, { transform: translate3d('-25%'), opacity: .9 }).queue(function (done) {
             _this2.backgroundMask.remove();
             unblock();
             callback();
@@ -200,10 +223,10 @@ var IOSSlideNavigatorAnimator = function (_IOSSwipeNavigatorAni) {
       this.backgroundMask.remove();
       enterPage.parentNode.insertBefore(this.backgroundMask, enterPage);
 
-      var unblock = _get(IOSSlideNavigatorAnimator.prototype.__proto__ || _Object$getPrototypeOf(IOSSlideNavigatorAnimator.prototype), 'block', this).call(this, enterPage);
+      var unblock = _get(IOSSlideNavigatorAnimator.prototype.__proto__ || Object.getPrototypeOf(IOSSlideNavigatorAnimator.prototype), 'block', this).call(this, enterPage);
 
-      var enterPageTarget = util.findToolbarPage(enterPage) || enterPage;
-      var leavePageTarget = util.findToolbarPage(leavePage) || leavePage;
+      var enterPageTarget = _util2.default.findToolbarPage(enterPage) || enterPage;
+      var leavePageTarget = _util2.default.findToolbarPage(leavePage) || leavePage;
       var enterPageDecomposition = this._decompose(enterPageTarget);
       var leavePageDecomposition = this._decompose(leavePageTarget);
 
@@ -212,22 +235,22 @@ var IOSSlideNavigatorAnimator = function (_IOSSwipeNavigatorAni) {
       var shouldAnimateToolbar = this._shouldAnimateToolbar(enterPageTarget, leavePageTarget);
 
       if (shouldAnimateToolbar) {
-        animit.runAll(animit([enterPageDecomposition.content, enterPageDecomposition.bottomToolbar, enterPageDecomposition.background], this.def).default({ transform: translate3d('-25%'), opacity: .9 }, { transform: translate3d(), opacity: 1 }), animit(enterPageDecomposition.toolbarCenter, this.def).default({ transform: translate3d('-' + delta.title + 'px'), opacity: 0 }, {
+        _animit2.default.runAll((0, _animit2.default)([enterPageDecomposition.content, enterPageDecomposition.bottomToolbar, enterPageDecomposition.background], this.def).default({ transform: translate3d('-25%'), opacity: .9 }, { transform: translate3d(), opacity: 1 }), (0, _animit2.default)(enterPageDecomposition.toolbarCenter, this.def).default({ transform: translate3d('-' + delta.title + 'px'), opacity: 0 }, {
           transform: translate3d(),
           opacity: 1,
           transition: 'opacity ' + this.duration + 's linear, transform ' + this.duration + 's ' + this.timing
-        }), animit(enterPageDecomposition.backButtonLabel, this.def).default({ transform: translate3d('-' + delta.label + 'px') }, { transform: translate3d() }), animit(enterPageDecomposition.other, this.def).default({ opacity: 0 }, { css: { opacity: 1 }, timing: 'linear' }), animit([leavePageDecomposition.content, leavePageDecomposition.bottomToolbar, leavePageDecomposition.background], this.def).default({ transform: translate3d() }, { transform: translate3d('100%') }).wait(0).queue(function (done) {
+        }), (0, _animit2.default)(enterPageDecomposition.backButtonLabel, this.def).default({ transform: translate3d('-' + delta.label + 'px') }, { transform: translate3d() }), (0, _animit2.default)(enterPageDecomposition.other, this.def).default({ opacity: 0 }, { css: { opacity: 1 }, timing: 'linear' }), (0, _animit2.default)([leavePageDecomposition.content, leavePageDecomposition.bottomToolbar, leavePageDecomposition.background], this.def).default({ transform: translate3d() }, { transform: translate3d('100%') }).wait(0).queue(function (done) {
           _this3.backgroundMask.remove();
           unblock();
           callback();
           done();
-        }), animit(leavePageDecomposition.toolbar, this.def).default({ opacity: 1 }, { opacity: 0 }), animit(leavePageDecomposition.toolbarCenter, this.def).default({ transform: translate3d() }, { transform: translate3d('125%') }), animit(leavePageDecomposition.backButtonLabel, this.def).default({ transform: translate3d(), opacity: 1 }, {
+        }), (0, _animit2.default)(leavePageDecomposition.toolbar, this.def).default({ opacity: 1 }, { opacity: 0 }), (0, _animit2.default)(leavePageDecomposition.toolbarCenter, this.def).default({ transform: translate3d() }, { transform: translate3d('125%') }), (0, _animit2.default)(leavePageDecomposition.backButtonLabel, this.def).default({ transform: translate3d(), opacity: 1 }, {
           transform: translate3d(delta.title + 'px'),
           opacity: 0,
           transition: 'opacity ' + this.duration + 's linear, transform ' + this.duration + 's ' + this.timing
         }));
       } else {
-        animit.runAll(animit(enterPage, this.def).default({ transform: translate3d('-25%'), opacity: .9 }, { transform: translate3d(), opacity: 1 }), animit(leavePage, this.def).default({ transform: translate3d() }, { transform: translate3d('100%') }).queue(function (done) {
+        _animit2.default.runAll((0, _animit2.default)(enterPage, this.def).default({ transform: translate3d('-25%'), opacity: .9 }, { transform: translate3d(), opacity: 1 }), (0, _animit2.default)(leavePage, this.def).default({ transform: translate3d() }, { transform: translate3d('100%') }).queue(function (done) {
           _this3.backgroundMask.remove();
           unblock();
           callback();
@@ -238,6 +261,6 @@ var IOSSlideNavigatorAnimator = function (_IOSSwipeNavigatorAni) {
   }]);
 
   return IOSSlideNavigatorAnimator;
-}(IOSSwipeNavigatorAnimator);
+}(_iosSwipeAnimator2.default);
 
-export default IOSSlideNavigatorAnimator;
+exports.default = IOSSlideNavigatorAnimator;

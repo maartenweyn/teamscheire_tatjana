@@ -1,41 +1,79 @@
-import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-import _extends from 'babel-runtime/helpers/extends';
-import _typeof from 'babel-runtime/helpers/typeof';
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _get from 'babel-runtime/helpers/get';
-import _inherits from 'babel-runtime/helpers/inherits';
-import _Object$keys from 'babel-runtime/core-js/object/keys';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-*/
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-import onsElements from '../../ons/elements';
-import util from '../../ons/util';
-import autoStyle from '../../ons/autostyle';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import AnimatorFactory from '../../ons/internal/animator-factory';
-import { PopoverAnimator, IOSFadePopoverAnimator, MDFadePopoverAnimator } from './animator';
-import platform from '../../ons/platform';
-import iPhoneXPatch from '../../ons/iphonex-patch';
-import BaseDialogElement from '../base/base-dialog';
-import contentReady from '../../ons/content-ready';
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _elements = require('../../ons/elements');
+
+var _elements2 = _interopRequireDefault(_elements);
+
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _autostyle = require('../../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _animatorFactory = require('../../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _animator = require('./animator');
+
+var _platform = require('../../ons/platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _iphonexPatch = require('../../ons/iphonex-patch');
+
+var _iphonexPatch2 = _interopRequireDefault(_iphonexPatch);
+
+var _baseDialog = require('../base/base-dialog');
+
+var _baseDialog2 = _interopRequireDefault(_baseDialog);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var scheme = {
   '.popover': 'popover--*',
@@ -46,11 +84,11 @@ var scheme = {
 
 var _animatorDict = {
   'default': function _default() {
-    return platform.isAndroid() ? MDFadePopoverAnimator : IOSFadePopoverAnimator;
+    return _platform2.default.isAndroid() ? _animator.MDFadePopoverAnimator : _animator.IOSFadePopoverAnimator;
   },
-  'none': PopoverAnimator,
-  'fade-ios': IOSFadePopoverAnimator,
-  'fade-md': MDFadePopoverAnimator
+  'none': _animator.PopoverAnimator,
+  'fade-ios': _animator.IOSFadePopoverAnimator,
+  'fade-md': _animator.MDFadePopoverAnimator
 };
 
 var positions = {
@@ -60,7 +98,7 @@ var positions = {
   right: 'left'
 };
 
-var directions = _Object$keys(positions);
+var directions = Object.keys(positions);
 /**
  * @element ons-popover
  * @category dialog
@@ -210,11 +248,11 @@ var PopoverElement = function (_BaseDialogElement) {
   function PopoverElement() {
     _classCallCheck(this, PopoverElement);
 
-    var _this = _possibleConstructorReturn(this, (PopoverElement.__proto__ || _Object$getPrototypeOf(PopoverElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (PopoverElement.__proto__ || Object.getPrototypeOf(PopoverElement)).call(this));
 
     _this._boundOnChange = _this._onChange.bind(_this);
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       _this._compile();
       _this.style.display = 'none';
     });
@@ -224,9 +262,9 @@ var PopoverElement = function (_BaseDialogElement) {
   _createClass(PopoverElement, [{
     key: '_updateAnimatorFactory',
     value: function _updateAnimatorFactory() {
-      return new AnimatorFactory({
+      return new _animatorFactory2.default({
         animators: _animatorDict,
-        baseClass: PopoverAnimator,
+        baseClass: _animator.PopoverAnimator,
         baseClassName: 'PopoverAnimator',
         defaultAnimation: this.getAttribute('animation') || 'default'
       });
@@ -252,12 +290,12 @@ var PopoverElement = function (_BaseDialogElement) {
           contentElement = this._content,
           margin = this._margin;
 
-      var safeAreaLengths = iPhoneXPatch.getSafeAreaLengths();
-      var safeAreaRect = iPhoneXPatch.getSafeAreaDOMRect();
+      var safeAreaLengths = _iphonexPatch2.default.getSafeAreaLengths();
+      var safeAreaRect = _iphonexPatch2.default.getSafeAreaDOMRect();
       var targetRect = target.getBoundingClientRect();
-      var isMD = util.hasModifier(this, 'material');
+      var isMD = _util2.default.hasModifier(this, 'material');
       var cover = isMD && this.hasAttribute('cover-target');
-      var parent = util.findParent(this, 'ons-page') || document.body;
+      var parent = _util2.default.findParent(this, 'ons-page') || document.body;
       var parentDimensions = parent.getBoundingClientRect();
       var maxPositions = {
         top: Math.max(parentDimensions.top, safeAreaRect.top),
@@ -288,7 +326,7 @@ var PopoverElement = function (_BaseDialogElement) {
           secondaryDirection = _calculateDirections2.secondary;
 
       this._currentDirection = primaryDirection;
-      util.addModifier(this, primaryDirection);
+      _util2.default.addModifier(this, primaryDirection);
 
       var sizeName = vertical ? 'width' : 'height';
       // Get .popover__content size
@@ -337,7 +375,7 @@ var PopoverElement = function (_BaseDialogElement) {
       this._currentDirection = null;
       ['top', 'bottom', 'left', 'right'].forEach(function (e) {
         _this2._arrow.style[e] = _this2._content.style[e] = _this2._popover.style[e] = '';
-        util.removeModifier(_this2, e);
+        _util2.default.removeModifier(_this2, e);
       });
     }
   }, {
@@ -345,7 +383,7 @@ var PopoverElement = function (_BaseDialogElement) {
     value: function _onChange() {
       var _this3 = this;
 
-      _setImmediate(function () {
+      setImmediate(function () {
         if (_this3._currentTarget) {
           _this3._positionPopover(_this3._currentTarget);
         }
@@ -354,7 +392,7 @@ var PopoverElement = function (_BaseDialogElement) {
   }, {
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
 
       if (this._popover && this._mask) {
         return;
@@ -377,7 +415,7 @@ var PopoverElement = function (_BaseDialogElement) {
         }
       } else {
 
-        var template = util.createFragment('\n        <div class="popover-mask"></div>\n        <div class="popover">\n          <div class="popover__content"></div>\n          <div class="popover__arrow"></div>\n        </div>\n      ');
+        var template = _util2.default.createFragment('\n        <div class="popover-mask"></div>\n        <div class="popover">\n          <div class="popover__content"></div>\n          <div class="popover__arrow"></div>\n        </div>\n      ');
         var content = template.querySelector('.popover__content');
 
         while (this.childNodes[0]) {
@@ -393,7 +431,7 @@ var PopoverElement = function (_BaseDialogElement) {
         this.removeAttribute('style');
       }
 
-      ModifierUtil.initModifier(this, this._scheme);
+      _modifierUtil2.default.initModifier(this, this._scheme);
     }
 
     /**
@@ -441,10 +479,10 @@ var PopoverElement = function (_BaseDialogElement) {
       }
 
       if (!(options.target instanceof HTMLElement)) {
-        util.throw('Invalid target type or undefined');
+        _util2.default.throw('Invalid target type or undefined');
       }
 
-      return _get(PopoverElement.prototype.__proto__ || _Object$getPrototypeOf(PopoverElement.prototype), 'show', this).call(this, options);
+      return _get(PopoverElement.prototype.__proto__ || Object.getPrototypeOf(PopoverElement.prototype), 'show', this).call(this, options);
     }
 
     /**
@@ -504,20 +542,20 @@ var PopoverElement = function (_BaseDialogElement) {
     value: function connectedCallback() {
       var _this4 = this;
 
-      _get(PopoverElement.prototype.__proto__ || _Object$getPrototypeOf(PopoverElement.prototype), 'connectedCallback', this).call(this);
+      _get(PopoverElement.prototype.__proto__ || Object.getPrototypeOf(PopoverElement.prototype), 'connectedCallback', this).call(this);
 
       window.addEventListener('resize', this._boundOnChange, false);
       this._margin = this._margin || parseInt(window.getComputedStyle(this).getPropertyValue('top'));
       this._margin = this._margin || 6; // Fix for iframes
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this4._radius = parseInt(window.getComputedStyle(_this4._content).getPropertyValue('border-top-left-radius'));
       });
     }
   }, {
     key: 'disconnectedCallback',
     value: function disconnectedCallback() {
-      _get(PopoverElement.prototype.__proto__ || _Object$getPrototypeOf(PopoverElement.prototype), 'disconnectedCallback', this).call(this);
+      _get(PopoverElement.prototype.__proto__ || Object.getPrototypeOf(PopoverElement.prototype), 'disconnectedCallback', this).call(this);
       window.removeEventListener('resize', this._boundOnChange, false);
     }
   }, {
@@ -526,9 +564,9 @@ var PopoverElement = function (_BaseDialogElement) {
       if (name === 'direction') {
         return this._boundOnChange();
       } else if (name === 'modifier') {
-        this._currentDirection && util.addModifier(this, this._currentDirection);
+        this._currentDirection && _util2.default.addModifier(this, this._currentDirection);
       }
-      _get(PopoverElement.prototype.__proto__ || _Object$getPrototypeOf(PopoverElement.prototype), 'attributeChangedCallback', this).call(this, name, last, current);
+      _get(PopoverElement.prototype.__proto__ || Object.getPrototypeOf(PopoverElement.prototype), 'attributeChangedCallback', this).call(this, name, last, current);
     }
 
     /**
@@ -544,35 +582,35 @@ var PopoverElement = function (_BaseDialogElement) {
   }, {
     key: '_mask',
     get: function get() {
-      return util.findChild(this, '.popover-mask');
+      return _util2.default.findChild(this, '.popover-mask');
     }
   }, {
     key: '_popover',
     get: function get() {
-      return util.findChild(this, '.popover');
+      return _util2.default.findChild(this, '.popover');
     }
   }, {
     key: '_content',
     get: function get() {
-      return util.findChild(this._popover, '.popover__content');
+      return _util2.default.findChild(this._popover, '.popover__content');
     }
   }, {
     key: '_arrow',
     get: function get() {
-      return util.findChild(this._popover, '.popover__arrow');
+      return _util2.default.findChild(this._popover, '.popover__arrow');
     }
   }], [{
     key: 'registerAnimator',
     value: function registerAnimator(name, Animator) {
-      if (!(Animator.prototype instanceof PopoverAnimator)) {
-        util.throwAnimator('Popover');
+      if (!(Animator.prototype instanceof _animator.PopoverAnimator)) {
+        _util2.default.throwAnimator('Popover');
       }
       _animatorDict[name] = Animator;
     }
   }, {
     key: 'observedAttributes',
     get: function get() {
-      return [].concat(_toConsumableArray(_get(PopoverElement.__proto__ || _Object$getPrototypeOf(PopoverElement), 'observedAttributes', this)), ['direction']);
+      return [].concat(_toConsumableArray(_get(PopoverElement.__proto__ || Object.getPrototypeOf(PopoverElement), 'observedAttributes', this)), ['direction']);
     }
   }, {
     key: 'animators',
@@ -582,15 +620,15 @@ var PopoverElement = function (_BaseDialogElement) {
   }, {
     key: 'PopoverAnimator',
     get: function get() {
-      return PopoverAnimator;
+      return _animator.PopoverAnimator;
     }
   }]);
 
   return PopoverElement;
-}(BaseDialogElement);
+}(_baseDialog2.default);
 
-export default PopoverElement;
+exports.default = PopoverElement;
 
 
-onsElements.Popover = PopoverElement;
+_elements2.default.Popover = PopoverElement;
 customElements.define('ons-popover', PopoverElement);

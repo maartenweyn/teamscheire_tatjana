@@ -17,6 +17,9 @@ limitations under the License.
 
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 var startsWith = function startsWith(s, c) {
   return s.substr(0, c.length) === c;
 };
@@ -183,4 +186,4 @@ var parse = function parse(string) {
   }
 };
 
-export default parse;
+exports.default = parse;

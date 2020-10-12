@@ -1,27 +1,41 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _animit = require('../../ons/animit');
 
-*/
+var _animit2 = _interopRequireDefault(_animit);
 
-import animit from '../../ons/animit';
-import ModalAnimator from './animator';
+var _animator = require('./animator');
+
+var _animator2 = _interopRequireDefault(_animator);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 /**
  * iOS style animator for modal.
@@ -41,7 +55,7 @@ var LiftModalAnimator = function (_ModalAnimator) {
 
     _classCallCheck(this, LiftModalAnimator);
 
-    return _possibleConstructorReturn(this, (LiftModalAnimator.__proto__ || _Object$getPrototypeOf(LiftModalAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    return _possibleConstructorReturn(this, (LiftModalAnimator.__proto__ || Object.getPrototypeOf(LiftModalAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
   }
 
   /**
@@ -55,7 +69,7 @@ var LiftModalAnimator = function (_ModalAnimator) {
     value: function show(modal, callback) {
       callback = callback ? callback : function () {};
 
-      animit(modal, this.def).default({ transform: 'translate3d(0, 100%, 0)' }, { transform: 'translate3d(0, 0, 0)' }).queue(function (done) {
+      (0, _animit2.default)(modal, this.def).default({ transform: 'translate3d(0, 100%, 0)' }, { transform: 'translate3d(0, 0, 0)' }).queue(function (done) {
         callback();
         done();
       }).play();
@@ -71,7 +85,7 @@ var LiftModalAnimator = function (_ModalAnimator) {
     value: function hide(modal, callback) {
       callback = callback ? callback : function () {};
 
-      animit(modal, this.def).default({ transform: 'translate3d(0, 0, 0)' }, { transform: 'translate3d(0, 100%, 0)' }).queue(function (done) {
+      (0, _animit2.default)(modal, this.def).default({ transform: 'translate3d(0, 0, 0)' }, { transform: 'translate3d(0, 100%, 0)' }).queue(function (done) {
         callback();
         done();
       }).play();
@@ -79,6 +93,6 @@ var LiftModalAnimator = function (_ModalAnimator) {
   }]);
 
   return LiftModalAnimator;
-}(ModalAnimator);
+}(_animator2.default);
 
-export default LiftModalAnimator;
+exports.default = LiftModalAnimator;

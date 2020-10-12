@@ -1,35 +1,71 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../../ons/elements';
-import animit from '../../ons/animit';
-import util from '../../ons/util';
-import styler from '../../ons/styler';
-import autoStyle from '../../ons/autostyle';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import AnimatorFactory from '../../ons/internal/animator-factory';
-import { ListItemAnimator, SlideListItemAnimator } from './animator';
-import BaseElement from '../base/base-element';
-import contentReady from '../../ons/content-ready';
+var _animit = require('../../ons/animit');
+
+var _animit2 = _interopRequireDefault(_animit);
+
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _styler = require('../../ons/styler');
+
+var _styler2 = _interopRequireDefault(_styler);
+
+var _autostyle = require('../../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _animatorFactory = require('../../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _animator = require('./animator');
+
+var _baseElement = require('../base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var defaultClassName = 'list-item';
 var scheme = {
@@ -45,8 +81,8 @@ var scheme = {
 };
 
 var _animatorDict = {
-  'default': SlideListItemAnimator,
-  'none': ListItemAnimator
+  'default': _animator.SlideListItemAnimator,
+  'none': _animator.ListItemAnimator
 };
 
 /**
@@ -161,7 +197,7 @@ var ListItemElement = function (_BaseElement) {
   function ListItemElement() {
     _classCallCheck(this, ListItemElement);
 
-    var _this = _possibleConstructorReturn(this, (ListItemElement.__proto__ || _Object$getPrototypeOf(ListItemElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (ListItemElement.__proto__ || Object.getPrototypeOf(ListItemElement)).call(this));
 
     _this._animatorFactory = _this._updateAnimatorFactory();
     _this.toggleExpansion = _this.toggleExpansion.bind(_this);
@@ -176,104 +212,125 @@ var ListItemElement = function (_BaseElement) {
     _this.show = _this.showExpansion;
     _this.hide = _this.hideExpansion;
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       _this._compile();
     });
     return _this;
   }
 
+  /**
+   * Compiles the list item.
+   *
+   * Various elements are allowed in the body of a list item:
+   *
+   *  - div.left, div.right, and div.center are allowed as direct children
+   *  - if div.center is not defined, anything that isn't div.left, div.right or div.expandable-content will be put in a div.center
+   *  - if div.center is defined, anything that isn't div.left, div.right or div.expandable-content will be ignored
+   *  - if list item has expandable attribute:
+   *      - div.expandable-content is allowed as a direct child
+   *      - div.top is allowed as direct child
+   *      - if div.top is defined, anything that isn't div.expandable-content should be inside div.top - anything else will be ignored
+   *      - if div.right is not defined, a div.right will be created with a drop-down chevron
+   *
+   * See the tests for examples.
+   */
+
+
   _createClass(ListItemElement, [{
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
-
+      _autostyle2.default.prepare(this);
       this.classList.add(defaultClassName);
+
+      var top = void 0,
+          expandableContent = void 0;
+      var topContent = [];
+      Array.from(this.childNodes).forEach(function (node) {
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+          topContent.push(node);
+        } else if (node.classList.contains('top')) {
+          top = node;
+        } else if (node.classList.contains('expandable-content')) {
+          expandableContent = node;
+        } else {
+          topContent.push(node);
+        }
+
+        if (node.nodeName !== 'ONS-RIPPLE') {
+          node.remove();
+        }
+      });
+      topContent = top ? Array.from(top.childNodes) : topContent;
+
+      var left = void 0,
+          right = void 0,
+          center = void 0;
+      var centerContent = [];
+      topContent.forEach(function (node) {
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+          centerContent.push(node);
+        } else if (node.classList.contains('left')) {
+          left = node;
+        } else if (node.classList.contains('right')) {
+          right = node;
+        } else if (node.classList.contains('center')) {
+          center = node;
+        } else {
+          centerContent.push(node);
+        }
+      });
 
       if (this.hasAttribute('expandable')) {
         this.classList.add('list-item--expandable');
-      }
 
-      var left = void 0,
-          center = void 0,
-          right = void 0,
-          top = void 0,
-          expandableContent = void 0;
-
-      var childEls = util.getAllChildNodes(this);
-
-      for (var i = 0; i < childEls.length; i++) {
-        var el = childEls[i];
-
-        if (el.classList.contains('left')) {
-          el.classList.add('list-item__left');
-          left = el;
-        } else if (el.classList.contains('center')) {
-          center = el;
-        } else if (el.classList.contains('right')) {
-          el.classList.add('list-item__right');
-          right = el;
-        } else if (el.classList.contains('top')) {
-          el.classList.add('list-item__top');
-          top = el;
-        } else if (el.classList.contains('expandable-content')) {
-          el.classList.add('list-item__expandable-content');
-          expandableContent = el;
+        if (!top) {
+          top = document.createElement('div');
+          top.classList.add('top');
         }
-      }
+        top.classList.add('list-item__top');
+        this.appendChild(top);
+        this._top = top;
 
-      if (!right && this.hasAttribute('expandable')) {
-        right = document.createElement('div');
-        right.classList.add('list-item__right', 'right');
+        if (expandableContent) {
+          expandableContent.classList.add('list-item__expandable-content');
+          this.appendChild(expandableContent);
+        }
 
-        // We cannot use a pseudo-element for this chevron, as we cannot animate it using
-        // JS. So, we make a chevron span instead.
-        var chevron = document.createElement('span');
-        chevron.classList.add('list-item__expand-chevron');
-        right.appendChild(chevron);
+        if (!right) {
+          right = document.createElement('div');
+          right.classList.add('list-item__right', 'right');
+
+          // We cannot use a pseudo-element for this chevron, as we cannot animate it using
+          // JS. So, we make a chevron span instead.
+          var chevron = document.createElement('span');
+          chevron.classList.add('list-item__expand-chevron');
+          right.appendChild(chevron);
+        }
+      } else {
+        top = this;
       }
 
       if (!center) {
         center = document.createElement('div');
+        center.classList.add('center');
+        centerContent.forEach(function (node) {
+          return center.appendChild(node);
+        });
+      }
+      center.classList.add('list-item__center');
+      top.appendChild(center);
 
-        if (!left && !right && !expandableContent) {
-          while (this.childNodes[0]) {
-            center.appendChild(this.childNodes[0]);
-          }
-        } else {
-          for (var _i = this.childNodes.length - 1; _i >= 0; _i--) {
-            var _el = this.childNodes[_i];
-            if (_el !== left && _el !== right && _el !== expandableContent && _el.tagName !== 'ONS-RIPPLE') {
-              center.insertBefore(_el, center.firstChild);
-            }
-          }
-        }
-
-        if (!expandableContent) {
-          this.insertBefore(center, right || null);
-        }
+      if (left) {
+        left.classList.add('list-item__left');
+        top.appendChild(left);
+      }
+      if (right) {
+        right.classList.add('list-item__right');
+        top.appendChild(right);
       }
 
-      center.classList.add('center', 'list-item__center');
-
-      if (expandableContent) {
-        // create 'top' div
-        // this holds everything except the expandable content
-        this._top = top || document.createElement('div');
-        this._top.classList.add('top', 'list-item__top');
-        this.appendChild(this._top);
-
-        this._top.appendChild(center);
-        if (left) {
-          this._top.appendChild(left);
-        }
-        if (right) {
-          this._top.appendChild(right);
-        }
-      }
-
-      util.updateRipple(this);
-
-      ModifierUtil.initModifier(this, scheme);
+      _util2.default.updateRipple(this);
+      _modifierUtil2.default.initModifier(this, scheme);
     }
 
     /**
@@ -329,13 +386,14 @@ var ListItemElement = function (_BaseElement) {
     key: 'toggleExpansion',
     value: function toggleExpansion() {
       this.classList.contains('expanded') ? this.hideExpansion() : this.showExpansion();
+      this.dispatchEvent(new Event('expansion'));
     }
   }, {
     key: '_updateAnimatorFactory',
     value: function _updateAnimatorFactory() {
-      return new AnimatorFactory({
+      return new _animatorFactory2.default({
         animators: _animatorDict,
-        baseClass: ListItemAnimator,
+        baseClass: _animator.ListItemAnimator,
         baseClassName: 'ListItemAnimator',
         defaultAnimation: this.getAttribute('animation') || 'default'
       });
@@ -345,13 +403,13 @@ var ListItemElement = function (_BaseElement) {
     value: function attributeChangedCallback(name, last, current) {
       switch (name) {
         case 'class':
-          util.restoreClass(this, defaultClassName, scheme);
+          _util2.default.restoreClass(this, defaultClassName, scheme);
           break;
         case 'modifier':
-          ModifierUtil.onModifierChanged(last, current, this, scheme);
+          _modifierUtil2.default.onModifierChanged(last, current, this, scheme);
           break;
         case 'ripple':
-          util.updateRipple(this);
+          _util2.default.updateRipple(this);
           break;
         case 'animation':
           this._animatorFactory = this._updateAnimatorFactory();
@@ -363,7 +421,7 @@ var ListItemElement = function (_BaseElement) {
     value: function connectedCallback() {
       var _this4 = this;
 
-      contentReady(this, function () {
+      (0, _contentReady2.default)(this, function () {
         _this4._setupListeners(true);
         _this4._originalBackgroundColor = _this4.style.backgroundColor;
         _this4.tapped = false;
@@ -378,8 +436,8 @@ var ListItemElement = function (_BaseElement) {
     key: '_setupListeners',
     value: function _setupListeners(add) {
       var action = (add ? 'add' : 'remove') + 'EventListener';
-      util[action](this, 'touchstart', this._onTouch, { passive: true });
-      util[action](this, 'touchmove', this._onRelease, { passive: true });
+      _util2.default[action](this, 'touchstart', this._onTouch, { passive: true });
+      _util2.default[action](this, 'touchmove', this._onRelease, { passive: true });
       this[action]('touchcancel', this._onRelease);
       this[action]('touchend', this._onRelease);
       this[action]('touchleave', this._onRelease);
@@ -406,7 +464,7 @@ var ListItemElement = function (_BaseElement) {
     value: function _onTouch(e) {
       var _this5 = this;
 
-      if (this.tapped || this !== e.target && (this._shouldIgnoreTap(e.target) || util.findParent(e.target, this._shouldIgnoreTap, function (p) {
+      if (this.tapped || this !== e.target && (this._shouldIgnoreTap(e.target) || _util2.default.findParent(e.target, this._shouldIgnoreTap, function (p) {
         return p === _this5;
       }))) {
         return; // Ignore tap
@@ -424,14 +482,14 @@ var ListItemElement = function (_BaseElement) {
         touchStyle.boxShadow = '0px -1px 0px 0px ' + touchStyle.backgroundColor;
       }
 
-      styler(this, touchStyle);
+      (0, _styler2.default)(this, touchStyle);
     }
   }, {
     key: '_onRelease',
     value: function _onRelease() {
       this.tapped = false;
       this.style.backgroundColor = this._originalBackgroundColor || '';
-      styler.clear(this, 'transition boxShadow');
+      _styler2.default.clear(this, 'transition boxShadow');
     }
   }, {
     key: 'expandableContent',
@@ -451,10 +509,10 @@ var ListItemElement = function (_BaseElement) {
   }]);
 
   return ListItemElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default ListItemElement;
+exports.default = ListItemElement;
 
 
-onsElements.ListItem = ListItemElement;
+_elements2.default.ListItem = ListItemElement;
 customElements.define('ons-list-item', ListItemElement);

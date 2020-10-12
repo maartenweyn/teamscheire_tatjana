@@ -1,34 +1,67 @@
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('../../ons/elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from '../../ons/elements';
-import util from '../../ons/util';
-import autoStyle from '../../ons/autostyle';
-import ModifierUtil from '../../ons/internal/modifier-util';
-import AnimatorFactory from '../../ons/internal/animator-factory';
-import { DialogAnimator, IOSDialogAnimator, AndroidDialogAnimator, SlideDialogAnimator } from './animator';
-import platform from '../../ons/platform';
-import BaseDialogElement from '../base/base-dialog';
-import contentReady from '../../ons/content-ready';
+var _util = require('../../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _autostyle = require('../../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _animatorFactory = require('../../ons/internal/animator-factory');
+
+var _animatorFactory2 = _interopRequireDefault(_animatorFactory);
+
+var _animator = require('./animator');
+
+var _platform = require('../../ons/platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _baseDialog = require('../base/base-dialog');
+
+var _baseDialog2 = _interopRequireDefault(_baseDialog);
+
+var _contentReady = require('../../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var scheme = {
   '.dialog': 'dialog--*',
@@ -38,10 +71,10 @@ var scheme = {
 
 var _animatorDict = {
   'default': function _default() {
-    return platform.isAndroid() ? AndroidDialogAnimator : IOSDialogAnimator;
+    return _platform2.default.isAndroid() ? _animator.AndroidDialogAnimator : _animator.IOSDialogAnimator;
   },
-  'slide': SlideDialogAnimator,
-  'none': DialogAnimator
+  'slide': _animator.SlideDialogAnimator,
+  'none': _animator.DialogAnimator
 };
 
 /**
@@ -187,9 +220,9 @@ var DialogElement = function (_BaseDialogElement) {
   function DialogElement() {
     _classCallCheck(this, DialogElement);
 
-    var _this = _possibleConstructorReturn(this, (DialogElement.__proto__ || _Object$getPrototypeOf(DialogElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (DialogElement.__proto__ || Object.getPrototypeOf(DialogElement)).call(this));
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       return _this._compile();
     });
     return _this;
@@ -198,9 +231,9 @@ var DialogElement = function (_BaseDialogElement) {
   _createClass(DialogElement, [{
     key: '_updateAnimatorFactory',
     value: function _updateAnimatorFactory() {
-      return new AnimatorFactory({
+      return new _animatorFactory2.default({
         animators: _animatorDict,
-        baseClass: DialogAnimator,
+        baseClass: _animator.DialogAnimator,
         baseClassName: 'DialogAnimator',
         defaultAnimation: this.getAttribute('animation')
       });
@@ -208,7 +241,7 @@ var DialogElement = function (_BaseDialogElement) {
   }, {
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
 
       this.style.display = 'none';
       this.style.zIndex = 10001;
@@ -247,7 +280,7 @@ var DialogElement = function (_BaseDialogElement) {
 
       this.setAttribute('status-bar-fill', '');
 
-      ModifierUtil.initModifier(this, this._scheme);
+      _modifierUtil2.default.initModifier(this, this._scheme);
     }
 
     /**
@@ -340,18 +373,18 @@ var DialogElement = function (_BaseDialogElement) {
   }, {
     key: '_mask',
     get: function get() {
-      return util.findChild(this, '.dialog-mask');
+      return _util2.default.findChild(this, '.dialog-mask');
     }
   }, {
     key: '_dialog',
     get: function get() {
-      return util.findChild(this, '.dialog');
+      return _util2.default.findChild(this, '.dialog');
     }
   }], [{
     key: 'registerAnimator',
     value: function registerAnimator(name, Animator) {
-      if (!(Animator.prototype instanceof DialogAnimator)) {
-        util.throwAnimator('Dialog');
+      if (!(Animator.prototype instanceof _animator.DialogAnimator)) {
+        _util2.default.throwAnimator('Dialog');
       }
       _animatorDict[name] = Animator;
     }
@@ -363,15 +396,15 @@ var DialogElement = function (_BaseDialogElement) {
   }, {
     key: 'DialogAnimator',
     get: function get() {
-      return DialogAnimator;
+      return _animator.DialogAnimator;
     }
   }]);
 
   return DialogElement;
-}(BaseDialogElement);
+}(_baseDialog2.default);
 
-export default DialogElement;
+exports.default = DialogElement;
 
 
-onsElements.Dialog = DialogElement;
+_elements2.default.Dialog = DialogElement;
 customElements.define('ons-dialog', DialogElement);

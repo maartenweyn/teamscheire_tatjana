@@ -1,3 +1,19 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _platform = require('./platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _util = require('./util');
+
+var _util2 = _interopRequireDefault(_util);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 
@@ -15,11 +31,8 @@ limitations under the License.
 
 */
 
-import platform from './platform';
-import util from './util';
-
 var error = function error(message) {
-  return util.throw('In PageAttributeExpression: ' + message);
+  return _util2.default.throw('In PageAttributeExpression: ' + message);
 };
 
 var pageAttributeExpression = {
@@ -177,10 +190,10 @@ var pageAttributeExpression = {
 };
 
 // Define default variables.
-pageAttributeExpression.defineVariable('mobileOS', platform.getMobileOS());
-pageAttributeExpression.defineVariable('iOSDevice', platform.getIOSDevice());
+pageAttributeExpression.defineVariable('mobileOS', _platform2.default.getMobileOS());
+pageAttributeExpression.defineVariable('iOSDevice', _platform2.default.getIOSDevice());
 pageAttributeExpression.defineVariable('runtime', function () {
-  return platform.isWebView() ? 'cordova' : 'browser';
+  return _platform2.default.isWebView() ? 'cordova' : 'browser';
 });
 
-export default pageAttributeExpression;
+exports.default = pageAttributeExpression;

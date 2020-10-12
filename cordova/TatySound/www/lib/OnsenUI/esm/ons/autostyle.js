@@ -1,3 +1,19 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _platform = require('./platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _util = require('./util');
+
+var _util2 = _interopRequireDefault(_util);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /*
 Copyright 2013-2015 ASIAL CORPORATION
 
@@ -14,9 +30,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */
-
-import onsPlatform from './platform';
-import util from './util';
 
 var autoStyleEnabled = true;
 
@@ -38,7 +51,7 @@ platforms.android = function (element) {
 
   var elementName = element.tagName.toLowerCase();
 
-  if (!util.hasModifier(element, 'material')) {
+  if (!_util2.default.hasModifier(element, 'material')) {
     var oldModifier = element.getAttribute('modifier') || '';
 
     var newModifier = oldModifier.trim().split(/\s+/).map(function (e) {
@@ -68,9 +81,9 @@ platforms.android = function (element) {
 platforms.ios = function (element) {
 
   // Modifiers
-  if (util.removeModifier(element, 'material')) {
-    if (util.removeModifier(element, 'material--flat')) {
-      util.addModifier(element, util.removeModifier(element, 'large') ? 'large--quiet' : 'quiet');
+  if (_util2.default.removeModifier(element, 'material')) {
+    if (_util2.default.removeModifier(element, 'material--flat')) {
+      _util2.default.addModifier(element, _util2.default.removeModifier(element, 'large') ? 'large--quiet' : 'quiet');
     }
 
     if (!element.getAttribute('modifier')) {
@@ -94,7 +107,7 @@ var unlocked = {
 
 var getPlatform = function getPlatform(element, force) {
   if (autoStyleEnabled && !element.hasAttribute('disable-auto-styling')) {
-    var mobileOS = onsPlatform.getMobileOS();
+    var mobileOS = _platform2.default.getMobileOS();
     if (platforms.hasOwnProperty(mobileOS) && (unlocked.hasOwnProperty(mobileOS) || force)) {
       return mobileOS;
     }
@@ -133,7 +146,7 @@ var restoreModifier = function restoreModifier(element) {
   return false;
 };
 
-export default {
+exports.default = {
   isEnabled: function isEnabled() {
     return autoStyleEnabled;
   },

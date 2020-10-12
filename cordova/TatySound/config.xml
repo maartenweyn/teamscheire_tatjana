@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="be.wesdec.tatysound" version="1.0.4" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="be.wesdec.tatysound" version="1.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>TatySound</name>
     <description>
         An communication app for TatySound
@@ -30,26 +30,59 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
-        <edit-config file="TatySound/TatySound-Info.plist" target="NSAppTransportSecurity" mode="merge">
+        <!-- <edit-config file="TatySound/TatySound-Info.plist" target="NSAppTransportSecurity" mode="merge">
             <dict>
                 <key>NSExceptionDomains</key>
                 <dict>
                     <key>wesdec.be</key>
                     <dict>
-                        <!--Include to allow subdomains-->
                         <key>NSIncludesSubdomains</key>
                         <true/>
-                        <!--Include to allow HTTP requests-->
                         <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
                         <true/>
                     </dict>
                 </dict>
             </dict>
-        </edit-config>
-
-        <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription"> <string>This app requires Bluetooth to connect to our hardware.</string> </config-file>
-        <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothAlwaysUsageDescription"> <string>This app requires Bluetooth to connect to our hardware.</string> </config-file>
+        </edit-config> -->
+        <!-- <custom-config-file parent="NSBluetoothAlwaysUsageDescription" platform="ios" target="*-Info.plist">
+            <string>This app requires Bluetooth to connect to our hardware.</string>
+        </custom-config-file> -->
+        <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothPeripheralUsageDescription"><string>This app requires Bluetooth to connect to our hardware.</string></config-file>
+        <config-file platform="ios" target="*-Info.plist" parent="NSBluetoothAlwaysUsageDescription"><string>This app requires Bluetooth to connect to our hardware.</string></config-file>
+        <config-file platform="ios" target="*-Info.plist" parent="BGTaskSchedulerPermittedIdentifiers"><array><string>be.wesdec.tatysound</string></array></config-file>
         <config-file platform="ios" target="*-Info.plist" parent="ITSAppUsesNonExemptEncryption"> <false/> </config-file>
-
+        <!-- iOS 8.0+ -->
+        <!-- iPhone 6 Plus  -->
+        <icon src="res/ios/icon-60@3x.png" width="180" height="180" />
+        <!-- iOS 7.0+ -->
+        <!-- iPhone / iPod Touch  -->
+        <icon src="res/ios/icon-60.png" width="60" height="60" />
+        <icon src="res/ios/icon-60@2x.png" width="120" height="120" />
+        <!-- iPad -->
+        <icon src="res/ios/icon-76.png" width="76" height="76" />
+        <icon src="res/ios/icon-76@2x.png" width="152" height="152" />
+        <!-- Spotlight Icon -->
+        <icon src="res/ios/icon-40.png" width="40" height="40" />
+        <icon src="res/ios/icon-40@2x.png" width="80" height="80" />
+        <!-- iOS 6.1 -->
+        <!-- iPhone / iPod Touch -->
+        <icon src="res/ios/icon.png" width="57" height="57" />
+        <icon src="res/ios/icon@2x.png" width="114" height="114" />
+        <!-- iPad -->
+        <icon src="res/ios/icon-20.png" width="20" height="20" />
+        <icon src="res/ios/icon-72.png" width="72" height="72" />
+        <icon src="res/ios/icon-72@2x.png" width="144" height="144" />
+        <!-- iPad Pro -->
+        <icon src="res/ios/icon-167.png" width="167" height="167" />
+        <!-- iPhone Spotlight and Settings Icon -->
+        <icon src="res/ios/icon-small.png" width="29" height="29" />
+        <icon src="res/ios/icon-small@2x.png" width="58" height="58" />
+        <icon src="res/ios/icon-small@3x.png" width="87" height="87" />
+        <!-- iPad Spotlight and Settings Icon -->
+        <icon src="res/ios/icon-50.png" width="50" height="50" />
+        <icon src="res/ios/icon-50@2x.png" width="100" height="100" />
+        <!-- iPad Pro -->
+        <icon src="res/ios/icon-83.5@2x.png" width="167" height="167" />
+        <icon src="res/ios/icon-1024.png" width="1024" height="1024" />
     </platform>
 </widget>

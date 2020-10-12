@@ -1,38 +1,87 @@
-import _extends from 'babel-runtime/helpers/extends';
-import _typeof from 'babel-runtime/helpers/typeof';
-import _Promise from 'babel-runtime/core-js/promise';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; /*
+                                                                                                                                                                                                                                                                              Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                              Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                              you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                              You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                                 http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                              Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                              distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                              WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                              See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                              limitations under the License.
+                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                              */
 
-*/
+var _util = require('./util');
 
-import util from './util';
-import elements from './elements';
-import animit from './animit';
-import GestureDetector from './gesture-detector';
-import platform from './platform';
-import notification from './notification';
-import actionSheet from './action-sheet';
-import internal from './internal';
-import orientation from './orientation';
-import modifier from './modifier';
-import softwareKeyboard from './software-keyboard';
-import pageAttributeExpression from './page-attribute-expression';
-import autoStyle from './autostyle';
-import DoorLock from './doorlock';
-import { defaultPageLoader, PageLoader } from './page-loader';
+var _util2 = _interopRequireDefault(_util);
+
+var _elements = require('./elements');
+
+var _elements2 = _interopRequireDefault(_elements);
+
+var _animit = require('./animit');
+
+var _animit2 = _interopRequireDefault(_animit);
+
+var _gestureDetector = require('./gesture-detector');
+
+var _gestureDetector2 = _interopRequireDefault(_gestureDetector);
+
+var _platform = require('./platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+var _notification = require('./notification');
+
+var _notification2 = _interopRequireDefault(_notification);
+
+var _actionSheet = require('./action-sheet');
+
+var _actionSheet2 = _interopRequireDefault(_actionSheet);
+
+var _internal = require('./internal');
+
+var _internal2 = _interopRequireDefault(_internal);
+
+var _orientation = require('./orientation');
+
+var _orientation2 = _interopRequireDefault(_orientation);
+
+var _modifier = require('./modifier');
+
+var _modifier2 = _interopRequireDefault(_modifier);
+
+var _softwareKeyboard = require('./software-keyboard');
+
+var _softwareKeyboard2 = _interopRequireDefault(_softwareKeyboard);
+
+var _pageAttributeExpression = require('./page-attribute-expression');
+
+var _pageAttributeExpression2 = _interopRequireDefault(_pageAttributeExpression);
+
+var _autostyle = require('./autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _doorlock = require('./doorlock');
+
+var _doorlock2 = _interopRequireDefault(_doorlock);
+
+var _pageLoader = require('./page-loader');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @object ons
@@ -42,21 +91,21 @@ import { defaultPageLoader, PageLoader } from './page-loader';
  *   [en]A global object that's used in Onsen UI. [/en]
  */
 var ons = {
-  animit: animit,
-  defaultPageLoader: defaultPageLoader,
-  elements: elements,
-  GestureDetector: GestureDetector,
-  modifier: modifier,
-  notification: notification,
-  orientation: orientation,
-  pageAttributeExpression: pageAttributeExpression,
-  PageLoader: PageLoader,
-  platform: platform,
-  softwareKeyboard: softwareKeyboard,
-  _autoStyle: autoStyle,
-  _internal: internal,
-  _readyLock: new DoorLock(),
-  _util: util
+  animit: _animit2.default,
+  defaultPageLoader: _pageLoader.defaultPageLoader,
+  elements: _elements2.default,
+  GestureDetector: _gestureDetector2.default,
+  modifier: _modifier2.default,
+  notification: _notification2.default,
+  orientation: _orientation2.default,
+  pageAttributeExpression: _pageAttributeExpression2.default,
+  PageLoader: _pageLoader.PageLoader,
+  platform: _platform2.default,
+  softwareKeyboard: _softwareKeyboard2.default,
+  _autoStyle: _autostyle2.default,
+  _internal: _internal2.default,
+  _readyLock: new _doorlock2.default(),
+  _util: _util2.default
 };
 
 ons.platform.select((window.location.search.match(/platform=([\w-]+)/) || [])[1]);
@@ -64,7 +113,7 @@ ons.platform.select((window.location.search.match(/platform=([\w-]+)/) || [])[1]
 waitDeviceReady();
 
 var readyError = function readyError(after) {
-  return util.throw('This method must be called ' + (after ? 'after' : 'before') + ' ons.isReady() is true');
+  return _util2.default.throw('This method must be called ' + (after ? 'after' : 'before') + ' ons.isReady() is true');
 };
 
 /**
@@ -139,7 +188,7 @@ ons.disableDeviceBackButtonHandler = function () {
   if (!ons.isReady()) {
     readyError(true);
   }
-  internal.dbbDispatcher.disable();
+  _internal2.default.dbbDispatcher.disable();
 };
 
 /**
@@ -153,11 +202,11 @@ ons.enableDeviceBackButtonHandler = function () {
   if (!ons.isReady()) {
     readyError(true);
   }
-  internal.dbbDispatcher.enable();
+  _internal2.default.dbbDispatcher.enable();
 };
 
 ons.fireDeviceBackButtonEvent = function () {
-  internal.dbbDispatcher.fireDeviceBackButtonEvent();
+  _internal2.default.dbbDispatcher.fireDeviceBackButtonEvent();
 };
 
 /**
@@ -171,7 +220,7 @@ ons.enableAutoStatusBarFill = function () {
   if (ons.isReady()) {
     readyError(false);
   }
-  internal.config.autoStatusBarFill = true;
+  _internal2.default.config.autoStatusBarFill = true;
 };
 
 /**
@@ -185,7 +234,7 @@ ons.disableAutoStatusBarFill = function () {
   if (ons.isReady()) {
     readyError(false);
   }
-  internal.config.autoStatusBarFill = false;
+  _internal2.default.config.autoStatusBarFill = false;
 };
 
 /**
@@ -202,7 +251,7 @@ ons.mockStatusBar = function () {
 
   var mock = function mock() {
     if (!document.body.children[0] || !document.body.children[0].classList.contains('ons-status-bar-mock')) {
-      var android = platform.isAndroid(),
+      var android = _platform2.default.isAndroid(),
           i = function i(_i) {
         return '<i class="' + _i.split('-')[0] + ' ' + _i + '"></i>';
       };
@@ -210,11 +259,11 @@ ons.mockStatusBar = function () {
           center = android ? '' : '12:28 PM',
           right = android ? i('zmdi-network') + ' ' + i('zmdi-wifi') + ' ' + i('zmdi-battery') + ' 12:28 PM' : '80% ' + i('fa-battery-three-quarters');
 
-      document.body.insertBefore(util.createElement('<div class="ons-status-bar-mock ' + (android ? 'android' : 'ios') + '">' + ('<div>' + left + '</div><div>' + center + '</div><div>' + right + '</div>') + '</div>'), document.body.firstChild);
+      document.body.insertBefore(_util2.default.createElement('<div class="ons-status-bar-mock ' + (android ? 'android' : 'ios') + '">' + ('<div>' + left + '</div><div>' + center + '</div><div>' + right + '</div>') + '</div>'), document.body.firstChild);
     }
   };
 
-  document.body ? mock() : internal.waitDOMContentLoaded(mock);
+  document.body ? mock() : _internal2.default.waitDOMContentLoaded(mock);
 };
 
 /**
@@ -225,7 +274,7 @@ ons.mockStatusBar = function () {
  *   [ja]アニメーションを全て無効にします。テストの際に便利です。[/ja]
  */
 ons.disableAnimations = function () {
-  internal.config.animationsDisabled = true;
+  _internal2.default.config.animationsDisabled = true;
 };
 
 /**
@@ -236,15 +285,15 @@ ons.disableAnimations = function () {
  *   [ja]アニメーションを有効にします。[/ja]
  */
 ons.enableAnimations = function () {
-  internal.config.animationsDisabled = false;
+  _internal2.default.config.animationsDisabled = false;
 };
 
 ons._disableWarnings = function () {
-  internal.config.warningsDisabled = true;
+  _internal2.default.config.warningsDisabled = true;
 };
 
 ons._enableWarnings = function () {
-  internal.config.warningsDisabled = false;
+  _internal2.default.config.warningsDisabled = false;
 };
 
 /**
@@ -254,7 +303,7 @@ ons._enableWarnings = function () {
  *   [en]Disable automatic styling.[/en]
  *   [ja][/ja]
  */
-ons.disableAutoStyling = autoStyle.disable;
+ons.disableAutoStyling = _autostyle2.default.disable;
 
 /**
  * @method enableAutoStyling
@@ -263,7 +312,7 @@ ons.disableAutoStyling = autoStyle.disable;
  *   [en]Enable automatic styling based on OS (default).[/en]
  *   [ja][/ja]
  */
-ons.enableAutoStyling = autoStyle.enable;
+ons.enableAutoStyling = _autostyle2.default.enable;
 
 /**
  * @method disableIconAutoPrefix
@@ -273,22 +322,8 @@ ons.enableAutoStyling = autoStyle.enable;
  *   [ja][/ja]
  */
 ons.disableIconAutoPrefix = function () {
-  util.checkMissingImport('Icon');
-  elements.Icon.setAutoPrefix(false);
-};
-
-/**
- * @method forceUIWebViewScrollFix
- * @signature forceUIWebViewScrollFix()
- * @param {Boolean} force Enable or disable the fix.
- * @description
- *   [en]Applies a fix for iOS UIWebView which prevents scroll events jumping to pages under the top layer. This may visually affect normal scrolling of UIWebView if you open a dialog/menu before the scroll momentum finished. Disabled by default.[/en]
- *   [ja][/ja]
- */
-ons.forceUIWebViewScrollFix = function () {
-  var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-  internal.config.forceUIWebViewScrollFix = force;
+  _util2.default.checkMissingImport('Icon');
+  _elements2.default.Icon.setAutoPrefix(false);
 };
 
 /**
@@ -307,7 +342,7 @@ ons.forcePlatformStyling = function (newPlatform) {
     if (element.tagName.toLowerCase() === 'ons-if') {
       element._platformUpdate();
     } else if (element.tagName.match(/^ons-/i)) {
-      autoStyle.prepare(element, true);
+      _autostyle2.default.prepare(element, true);
       if (element.tagName.toLowerCase() === 'ons-tabbar') {
         element._updatePosition();
       }
@@ -331,11 +366,11 @@ ons.forcePlatformStyling = function (newPlatform) {
 ons.preload = function () {
   var templates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
-  return _Promise.all((templates instanceof Array ? templates : [templates]).map(function (template) {
+  return Promise.all((templates instanceof Array ? templates : [templates]).map(function (template) {
     if (typeof template !== 'string') {
-      util.throw('Expected string arguments but got ' + (typeof template === 'undefined' ? 'undefined' : _typeof(template)));
+      _util2.default.throw('Expected string arguments but got ' + (typeof template === 'undefined' ? 'undefined' : _typeof(template)));
     }
-    return internal.getTemplateHTMLAsync(template);
+    return _internal2.default.getTemplateHTMLAsync(template);
   }));
 };
 
@@ -379,7 +414,7 @@ ons.createElement = function (template) {
     return element;
   };
 
-  return template.charAt(0) === '<' ? create(template) : internal.getPageHTMLAsync(template).then(create);
+  return template.charAt(0) === '<' ? create(template) : _internal2.default.getPageHTMLAsync(template).then(create);
 };
 
 /**
@@ -475,7 +510,7 @@ ons.createPopover = ons.createDialog = ons.createAlertDialog = function (templat
  *   [en]Will resolve when the action sheet is closed. The resolve value is either the index of the tapped button or -1 when canceled.[/en]
  *   [ja][/ja]
  */
-ons.openActionSheet = actionSheet;
+ons.openActionSheet = _actionSheet2.default;
 
 /**
  * @method resolveLoadingPlaceholder
@@ -490,7 +525,7 @@ ons.openActionSheet = actionSheet;
 ons.resolveLoadingPlaceholder = function (page, link) {
   var elements = ons._util.arrayFrom(window.document.querySelectorAll('[ons-loading-placeholder]'));
   if (elements.length === 0) {
-    util.throw('No ons-loading-placeholder exists');
+    _util2.default.throw('No ons-loading-placeholder exists');
   }
 
   elements.filter(function (element) {
@@ -529,7 +564,7 @@ ons._resolveLoadingPlaceholder = function (parent, page) {
       element.style.display = '';
     });
   }).catch(function (error) {
-    return _Promise.reject('Unabled to resolve placeholder: ' + error);
+    return Promise.reject('Unabled to resolve placeholder: ' + error);
   });
 };
 
@@ -563,4 +598,4 @@ ons.getScriptPage = function () {
   return getCS() && /ons-page/i.test(getCS().parentElement.tagName) && getCS().parentElement || null;
 };
 
-export default ons;
+exports.default = ons;

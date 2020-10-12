@@ -1,29 +1,57 @@
-import _setImmediate from 'babel-runtime/core-js/set-immediate';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-   http://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+'use strict';
 
-import onsElements from '../ons/elements';
-import util from '../ons/util';
-import styler from '../ons/styler';
-import autoStyle from '../ons/autostyle';
-import ModifierUtil from '../ons/internal/modifier-util';
-import BaseElement from './base/base-element';
-import contentReady from '../ons/content-ready';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _elements = require('../ons/elements');
+
+var _elements2 = _interopRequireDefault(_elements);
+
+var _util = require('../ons/util');
+
+var _util2 = _interopRequireDefault(_util);
+
+var _styler = require('../ons/styler');
+
+var _styler2 = _interopRequireDefault(_styler);
+
+var _autostyle = require('../ons/autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('../ons/internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _baseElement = require('./base/base-element');
+
+var _baseElement2 = _interopRequireDefault(_baseElement);
+
+var _contentReady = require('../ons/content-ready');
+
+var _contentReady2 = _interopRequireDefault(_contentReady);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
 
 var defaultClassName = 'fab';
 
@@ -90,12 +118,12 @@ var FabElement = function (_BaseElement) {
 
     // The following statements can be executed before contentReady
     // since these do not access the children
-    var _this = _possibleConstructorReturn(this, (FabElement.__proto__ || _Object$getPrototypeOf(FabElement)).call(this));
+    var _this = _possibleConstructorReturn(this, (FabElement.__proto__ || Object.getPrototypeOf(FabElement)).call(this));
 
-    _this.hide();
+    _this._hide();
     _this.classList.add(defaultClassName);
 
-    contentReady(_this, function () {
+    (0, _contentReady2.default)(_this, function () {
       _this._compile();
     });
     return _this;
@@ -104,13 +132,13 @@ var FabElement = function (_BaseElement) {
   _createClass(FabElement, [{
     key: '_compile',
     value: function _compile() {
-      autoStyle.prepare(this);
+      _autostyle2.default.prepare(this);
 
-      if (!util.findChild(this, '.fab__icon')) {
+      if (!_util2.default.findChild(this, '.fab__icon')) {
         var content = document.createElement('span');
         content.classList.add('fab__icon');
 
-        util.arrayFrom(this.childNodes).forEach(function (element) {
+        _util2.default.arrayFrom(this.childNodes).forEach(function (element) {
           if (!element.tagName || element.tagName.toLowerCase() !== 'ons-ripple') {
             content.appendChild(element);
           }
@@ -120,7 +148,7 @@ var FabElement = function (_BaseElement) {
 
       this._updateRipple();
 
-      ModifierUtil.initModifier(this, scheme);
+      _modifierUtil2.default.initModifier(this, scheme);
 
       this._updatePosition();
     }
@@ -129,8 +157,8 @@ var FabElement = function (_BaseElement) {
     value: function connectedCallback() {
       var _this2 = this;
 
-      _setImmediate(function () {
-        return _this2.show();
+      setImmediate(function () {
+        return _this2._show();
       });
     }
   }, {
@@ -138,10 +166,10 @@ var FabElement = function (_BaseElement) {
     value: function attributeChangedCallback(name, last, current) {
       switch (name) {
         case 'class':
-          util.restoreClass(this, defaultClassName, scheme);
+          _util2.default.restoreClass(this, defaultClassName, scheme);
           break;
         case 'modifier':
-          ModifierUtil.onModifierChanged(last, current, this, scheme);
+          _modifierUtil2.default.onModifierChanged(last, current, this, scheme);
           break;
         case 'ripple':
           this._updateRipple();
@@ -154,21 +182,24 @@ var FabElement = function (_BaseElement) {
   }, {
     key: '_show',
     value: function _show() {
-      this.show();
+      if (!this._manuallyHidden) {
+        // if user has not called ons-fab.hide()
+        this._toggle(true);
+      }
     }
   }, {
     key: '_hide',
     value: function _hide() {
       var _this3 = this;
 
-      _setImmediate(function () {
-        return _this3.hide();
+      setImmediate(function () {
+        return _this3._toggle(false);
       });
     }
   }, {
     key: '_updateRipple',
     value: function _updateRipple() {
-      util.updateRipple(this);
+      _util2.default.updateRipple(this);
     }
   }, {
     key: '_updatePosition',
@@ -246,10 +277,18 @@ var FabElement = function (_BaseElement) {
     value: function toggle() {
       var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : !this.visible;
 
-      var isBottom = (this.getAttribute('position') || '').indexOf('bottom') >= 0;
-      var translate = isBottom ? 'translate3d(0px, -' + (util.globals.fabOffset || 0) + 'px, 0px)' : '';
+      this._manuallyHidden = !action;
+      this._toggle(action);
+    }
+  }, {
+    key: '_toggle',
+    value: function _toggle() {
+      var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : !this.visible;
 
-      styler(this, { transform: translate + ' scale(' + Number(action) + ')' });
+      var isBottom = (this.getAttribute('position') || '').indexOf('bottom') >= 0;
+      var translate = isBottom ? 'translate3d(0px, -' + (_util2.default.globals.fabOffset || 0) + 'px, 0px)' : '';
+
+      (0, _styler2.default)(this, { transform: translate + ' scale(' + Number(action) + ')' });
     }
 
     /**
@@ -263,7 +302,7 @@ var FabElement = function (_BaseElement) {
   }, {
     key: 'disabled',
     set: function set(value) {
-      return util.toggleAttribute(this, 'disabled', value);
+      return _util2.default.toggleAttribute(this, 'disabled', value);
     },
     get: function get() {
       return this.hasAttribute('disabled');
@@ -291,10 +330,10 @@ var FabElement = function (_BaseElement) {
   }]);
 
   return FabElement;
-}(BaseElement);
+}(_baseElement2.default);
 
-export default FabElement;
+exports.default = FabElement;
 
 
-onsElements.Fab = FabElement;
+_elements2.default.Fab = FabElement;
 customElements.define('ons-fab', FabElement);

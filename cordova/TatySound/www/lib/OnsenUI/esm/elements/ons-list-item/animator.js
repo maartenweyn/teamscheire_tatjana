@@ -1,29 +1,45 @@
-import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-import _Object$getPrototypeOf from 'babel-runtime/core-js/object/get-prototype-of';
-import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
-import _createClass from 'babel-runtime/helpers/createClass';
-import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
-import _inherits from 'babel-runtime/helpers/inherits';
-/*
-Copyright 2013-2018 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.SlideListItemAnimator = exports.ListItemAnimator = undefined;
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+var _animit3 = require('../../ons/animit');
 
-import animit from '../../ons/animit';
-import BaseAnimator from '../../ons/base-animator';
+var _animit4 = _interopRequireDefault(_animit3);
 
-export var ListItemAnimator = function (_BaseAnimator) {
+var _baseAnimator = require('../../ons/base-animator');
+
+var _baseAnimator2 = _interopRequireDefault(_baseAnimator);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Copyright 2013-2018 ASIAL CORPORATION
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               you may not use this file except in compliance with the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               You may obtain a copy of the License at
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               See the License for the specific language governing permissions and
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               limitations under the License.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+var ListItemAnimator = exports.ListItemAnimator = function (_BaseAnimator) {
   _inherits(ListItemAnimator, _BaseAnimator);
 
   function ListItemAnimator() {
@@ -37,7 +53,7 @@ export var ListItemAnimator = function (_BaseAnimator) {
 
     _classCallCheck(this, ListItemAnimator);
 
-    return _possibleConstructorReturn(this, (ListItemAnimator.__proto__ || _Object$getPrototypeOf(ListItemAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
+    return _possibleConstructorReturn(this, (ListItemAnimator.__proto__ || Object.getPrototypeOf(ListItemAnimator)).call(this, { timing: timing, delay: delay, duration: duration }));
   }
 
   _createClass(ListItemAnimator, [{
@@ -53,15 +69,15 @@ export var ListItemAnimator = function (_BaseAnimator) {
   }]);
 
   return ListItemAnimator;
-}(BaseAnimator);
+}(_baseAnimator2.default);
 
-export var SlideListItemAnimator = function (_ListItemAnimator) {
+var SlideListItemAnimator = exports.SlideListItemAnimator = function (_ListItemAnimator) {
   _inherits(SlideListItemAnimator, _ListItemAnimator);
 
   function SlideListItemAnimator() {
     _classCallCheck(this, SlideListItemAnimator);
 
-    return _possibleConstructorReturn(this, (SlideListItemAnimator.__proto__ || _Object$getPrototypeOf(SlideListItemAnimator)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (SlideListItemAnimator.__proto__ || Object.getPrototypeOf(SlideListItemAnimator)).apply(this, arguments));
   }
 
   _createClass(SlideListItemAnimator, [{
@@ -98,7 +114,7 @@ export var SlideListItemAnimator = function (_ListItemAnimator) {
       // Now that we have the values we need, reset the height back to its original state
       listItem.expandableContent.style.height = oldHeight;
 
-      (_animit = animit(listItem.expandableContent, { duration: this.duration, property: 'height padding-top padding-bottom' })).default.apply(_animit, _toConsumableArray(shouldOpen ? expansionOpenTransition : expansionOpenTransition.reverse())).play(function () {
+      (_animit = (0, _animit4.default)(listItem.expandableContent, { duration: this.duration, property: 'height padding-top padding-bottom' })).default.apply(_animit, _toConsumableArray(shouldOpen ? expansionOpenTransition : expansionOpenTransition.reverse())).play(function () {
         listItem.expandableContent.style.display = oldDisplay;
         callback && callback();
       });
@@ -106,7 +122,7 @@ export var SlideListItemAnimator = function (_ListItemAnimator) {
       if (listItem.expandChevron) {
         var _animit2;
 
-        (_animit2 = animit(listItem.expandChevron, { duration: this.duration, property: 'transform' })).default.apply(_animit2, _toConsumableArray(shouldOpen ? iconOpenTransition : iconOpenTransition.reverse())).play();
+        (_animit2 = (0, _animit4.default)(listItem.expandChevron, { duration: this.duration, property: 'transform' })).default.apply(_animit2, _toConsumableArray(shouldOpen ? iconOpenTransition : iconOpenTransition.reverse())).play();
       }
     }
   }]);

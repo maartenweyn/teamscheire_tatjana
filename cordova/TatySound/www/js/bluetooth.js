@@ -22,8 +22,8 @@ var bluetooth = {
         debug.log('Initialising bluetooth ...');
         bluetooth.refreshDeviceList();
         debug.log('Bluetooth Initialised', 'success');
-        window.BackgroundTimer.onTimerEvent(bluetooth.timer_callback);
-        window.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
+        window.plugins.BackgroundTimer.onTimerEvent(bluetooth.timer_callback);
+        window.plugins.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
 
         console.log("platform " + window.cordova.platformId);
         //autoconnect
@@ -94,7 +94,7 @@ var bluetooth = {
         //mqttclient.addMessage('device,1');
 
         bluetooth.toggleConnectionButtons();
-        window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
+        window.plugins.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
 
         //bluetooth.sendTime();
     },
@@ -143,10 +143,6 @@ var bluetooth = {
         debug.log('Has send data', 'success');
     },
     onData: function (data) {
-        //mqttclient.addMessage(bytesToString(data));
-
-        //currentmessage.push(data);
-
         data = new Uint8Array(data);
         var stringdata = String.fromCharCode.apply(null, data);
 
@@ -201,7 +197,7 @@ var bluetooth = {
     timer_callback: function() {
         console.log("timer_callback");
         ble.isConnected(bluetooth.connectedDevice.id, function () {
-            window.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
+            window.plugins.BackgroundTimer.stop(bluetooth.timerstop_successCallback, bluetooth.timerstop_errorCallback);
         }, function () {
             bluetooth.refreshDeviceList();
         });
@@ -227,7 +223,7 @@ var bluetooth = {
             //mqttclient.addMessage('device,0');
             debug.log('error and disconnected from ' + bluetooth.lastConnectedDeviceId, 'success');
             bluetooth.toggleConnectionButtons();
-            window.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
+            window.plugins.BackgroundTimer.start(bluetooth.timerstart_successCallback, bluetooth.timerstart_errorCallback, bluetooth.background_timer_settings);
         });
     },
     toggleConnectionButtons: function () {

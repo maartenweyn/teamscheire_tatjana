@@ -1,32 +1,57 @@
-import _Promise from 'babel-runtime/core-js/promise';
-import _typeof from 'babel-runtime/helpers/typeof';
-import _Object$keys from 'babel-runtime/core-js/object/keys';
-import _Array$from from 'babel-runtime/core-js/array/from';
-import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-/*
-Copyright 2013-2015 ASIAL CORPORATION
+'use strict';
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-   http://www.apache.org/licenses/LICENSE-2.0
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+var _elements = require('./elements');
 
-*/
+var _elements2 = _interopRequireDefault(_elements);
 
-import onsElements from './elements';
-import styler from './styler';
-import internal from './internal';
-import autoStyle from './autostyle';
-import ModifierUtil from './internal/modifier-util';
-import animationOptionsParse from './animation-options-parser';
-import platform from './platform';
+var _styler = require('./styler');
+
+var _styler2 = _interopRequireDefault(_styler);
+
+var _internal = require('./internal');
+
+var _internal2 = _interopRequireDefault(_internal);
+
+var _autostyle = require('./autostyle');
+
+var _autostyle2 = _interopRequireDefault(_autostyle);
+
+var _modifierUtil = require('./internal/modifier-util');
+
+var _modifierUtil2 = _interopRequireDefault(_modifierUtil);
+
+var _animationOptionsParser = require('./animation-options-parser');
+
+var _animationOptionsParser2 = _interopRequireDefault(_animationOptionsParser);
+
+var _platform = require('./platform');
+
+var _platform2 = _interopRequireDefault(_platform);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /*
+                                                                                                                                                                                                    Copyright 2013-2015 ASIAL CORPORATION
+                                                                                                                                                                                                    
+                                                                                                                                                                                                    Licensed under the Apache License, Version 2.0 (the "License");
+                                                                                                                                                                                                    you may not use this file except in compliance with the License.
+                                                                                                                                                                                                    You may obtain a copy of the License at
+                                                                                                                                                                                                    
+                                                                                                                                                                                                       http://www.apache.org/licenses/LICENSE-2.0
+                                                                                                                                                                                                    
+                                                                                                                                                                                                    Unless required by applicable law or agreed to in writing, software
+                                                                                                                                                                                                    distributed under the License is distributed on an "AS IS" BASIS,
+                                                                                                                                                                                                    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                                                                                                                                                                                    See the License for the specific language governing permissions and
+                                                                                                                                                                                                    limitations under the License.
+                                                                                                                                                                                                    
+                                                                                                                                                                                                    */
 
 var util = {};
 var errorPrefix = '[Onsen UI]';
@@ -37,10 +62,9 @@ util.globals = {
   supportsPassive: false
 };
 
-platform._runOnActualPlatform(function () {
-  util.globals.actualMobileOS = platform.getMobileOS();
-  util.globals.isUIWebView = platform.isUIWebView();
-  util.globals.isWKWebView = platform.isWKWebView();
+_platform2.default._runOnActualPlatform(function () {
+  util.globals.actualMobileOS = _platform2.default.getMobileOS();
+  util.globals.isWKWebView = _platform2.default.isWKWebView();
 });
 
 try {
@@ -158,7 +182,7 @@ util.hasAnyComponentAsParent = function (element) {
 util.getAllChildNodes = function (element) {
   var _ref;
 
-  return (_ref = [element]).concat.apply(_ref, _toConsumableArray(_Array$from(element.children).map(function (childEl) {
+  return (_ref = [element]).concat.apply(_ref, _toConsumableArray(Array.from(element.children).map(function (childEl) {
     return util.getAllChildNodes(childEl);
   })));
 };
@@ -220,7 +244,7 @@ util.create = function () {
     element.className = classList.join(' ');
   }
 
-  styler(element, style);
+  (0, _styler2.default)(element, style);
 
   return element;
 };
@@ -269,7 +293,7 @@ util.extend = function (dst) {
 
   for (var i = 0; i < args.length; i++) {
     if (args[i]) {
-      var keys = _Object$keys(args[i]);
+      var keys = Object.keys(args[i]);
       for (var j = 0; j < keys.length; j++) {
         var key = keys[j];
         dst[key] = args[i][key];
@@ -369,7 +393,7 @@ util.triggerElementEvent = function (target, eventName) {
     detail: detail
   });
 
-  _Object$keys(detail).forEach(function (key) {
+  Object.keys(detail).forEach(function (key) {
     event[key] = detail[key];
   });
 
@@ -402,7 +426,7 @@ util.addModifier = function (target, modifierName) {
   var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
   if (options.autoStyle) {
-    modifierName = autoStyle.mapModifier(modifierName, target, options.forceAutoStyle);
+    modifierName = _autostyle2.default.mapModifier(modifierName, target, options.forceAutoStyle);
   }
 
   if (util.hasModifier(target, modifierName)) {
@@ -424,7 +448,7 @@ util.removeModifier = function (target, modifierName) {
   var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
   if (options.autoStyle) {
-    modifierName = autoStyle.mapModifier(modifierName, target, options.forceAutoStyle);
+    modifierName = _autostyle2.default.mapModifier(modifierName, target, options.forceAutoStyle);
   }
 
   if (!target.getAttribute('modifier') || !util.hasModifier(target, modifierName)) {
@@ -463,7 +487,7 @@ util.restoreClass = function (el, defaultClass, scheme) {
   defaultClass.split(/\s+/).forEach(function (c) {
     return c !== '' && !el.classList.contains(c) && el.classList.add(c);
   });
-  el.hasAttribute('modifier') && ModifierUtil.refresh(el, scheme);
+  el.hasAttribute('modifier') && _modifierUtil2.default.refresh(el, scheme);
 };
 
 // TODO: FIX
@@ -492,7 +516,7 @@ util.bindListeners = function (element, listenerNames) {
 };
 
 util.each = function (obj, f) {
-  return _Object$keys(obj).forEach(function (key) {
+  return Object.keys(obj).forEach(function (key) {
     return f(key, obj[key]);
   });
 };
@@ -514,7 +538,7 @@ util.updateRipple = function (target, hasRipple) {
   if (hasRipple) {
     if (!rippleElement) {
       var element = document.createElement('ons-ripple');
-      _Object$keys(attrs).forEach(function (key) {
+      Object.keys(attrs).forEach(function (key) {
         return element.setAttribute(key, attrs[key]);
       });
       target.insertBefore(element, target.firstChild);
@@ -528,7 +552,7 @@ util.updateRipple = function (target, hasRipple) {
  * @param {String}
  * @return {Object}
  */
-util.animationOptionsParse = animationOptionsParse;
+util.animationOptionsParse = _animationOptionsParser2.default;
 
 /**
  * @param {*} value
@@ -542,7 +566,7 @@ util.isInteger = function (value) {
  */
 util.defer = function () {
   var deferred = {};
-  deferred.promise = new _Promise(function (resolve, reject) {
+  deferred.promise = new Promise(function (resolve, reject) {
     deferred.resolve = resolve;
     deferred.reject = reject;
   });
@@ -559,7 +583,7 @@ util.warn = function () {
     args[_key2] = arguments[_key2];
   }
 
-  if (!internal.config.warningsDisabled) {
+  if (!_internal2.default.config.warningsDisabled) {
     var _console;
 
     (_console = console).warn.apply(_console, [errorPrefix].concat(args));
@@ -614,16 +638,7 @@ util.iosPageScrollFix = function (add) {
   // Full fix - May cause issues with UIWebView's momentum scroll
   if (util.globals.actualMobileOS === 'ios') {
     document.body.classList.toggle('ons-ios-scroll', add); // Allows custom and localized fixes (#2274)
-    if (!util.globals.isUIWebView || internal.config.forceUIWebViewScrollFix) {
-      document.body.classList.toggle('ons-ios-scroll-fix', add);
-    }
-  }
-};
-util.iosMaskScrollFix = function (el, add) {
-  // Half fix - only prevents scroll on masks
-  if (util.globals.isUIWebView) {
-    var action = (add ? 'add' : 'remove') + 'EventListener';
-    el[action]('touchmove', prevent, false);
+    document.body.classList.toggle('ons-ios-scroll-fix', add);
   }
 };
 
@@ -642,10 +657,10 @@ util.checkMissingImport = function () {
   }
 
   elementNames.forEach(function (name) {
-    if (!onsElements[name]) {
+    if (!_elements2.default[name]) {
       util.throw('Ons' + name + ' is required but was not imported (Custom Elements)');
     }
   });
 };
 
-export default util;
+exports.default = util;
