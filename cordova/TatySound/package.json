@@ -26,6 +26,8 @@
   },
   "devDependencies": {
     "cordova-ios": "^6.1.1",
+    "cordova-plugin-console": "^1.1.0",
+    "cordova-plugin-splashscreen": "^6.0.0",
     "cordova-plugin-whitelist": "^1.3.4"
   },
   "cordova": {
@@ -41,7 +43,9 @@
       "cordova-sqlite-storage": {},
       "cordova-plugin-ble-central": {
         "BLUETOOTH_USAGE_DESCRIPTION": "This app requires Bluetooth to connect to our hardware."
-      }
+      },
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-console": {}
     },
     "platforms": [
       "android",

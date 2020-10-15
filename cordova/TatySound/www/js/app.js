@@ -65,8 +65,8 @@ var app = {
         console.log("refreshDeviceList click");
         bluetooth.refreshDeviceList(false);
       });
-      $('#ble-found-devices').on('tap', 'ons-list-item', function (e) {
-        console.log("ble-found-devices click");
+      $('#ble-found-devices').on('click', 'ons-list-item', function (e) {
+        debug.log("ble-found-devices click");
         bluetooth.connectDevice($(this).attr("data-device-id"), $(this).attr("data-device-name"));
       });
       $(document).on('click', '#disconnectDevice', function (e) {

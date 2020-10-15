@@ -46,8 +46,14 @@
                 <ons-button id="refreshDeviceList" modifier="outline">Refresh</ons-button>
                 <ons-button id="disconnectDevice" modifier="outline" disabled="true">Disconnect</ons-button>    
             </div>
-            <ul id="ble-found-devices">Looking for Devices</ul>
-            <ul id="ble-connected-device">Not connected</ul>
+            <div id="ble-found-devices">
+                <ons-list-item>
+                        <em>No Spots</em>
+                </ons-list-item>
+            </div>
+            <div id="ble-connected-device">
+                Not connected
+            </div>
         </div>
 
         <ons-card id="settingscard" style="display: none;">
