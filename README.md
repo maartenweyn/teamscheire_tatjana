@@ -3,6 +3,8 @@
 Aflevering op VRTNu: [https://www.vrt.be/vrtnu/a-z/team-scheire/2/team-scheire-s2a2/
 ]()
 
+Uitleg over de oplossing in deze podcast: [https://soundcloud.com/nerdlandmakertalk/09-maarten-weyn]()
+
 # Geluidsmetingen
 
 ## 1. Wat is geluid?
