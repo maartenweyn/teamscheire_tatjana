@@ -1,6 +1,6 @@
 # Team Scheire Tatjana - Tinnitus
 
-Aflevering op VRTNu: [https://www.vrt.be/vrtnu/a-z/team-scheire/2/team-scheire-s2a2/](https://www.vrt.be/vrtnu/a-z/team-scheire/2/team-scheire-s2a2/])
+Aflevering op VRTNu: [https://vrtnu.page.link/GqeyBG1gsRzztzNG9](https://vrtnu.page.link/GqeyBG1gsRzztzNG9)
 
 Uitleg over de oplossing in deze podcast: [https://soundcloud.com/nerdlandmakertalk/09-maarten-weyn](https://soundcloud.com/nerdlandmakertalk/09-maarten-weyn)
 
