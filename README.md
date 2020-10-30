@@ -1,7 +1,8 @@
 # Team Scheire Tatjana - Tinnitus
 
-Aflevering op VRTNu: [https://www.vrt.be/vrtnu/a-z/team-scheire/2/team-scheire-s2a2/
-]()
+Aflevering op VRTNu: [https://vrtnu.page.link/GqeyBG1gsRzztzNG9](https://vrtnu.page.link/GqeyBG1gsRzztzNG9)
+
+Uitleg over de oplossing in deze podcast: [https://soundcloud.com/nerdlandmakertalk/09-maarten-weyn](https://soundcloud.com/nerdlandmakertalk/09-maarten-weyn)
 
 # Geluidsmetingen
 
@@ -33,7 +34,7 @@ Dus deze waarde geeft een indicatie hoeveel keer het geluid luider is dan gehoor
 
 In het geval van een geluidsniveau wordt een logaritme gebruikt met grondtal 10. In dat geval is de logaritme van een getal het getal waartoe 10 moet worden verheven. de logaritme van 1000 is bijvoorbeeld 3 want 103 = 10 x 10 x 10 = 1000.
 
-In het geval van het geluidsniveau berekenen we de logaritme van het aantal keer het geluid sterkers is dan de gehoordrempel, en dat getal nog eens x 20.
+In het geval van het geluidsniveau berekenen we de logaritme van het aantal keer het geluid sterker is dan de gehoordrempel, en dat getal nog eens x 20.
 
 
 ## 4. Hoe kunnen we dat nu meten
